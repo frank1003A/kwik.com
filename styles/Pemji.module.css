@@ -1,0 +1,35 @@
+.passwordemjoifier {
+        /* padding: 15px; */
+        background: #eee;
+        border-radius: 50px;
+        width: 100%;
+        overflow: hidden;
+        /*border: 2px solid #eee;
+        height: 47px;*/
+        display: flex;
+        align-items: center;
+}
+
+.passwordemjoifier .pemj {
+    padding-right: 20px;
+}
+
+
+/*.passwordemjoifier input {
+    height: 30px;
+    background: #eee;
+    border-radius: 50px;
+    padding: 15px;
+    width: 90%;
+    border: none;
+}
+
+.passwordemjoifier input:focus-visible {
+    border: 0px ;
+    outline: none;
+    border-color: none ;
+}
+
+.passwordemjoifier input:hover .passwordemjoifier{
+    border: 2px solid red;
+}*/

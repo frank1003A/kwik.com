@@ -1,0 +1,487 @@
+.login-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.signup-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+section#imgandtext {
+    width: 50%;
+    background: #01023b;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+}
+section#formandinput {
+    background: white;
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+}
+
+section#formandinputsignup {
+    background: white;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-container .imgandtext img#logoup{
+    height: 40px;
+    margin-right: auto;
+    margin-bottom: auto;
+}
+
+.signup-container .imgandtext img#logoup{
+    height: 40px;
+    margin-right: auto;
+    margin-bottom: auto;
+}
+
+.login-container .imgandtext img#imglogin{
+    margin: auto;
+    height: -webkit-fill-available;
+}
+
+.signup-container .imgandtext img#imglogin{
+    margin: auto;
+    height: -webkit-fill-available;
+}
+
+#formandinput .form .logocont {
+    display: flex;
+}
+
+#formandinputsignup .form .logocont {
+    display: flex;
+}
+
+.formandinput img#logologin{
+    height: 65px;
+}
+
+#formandinput h3{
+    font-size: 3rem;
+    color: #525252;
+}
+
+#formandinputsignup h3{
+    font-size: 3rem;
+    color: #525252;
+}
+
+.formandinput .socials span{
+    background: #eee;
+    padding: 5px;
+    border-radius: 0.5rem;
+    display: inline-block;
+    margin: 6px;
+}
+
+#formandinput .form .form-control {
+    display: flex;
+    line-height: 2;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#formandinputsignup .form .form-control {
+    display: flex;
+    line-height: 4;
+    gap: .2rem;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#formandinput .form .form-control .frmtxt {
+    font-weight: 500;
+    font-size: small;
+}
+
+#formandinputsignup .form .form-control .frmtxt {
+    font-weight: 500;
+    font-size: small;
+}
+
+#formandinput .form .form-control .frmtxt span {
+    color: #2124B1;
+}
+
+#formandinputsignup .form .form-control .frmtxt span {
+    color: #2124B1;
+}
+
+#formandinput .form .form-control p{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #666;
+}
+
+#formandinputsignup .form .form-control p{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #666;
+}
+
+#formandinput .socials{
+    margin: 10px;
+}
+
+#formandinputsignup .socials{
+    margin: 10px;
+}
+
+#formandinput .form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: inherit;
+    gap: 1rem;
+    justify-content: center;
+}
+
+#formandinputsignup .form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: inherit;
+    gap: .5rem;
+    justify-content: center;
+}
+
+#formandinput .form .form-control input[type="text"] {
+    padding: 15px;
+    background: #eee;
+    border-radius: 50px;
+    width: 100%;
+    font-family: Roboto, sans-serif;
+    font-size: .8990rem;
+    font-weight: 400;
+    border: 1px solid #eee;
+}
+
+#formandinput .form .form-control input[type="text"]:focus-visible {
+    outline: none;
+    border-color: #2124B1 ;
+}
+
+#formandinputsignup .form .form-control input[type="text"] {
+    padding: 15px;
+    background: #eee;
+    border-radius: 50px;
+    width: 100%;
+    border: 1px solid #eee;
+    font-family: Roboto, sans-serif;
+    font-size: .8990rem;
+    font-weight: 400;
+}
+
+#formandinputsignup .form .form-control input[type="text"]:focus-visible{
+    outline: none;
+    border-color: #2124B1 ;
+}
+
+#formandinput .form .form-control input[type="text"]:focus-visible, 
+#formandinput .form .form-control input[type="text"]:focus,
+#formandinput .form .form-control input[type="text"]:focus-within {
+    border-color: #2124B1 !important;
+}
+
+#formandinputsignup .form .form-control input[type="text"]:focus-visible, 
+#formandinputsignup .form .form-control input[type="text"]:focus,
+#formandinputsignup .form .form-control input[type="text"]:focus-within {
+    border-color: #2124B1 !important;
+}
+
+#formandinput .form .form-control input[type="password"] {
+    padding: 15px;
+    background: #eee;
+    border-radius: 50px;
+    width: 100%;
+    border: 1px solid #eee;
+    font-family: Roboto, sans-serif;
+    font-size: .8990rem;
+    font-weight: 400;
+}
+
+#formandinput .form .form-control input[type="password"]:focus-visible {
+    outline: none;
+    border-color: #2124B1 ;
+}
+
+#formandinputsignup .form .form-control input[type="password"] {
+    padding: 15px;
+    background: #eee;
+    border-radius: 50px;
+    width: 100%;
+    border: 1px solid #eee;
+    font-family: Roboto, sans-serif;
+    font-size: .8990rem;
+    font-weight: 400;
+}
+
+#formandinputsignup .form .form-control input[type="password"]:focus-visible {
+    outline: none;
+    border-color: #2124B1 ;
+}
+
+#formandinput .form  .loginbtn{
+    width: 100%;
+    padding: 10px;
+    border-radius: 50px !important;
+    box-shadow: var(--box-shadow);
+    border: 1px solid #eee !important;
+    background-color: #2124B1 !important;
+}
+
+#formandinputsignup .form  .loginbtn{
+    width: 100%;
+    padding: 10px;
+    border-radius: 50px !important;
+    box-shadow: var(--box-shadow);
+    border: 1px solid #eee !important;
+    background-color: #2124B1 !important;
+}
+
+#formandinput .form .googlebtn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 50px !important;
+    box-shadow: var(--box-shadow);
+    border: 1px solid #eee !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    display: flex;
+    justify-content: center;
+    gap: .2rem;
+    align-items: center;
+}
+
+#formandinputsignup .form .googlebtn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 50px !important;
+    box-shadow: var(--box-shadow);
+    border: 1px solid #eee !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    display: flex;
+    justify-content: center;
+    gap: .2rem;
+    align-items: center;
+}
+
+#formandinput .flex-row{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: small;
+}
+
+#formandinputsignup .flex-row{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: small;
+}
+
+#formandinput .form .form-control label#passlabel {
+    font-size: 1.2rem;
+    color: #a1a0a0;
+}
+
+#formandinputsingup .form .form-control label#passlabel {
+    font-size: 1.2rem;
+    color: #a1a0a0;
+}
+
+#formandinput .dividersolid{
+    border-top: 1px solid #eee;
+    width: 30%;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;      
+}
+
+#formandinputsignup .dividersolid{
+    border-top: 1px solid #eee;
+    width: 30%;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;      
+}
+
+
+#formandinput .form .form-control .frm p,
+#formandinput .form .form-control .frm a{
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #000000cc;
+}
+
+#formandinputsignup .form .form-control .frm p,
+#formandinputsignup .form .form-control .frm a{
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #000000cc;
+}
+
+#formandinput .form .frm{
+    font-weight: 600;
+    color: #2124B1;
+    display: flex;
+    font-size: .8990rem;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+#formandinputsignup .form .frm{
+    font-weight: 600;
+    color: #2124B1;
+    display: flex;
+    font-size: .8990rem;
+    flex-direction: row;
+    align-items: center;
+}
+
+#formandinput .form .frm .chckbx {
+    display: flex;
+}
+
+#formandinputsignup .form .frm .chckbx {
+    display: flex;
+}
+
+#formandinput .form .frm .chckbx #rmcheck {
+    color: #525252 !important;
+}
+
+#formandinputsignup .form .frm .chckbxlogin {
+    display: flex;
+}
+
+#formandinputsignup .form .frm .chckbxlogin #rmcheck {
+    color: #525252 !important;
+}
+
+#formandinput .form .fp{
+    margin-left: auto;
+    color: #faae0a;
+}
+
+#formandinputsignup .form .fp{
+    margin-left: auto;
+    color: #faae0a;
+}
+
+#formandinput .frmout {
+        font-weight: 600;
+    color: #2124B1;
+    display: flex;
+    font-size: .8990rem;
+    width: 50%;
+    padding: 1rem;
+    justify-content: flex-start;
+}
+
+#formandinputsignup .frmout {
+    font-weight: 600;
+color: #2124B1;
+display: flex;
+font-size: .8990rem;
+width: 50%;
+padding: 1rem;
+justify-content: flex-start;
+}
+
+#formandinput .frmout span {
+    color: #525252 !important;
+}
+
+#formandinputsignup .frmout span {
+    color: #525252 !important;
+}
+
+
+#formandinput .rights {
+    width: 50%;
+}
+
+#formandinputsignup .rights {
+    width: 50%;
+}
+
+#formandinput .rights span {
+    font-size: small;
+    font-weight: 600;
+    color: #666;
+}
+
+#formandinputsignup .rights span {
+    font-size: small;
+    font-weight: 600;
+    color: #666;
+}
+
+@media (max-width:900px){
+    .login-container{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .signup-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    section#imgandtext{
+        display: none;
+        visibility: hidden;
+    }
+
+    section#formandinput{
+        width: 100%;
+    }
+
+    section#formandinputsignup{
+        width: 100%;
+    }
+    
+}
+
+@media (max-width:500px) {
+    section#formandinput{
+        width: 100%;
+        padding: 2rem;
+    }
+
+    #formandinput .frmout {
+        width: 100%;
+    }
+
+    #formandinput .rights {
+        width: 100%;
+    }
+}
+
+
+
+
+

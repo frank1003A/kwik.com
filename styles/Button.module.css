@@ -1,0 +1,24 @@
+.muiButton {
+    background-color: #2124B1;
+    border-radius: 4px;
+    gap: .5rem;
+    width: 100%;
+}
+
+/*ffc800*/
+.muiButton:hover{
+    background-color: #ffc800;
+}
+
+.muiButtonBackground {
+    background-color: transparent;
+    border-radius: 1px;
+    gap: .5rem;
+    box-shadow: none !important;
+    color: #555;
+}
+
+.muiButtonBackground:hover{
+    background-color: transparent;
+    color: #2124B1;
+}
