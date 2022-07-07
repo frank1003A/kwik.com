@@ -14,11 +14,11 @@ const PasswordEmojifier:FC<Props> = ({mask}) => {
     ]
     const closedemoji = "🤐"
     const openedemoji = "😜"
-    const [text, setText] = useState('')
-    const [emoji, setEmoji] = useState('')
-    //const [status, setStatus] = useState('')
-    const [mstate, setmstate] = useState('')
-    const [showemoji, setShowemoji] = useState(false)
+    const [text, setText] = useState<string>('')
+    const [emoji, setEmoji] = useState<string>('')
+    //const [status, setStatus] = useState<string>('')
+    const [mstate, setmstate] = useState<string>('')
+    const [showemoji, setShowemoji] = useState<boolean>(false)
 
     const handleEmojiText = (e: React.ChangeEvent<HTMLInputElement>) => {
       let { value } = e.target;

@@ -46,6 +46,8 @@ const invoices: NextPage = () => {
   const dispatch = useAppDispatch();
   const invoice = useAppSelector((state) => state.invoice.invoice); // Invoice State
 
+  console.log(invoice.invoiceitems[0].amount);
+
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
       setInvComp(false);
@@ -227,80 +229,14 @@ const invoices: NextPage = () => {
     e.preventDefault();
     const { value } = e.currentTarget;
 
-    const update_value = {...InvoiceRepo}
-
-    if (name === "quantity"){
-      update_value.invoiceitems[index][name] = value
-    }
-
-    if (name === "quantity"){
-      update_value.invoiceitems[index][name] = value
-    }
-
-    else if (name === "description"){
-      update_value.invoiceitems[index][name] = value
-    }
-
-    else if (name === "rate"){
-      update_value.invoiceitems[index][name] = value 
-    }
-
-    setInvoiceRepo(update_value)
-
-
-    
-
-    /**if (idx === index) {
-          const newItems = {...itm}
-
-          if (name === "id") return
-
-        if (name === "quantity"){
-          newItems[name] = value
-        }
-
-        else if (name === ("description")){
-          newItems[name] = value 
-        }
-
-        else if (name === "rate"){
-          newItems[name] = value 
-        }
-
-        if (newItems !== undefined)
-            return newItems
-        }
-        if (itm !== undefined) return {...itm}
-      }) */
-
-    /**dispatch(
+    dispatch(
       updateInvoiceItem({
         invItemName: name,
         invIndex: index,
         invValue: value,
         invtaxrate: taxRate,
-      })
-
-      const items = InvoiceRepo.invoiceitems.map((itm, idx) => {
-      if (idx === index) {
-        const newItems = { ...itm };
-
-        if (name === "id") return;
-
-        if (name === "quantity") {
-          newItems[name] = value;
-        } else if (name === "description") {
-          newItems[name] = value;
-        } else if (name === "rate") {
-          newItems[name] = value;
-        }
-
-        if (newItems !== undefined) return newItems;
-      }
-      if (itm !== undefined) return { ...itm };
-    });
-    ); */
-  };
+      }))
+  }
 
   const handleDetailInput = (
     e: Event | SyntheticEvent<any, Event>,
@@ -308,26 +244,13 @@ const invoices: NextPage = () => {
   ) => {
     e.preventDefault()
     const {value} = e.currentTarget
-
-    if (name !== "invoiceitems") {
-      let new_value = {...InvoiceRepo}
-
-      if (name === "logoWidth" && typeof value === "number")
-          new_value[name] = value
-
-      else if (name !== "logoWidth" && name !== "tax" && typeof value === "string") {
-          new_value[name] = value
-      }
-
-      setInvoiceRepo(new_value)
-    }
     
-    /**dispatch(
+    dispatch(
       updateInvoice({
         invName: name,
         invValue: value,
       })
-    ); */
+    ); 
   };
 
   const componentRef = useRef(null);
@@ -352,21 +275,15 @@ const invoices: NextPage = () => {
   };
 
   const addTC = () => {
-    const newItem = {...initialInvoiceItems}
-    const itemList = [...InvoiceRepo.invoiceitems]
-    
-    /**setInvoiceRepo(state => [...state, newItem]) */
-    /**dispatch(updateInvoiceItemNo()); */
+    dispatch(updateInvoiceItemNo());
   };
 
-  const removeItem = (itemId: string | number | string[]) => {
-    const item = InvoiceRepo.invoiceitems.filter(itm => itm.id !== itemId); 
-    setInvoiceRepo({...InvoiceRepo, invoiceitems: item})
-    /**dispatch(
+  const removeItem = (id: string | number | string[]) => {
+    dispatch(
       deleteInvoiceItemNo({
-        invId: itemId,
+        invId: id,
       })
-    ); */
+    ); 
   };
 
   const removeJSXElement = (elementid: string) => {
@@ -492,3 +409,107 @@ const invoices: NextPage = () => {
 };
 
 export default invoices;
+
+/**
+    /**if (name !== "invoiceitems") {
+      let new_value = {...InvoiceRepo}
+
+      if (name === "logoWidth" && typeof value === "number")
+          new_value[name] = value
+
+      else if (name !== "logoWidth" && name !== "tax" && typeof value === "string") {
+          new_value[name] = value
+      }
+
+      setInvoiceRepo(new_value)
+    } 
+    
+     /**setInvoiceRepo((prev) => {
+        return {
+          ...prev, invoiceitems: [...prev.invoiceitems, {...items[0]}] 
+        }
+      }) */
+
+
+    
+
+    /**if (idx === index) {
+          const newItems = {...itm}
+
+          if (name === "id") return
+
+        if (name === "quantity"){
+          newItems[name] = value
+        }
+
+
+
+        else if (name === ("description")){
+          newItems[name] = value 
+        }
+
+        else if (name === "rate"){
+          newItems[name] = value 
+        }
+
+        if (newItems !== undefined)
+            return newItems
+        }
+        if (itm !== undefined) return {...itm}
+      }) */
+
+    /**dispatch(
+      updateInvoiceItem({
+        invItemName: name,
+        invIndex: index,
+        invValue: value,
+        invtaxrate: taxRate,
+      })
+
+      const items = InvoiceRepo.invoiceitems.map((itm, idx) => {
+      if (idx === index) {
+        const newItems = { ...itm };
+
+        if (name === "id") return;
+
+        if (name === "quantity") {
+          newItems[name] = value;
+        } else if (name === "description") {
+          newItems[name] = value;
+        } else if (name === "rate") {
+          newItems[name] = value;
+        }
+
+        if (newItems !== undefined) return newItems;
+      }
+      if (itm !== undefined) return { ...itm };
+    });
+
+
+    const update_value = {...InvoiceRepo}
+
+    const items = InvoiceRepo.invoiceitems.map((itm, idx) => {
+      if (idx === index) {
+        const newItems = { ...itm };
+
+        if (name === "id" && name !== undefined && typeof value === "number") {
+          newItems[name] = Math.random() * 100
+        }
+
+        if (name === "quantity" && name !== undefined && typeof value === "number") {
+          newItems[name] = value;
+        } else if (name === "description" && typeof value === "string") {
+          newItems[name] = value;
+        } else if (name === "rate" && typeof value === "string") {
+          newItems[name] = value;
+        }
+
+        if (newItems !== undefined) return newItems;
+      }
+      if (itm !== undefined) return { ...itm };
+    });
+
+    console.log(items[0])
+    ); 
+    */ 
+

@@ -1,3 +1,15 @@
+<div align="center">
+  ![Kwik](https://user-images.githubusercontent.com/63779386/169904701-5bdae1e2-623d-4e9e-8d25-fdb5b6c203bc.png)
+</div>
+
+<div align="center">
+  <h1>Kwik.com</h1>
+  <p>A portfolio invoice and quotation maker for the web</p>
+  <a href="https://github.com/frank1003A?tab=repositories">
+   Written by Frank Ezene
+  <a>
+</div>
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

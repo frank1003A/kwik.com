@@ -1,4 +1,4 @@
-import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, Draft, PayloadAction, current } from '@reduxjs/toolkit'
 import produce from 'immer'
 import type { RootState } from './store'
 import { initialInvoice } from '../../components/Data/initialData'
@@ -12,9 +12,10 @@ type Pload = {
     invName?: keyof Invoice,
     invItemName? : keyof InvoiceItems
     invValue?: string | number | number[],
-    invIndex?: number,
+    invIndex?: number | undefined,
     invtaxrate?: number | undefined,
-    invId?: string | number | string[]
+    invId?: string | number | string[],
+    elementType?: string
 }
 
 const initialState: InvoiceState = { 
@@ -41,8 +42,10 @@ const invoiceSlice = createSlice({
         }, 
         clearSelectValue: (state, action: PayloadAction<Pload>) => { 
             const invName = action.payload.invName
-            if (typeof invName !== "undefined" && typeof state.invoice[invName] === ("string")) 
+            const elementType = action.payload.elementType
+            if (typeof invName === "string" && elementType === "select"){ 
                 state.invoice[invName] = "" as never
+            }
         },
         updateInvoiceItem: (state, action: PayloadAction<Pload>) => {
             //
@@ -50,32 +53,18 @@ const invoiceSlice = createSlice({
             const invIndex = action.payload.invIndex
             const invValue = action.payload.invValue
             const taxRate = action.payload.invtaxrate
-            const newItem = {
-                ...state, invoice: {
-                    ['invoiceitems']: {
-                        [invIndex!]: {
-                            [invItemName!]:invValue
-                        }
-                    }
-                }
+            if (invIndex !== undefined) {
+
+            if (invItemName === "quantity" && invItemName !== undefined && typeof invValue=== "number" )
+                state.invoice.invoiceitems[invIndex][invItemName] = invValue
+
+            else if (invItemName == "description" && typeof invValue === "string")
+                     state.invoice.invoiceitems[invIndex][invItemName] = invValue
+
+            else if (invItemName == "rate" && typeof invValue === "string")
+                     state.invoice.invoiceitems[invIndex][invItemName] = invValue
+
             }
-            produce(state, draft => {newItem})
-            //
-            const quantity = state.invoice["invoiceitems"][invIndex!].quantity
-            const rate = state.invoice["invoiceitems"][invIndex!].rate
-            const amt = (quantity * Number(rate)) !== undefined ? (quantity * Number(rate)).toString() : "0.00";
-            state.invoice["invoiceitems"][invIndex!].amount = amt
-            //
-            const subTotal = state.invoice.invoiceitems
-                            .reduce((acc, item) => acc + Number(item.amount || 0),0)
-                            .toString();
-            state.invoice.subTotal = subTotal === undefined ? "0.00": subTotal ;
-            //
-            const tax = (taxRate! / 100) * Number(state.invoice.subTotal)
-            state.invoice.tax = tax
-            //
-            const total = Number(state.invoice.subTotal) + Number(state.invoice.tax)
-            state.invoice.total = total.toString()
         },
         updateInvoiceItemNo: (state) => {
             const newItem = {
@@ -89,8 +78,10 @@ const invoiceSlice = createSlice({
         },
         deleteInvoiceItemNo: (state, action: PayloadAction<Pload>) => {
             const invId = action.payload.invId
-            const item = state.invoice.invoiceitems.filter((item) =>  item.id === invId )
-            state.invoice.invoiceitems = {...item}
+            const item = state.invoice.invoiceitems.filter(itm => itm.id !== invId)
+           if (invId !== undefined && typeof invId === "number") {
+                state.invoice.invoiceitems = item
+            } 
         },
     }
 })
@@ -106,3 +97,20 @@ export const {
 export const invoice = (state: RootState) => state.invoice.invoice
 
 export default invoiceSlice.reducer
+
+
+/**const quantity = state.invoice.invoiceitems[invIndex].quantity
+            const rate = state.invoice.invoiceitems[invIndex].rate
+            const amt = (quantity * Number(rate)).toString()
+            state.invoice.invoiceitems[invIndex].amount = amt === undefined ? "0.00" : amt
+            //
+            const subTotal = state.invoice.invoiceitems
+                            .reduce((acc, item) => acc + Number(item.amount || 0),0)
+                            .toString();
+            state.invoice.subTotal = subTotal === undefined ? "0.00": subTotal ;
+            //
+            const tax = taxRate !== undefined ? (taxRate / 100) * Number(state.invoice.subTotal) : 0
+            state.invoice.tax = tax
+            //
+            const total = Number(state.invoice.subTotal) + Number(state.invoice.tax)
+            state.invoice.total = total.toString() */
