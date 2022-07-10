@@ -1,14 +1,14 @@
 'use strict'
+import React, { FC, SyntheticEvent } from 'react';
+import { ColorChangeHandler, SketchPicker } from 'react-color';
+import reactCSS from 'reactcss';
 
-import React, {FC} from 'react'
-import reactCSS from 'reactcss'
-import { SketchPicker } from 'react-color'
 
 interface Props {
     color: string, 
     displayColorPicker: boolean, 
     handleClick: () => void, 
-    handleChange: () => void, 
+    handleChange: ColorChangeHandler, 
     handleClose: () => void 
 }
 
@@ -34,11 +34,11 @@ const EditabeColorInput: FC<Props> = ({color, displayColorPicker, handleClick, h
         alignItems: "center",
       },
       popover: {
-        /**position: 'absolute', */
+        position: 'absolute' as const, 
         zIndex: "2",
       },
       cover: {
-        /**position: "fixed", */
+        position: "fixed" as const,
         top: "0px",
         right: "0px",
         bottom: "0px",

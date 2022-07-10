@@ -16,6 +16,7 @@ import {
   updateInvoiceItem,
   updateInvoiceItemNo,
   deleteInvoiceItemNo,
+  getTaxRate
 } from "../redux/invoiceSlice";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 import Modals from "../../components/Modal";
@@ -36,7 +37,7 @@ const invoices: NextPage = () => {
   const [editPdf, seteditPdf] = useState<boolean>(false);
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
   const [opensaved, setOpenSaved] = useState<boolean>(false);
-  const [taxRate, setTaxRate] = useState<number>(0);
+  const [taxRate, setTaxRate] = useState<number>();
   const [currency, setCurrency] = useState<string>("");
   const [showEditComp, setShowEditComp] = useState<boolean>(false);
   const [edcActive, setEdcActive] = useState<boolean>(false);
@@ -45,8 +46,6 @@ const invoices: NextPage = () => {
 
   const dispatch = useAppDispatch();
   const invoice = useAppSelector((state) => state.invoice.invoice); // Invoice State
-
-  console.log(invoice.invoiceitems[0].amount);
 
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
@@ -286,6 +285,16 @@ const invoices: NextPage = () => {
     ); 
   };
 
+  const getTxRate = (e:Event | SyntheticEvent<any, Event>): void => {
+    const { value } = e.currentTarget
+    setTaxRate(value)
+    dispatch(
+      getTaxRate({
+        invtaxrate: taxRate 
+      })
+    )
+  }
+
   const removeJSXElement = (elementid: string) => {
     const element = document.getElementById(elementid) as HTMLElement;
     element.style.display = "none";
@@ -358,12 +367,10 @@ const invoices: NextPage = () => {
                 <Divider />
                 <Typography>Vat Rate %</Typography>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Vat Rate"
                   value={taxRate}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setTaxRate(Number(e.target.value))
-                  }
+                  onChange={getTxRate}
                 />
                 <Typography>Background Image</Typography>
                 <input type="file" placeholder="upload PNG or JPEG" />

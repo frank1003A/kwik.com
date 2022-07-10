@@ -1,12 +1,12 @@
-import React, {FC} from 'react'
+import React, { FC } from 'react'
 import styles from '../styles/Home.module.css'
 
 interface Props {
-    isOver?: boolean,
-    children: React.ReactChild
+    isOver: boolean, 
+    children: React.ReactChild[]
 }
 
-const KwikCreatorPanel: FC<Props> = ({isOver,children}) => {
+const Creator_Panel: FC<Props> = ({isOver,children}) => {
   const className = isOver ? "highlight-region" : ""
   return (
     <div className={styles['kwikCreatorpanel']}>
@@ -17,5 +17,5 @@ const KwikCreatorPanel: FC<Props> = ({isOver,children}) => {
   )
 }
 
-export default KwikCreatorPanel
+export default Creator_Panel
 

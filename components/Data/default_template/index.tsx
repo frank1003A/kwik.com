@@ -326,11 +326,11 @@ export const TotalContainer:FC<TCNProps> = ({cur, invoice, handleDetailInput, tR
                 <div className={styles.vat}>
                   <input
                     type="text"
-                    placeholder={`Sale Vat/Tax (${tR}) %`}
+                    placeholder={`Sale Vat/Tax`}
                     onChange={(e) => handleDetailInput(e, "taxLabel")}
-                  />{" "}
+                  /><Typography>{`(${tR !== (0 || undefined) ? tR : 0}) %`}</Typography>
                   <Typography>
-                    {invoice.tax ? `${cur} ${invoice.tax}` : 0}
+                    {tR !== (0 || undefined) ? `${cur} ${invoice.tax}` : 0}
                   </Typography>
                 </div>
                 <div className={styles.total}>

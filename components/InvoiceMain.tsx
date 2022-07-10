@@ -28,7 +28,7 @@ import { Invoice, InvoiceItems } from "./Data/types";
     addTC: () => void,
     cur: string,
     itemArr: typeof initialInvoiceItems[], 
-    tR: number,
+    tR: number | undefined,
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     handleItemInput: (e: Event | SyntheticEvent<any, Event>, index: number, name: keyof InvoiceItems) => void,
   }

@@ -28,8 +28,11 @@
     "react": "18.0.0",
     "react-color": "^2.19.3",
     "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.0.0",
     "react-redux": "^8.0.0",
+    "react-resizable": "^3.0.4",
+    "react-select": "^5.4.0",
     "react-spinners": "^0.13.3",
     "react-to-print": "^2.14.6"
   },

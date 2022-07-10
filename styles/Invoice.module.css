@@ -585,7 +585,7 @@
   display: flex;
   top: 6.9rem;
   height: 100vh;
-  padding: .6rem;
+  /*padding: .6rem;*/
   /* overflow: auto; */
   background: #fff;
   border-left: 1px solid #eee;
@@ -596,13 +596,30 @@
   gap: 1rem;
 }
 
-.propertybar .prop {
+.property_bar .prop {
   display: flex;
+  width: 100%;
+  padding: 10px 10px 10px 10px;
+  gap: .5rem;
   flex-direction: column;
-  gap: .3rem;
+  border-top: 1px solid #eee;
+  align-items: center;
 }
 
-.property_bar div > label {
+.property_bar .header {
+  display: flex;
+  flex-direction: row;
+  grid-gap: .3rem;
+  gap: .3rem;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.6);
+  border-top: 1px solid #eee;
+  align-items: center;
+  padding: 14px 10px 14px 10px;
+  justify-content: center;
+}
+
+.property_bar div > .labhdr {
   color: rgba(0, 0, 0, 0.6);
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
@@ -612,8 +629,8 @@
 
 .property_bar input[type="date"] {
   height: 40px;
-  background-color: #eee;
-  border: 1px solid #2124B1;
+  width: 50px;
+  border: 1px solid #eee;
   border-radius:2px;
   padding: 1rem;
   color: rgba(0, 0, 0, 0.6);
@@ -626,10 +643,10 @@
 }
 
 .property_bar input[type="number"] {
-  height: 40px;
-  background-color: #eee;
-  border: 1px solid #2124B1;
-  border-radius:2px;
+  height: 34px;
+  width: 80px;
+  border: 1px solid #eee;
+  border-radius:4px;
   padding: 1rem;
   color: rgba(0, 0, 0, 0.6);
   font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -639,12 +656,15 @@
   letter-spacing: 0.00938em;
   position: relative;
 }
+.property_bar input[type="number"]:focus-within {
+  outline: none;
+}
 
 .property_bar input[type="text"] {
-  height: 40px;
-  background-color: #eee;
-  border: 1px solid #2124B1;
-  border-radius:2px;
+  height: 34px;
+  width: 100%;
+  border: 1px solid #eee;
+  border-radius:4px;
   padding: 1rem;
   color: rgba(0, 0, 0, 0.6);
   font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -657,12 +677,12 @@
 
 .property_bar input[type="text"]:focus-within {
   outline: none;
+  border: 1px solid #2124B1;
 }
 
 .property_bar input[type="file"] {
   height: 40px;
-  background-color: #eee;
-  border: 1px solid #2124B1;
+  border: 1px solid #eee;
   border-radius:2px;
   padding: .4rem;
   color: rgba(0, 0, 0, 0.6);
@@ -675,11 +695,11 @@
 }
 
 .property_bar select {
-  height: 40px;
-  background-color: #eee;
-  border: 1px solid #2124B1;
-  border-radius:2px;
-  padding: 1rem;
+  height: 34px;
+  border: 1px solid #eee;
+  border-radius:4px;
+  display: flex;
+  width: 100%;
   color: rgba(0, 0, 0, 0.6);
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
@@ -689,9 +709,42 @@
   position: relative;
 }
 
+.property_bar select:focus-within {
+  outline: none;
+  border: 1px solid #32b121;
+}
+
 .property_bar .col {
   display: flex;
   flex-direction: column;
+}
+
+.property_bar .prop .fwCnt {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.property_bar .prop .fwCnt .hder {
+  display: flex;
+}
+
+.property_bar .prop .fwCnt .fwOpt{
+  display: flex;
+}
+
+.property_bar .prop .fwCnt .fwOpt button {
+  border: none;
+  height: 40px;
+  width: 40px;
+  background: none;
+}
+
+.resizable_container {
+  resize: horizontal;
+  background: red;
+  height: 100px;
+  width: 100px;
 }
 
 .image {

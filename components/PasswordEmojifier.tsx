@@ -35,7 +35,7 @@ const PasswordEmojifier:FC<Props> = ({mask}) => {
     
     const getEmojiValue = (str: string | string[]) => {
       if (showemoji === false) return resetmask(str)
-      if (showemoji === true) return getmask(str)
+      else if (showemoji === true) return getmask(str)
     }
 
     const getmask = (str: string | string[]) => {

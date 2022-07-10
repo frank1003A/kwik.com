@@ -50,7 +50,7 @@ export interface TCNProps {
     cur: string, 
     invoice: typeof initialInvoice,
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
-    tR: number,
+    tR: number | undefined,
   }
   
 export interface NCProps {

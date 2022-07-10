@@ -2,7 +2,7 @@ import React, {FC} from 'react'
 import styles from '../styles/Invoice.module.css'
 
 interface Props {
-    children: React.ReactChild
+    children: JSX.Element[] | any[] | JSX.Element
 }
 
 const PropertyBar:FC<Props> = ({children}) => {
