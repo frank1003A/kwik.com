@@ -1,421 +1,235 @@
-import React, { FC, SyntheticEvent } from "react";
-import Layout from "../../components/Layout";
-import { useState, useEffect } from "react";
-import InvoiceMain from "../../components/InvoiceMain";
-import { countryList } from "../../components/Data/countryList";
-import styles from "../../styles/Invoice.module.css";
-import Image from "next/image";
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
-import Editorbar from "../../components/Editorbar";
-import MainEditor from "../../components/MainEditor";
-import { Typography, Divider, TextField } from "@mui/material";
-import Chip from "@mui/material/Chip";
-import {
-  updateInvoice,
-  updateInvoiceItem,
-  updateInvoiceItemNo,
-  deleteInvoiceItemNo,
-  getTaxRate
-} from "../redux/invoiceSlice";
-import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
-import Modals from "../../components/Modal";
-import ButtonComponent from "../../components/Button";
-import currencyList from "../../components/Data/currencyList";
-import Muiselect from "../../components/MuiSelect";
-import ControlledAccordions from "../../components/Accordion";
-import RemoveCircleRounded from "@mui/icons-material/Delete";
-import ResetIcon from "@mui/icons-material/Restore";
-import EditorLayout from "../../components/EditorLayout";
+import { Typography } from '@mui/material';
+import React, { FC, SyntheticEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { useRef } from 'react';
+import styled from 'styled-components';
+
+import ButtonComponent from '../../components/Button';
+import InvoiceBar from '../../components/InvoiceBar';
+import Layout from '../../components/Layout';
+
 import type { NextPage } from "next";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { Invoice, InvoiceItems } from "../../components/Data/types";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import { initialInvoice, initialInvoiceItems } from "../../components/Data/initialData";
+import axios, { AxiosInstance } from 'axios';
+import { Invoice } from '../../components/Data/types';
+import Link from 'next/link';
+import Modal from '../../components/Modal';
 
-const invoices: NextPage = () => {
-  const [editPdf, seteditPdf] = useState<boolean>(false);
-  const [opensuccess, setOpensuccess] = useState<boolean>(false);
-  const [opensaved, setOpenSaved] = useState<boolean>(false);
-  const [taxRate, setTaxRate] = useState<number>();
-  const [currency, setCurrency] = useState<string>("");
-  const [showEditComp, setShowEditComp] = useState<boolean>(false);
-  const [edcActive, setEdcActive] = useState<boolean>(false);
-  const [invComp, setInvComp] = useState<boolean>(false);
-  const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>({...initialInvoice});
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  height: 100%;
+  gap: 2rem;
+  background: #eee;
+  align-items: flex-start;
+  flex-direction: column;
 
-  const dispatch = useAppDispatch();
-  const invoice = useAppSelector((state) => state.invoice.invoice); // Invoice State
-
-  const handleActiveSideComponent = (): void => {
-    if (invComp === true) {
-      setInvComp(false);
-      setEdcActive(true);
+  span {
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+  }
+`;
+const Top = styled.div`
+  right: 0;
+  left: 250px;
+  display: flex;
+  padding: 0.5rem 3rem;
+  background: #eee;
+  align-items: center;
+  position: fixed;
+  justify-content: space-between;
+  div {
+    display: flex;
+    gap: 1rem;
+    select {
+      border: none;
+      border-radius: 4px;
+      padding: 0px 0.6rem;
+      box-shadow: 0 0 10px rgb(0 0 0 / 15%);
     }
-    if (edcActive === true) {
-      setEdcActive(false);
-      setInvComp(true);
-    }
-  };
+  }
+`;
+const Main = styled.div`
+  width: 100%;
+  display: flex;
+  height: 100%;
+  background: #eee;
+  margin-top: 5rem;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+`;
 
-  useEffect(() => {
-    setInvComp(true);
-  }, []);
+const Prompt = styled.div`
+margin: auto auto auto auto;
+`
 
-  const parentStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  };
+interface Props {
+  invoices: Invoice[]
+}
 
-  const dispInvComponents: JSX.Element[] = [
-    <>
-      <div style={parentStyle}>
-        <ControlledAccordions
-          headerChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove all{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfheader")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>logo </Typography>
-                <button onClick={() => removeJSXElement("dflogo")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>title </Typography>
-                <button onClick={() => removeJSXElement("dftitle")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
-                <button onClick={() => alert("none")}>
-                  <ResetIcon />
-                </button>
-              </div>
-            </div>
-          }
-          lineChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  Divider{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfdivider")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          companyChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfcompanydetail")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          billingChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfbilldetail")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          invoiceDetailChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicedetail")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          tableChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicetable")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          notesChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicenotes")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          tandcChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicetandc")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-        />
-      </div>
-    </>,
+const invoices: NextPage<Props> = ({invoices}) => {
+  const fakeInvoice: {
+    id: number;
+    name: string;
+    clientname: string;
+    invtitle: string;
+    due: string;
+    amt: string;
+  }[] = [
+    {
+      id: 1,
+      name: "User Interface Design",
+      clientname: "James Smith",
+      invtitle: "Invoice#3534245",
+      due: "08 Aug, 17",
+      amt: "NGN 20,000",
+    },
+    {
+      id: 2,
+      name: "Product Sales",
+      clientname: "Amara Eneh",
+      invtitle: "Invoice#355245",
+      due: "08 Jun, 17",
+      amt: "NGN 20,000",
+    },
+    {
+      id: 3,
+      name: "Website Desing",
+      clientname: "Matovik",
+      invtitle: "Invoice#35235",
+      due: "20 Aug, 17",
+      amt: "NGN 20,000",
+    },
+    {
+      id: 1,
+      name: "User Interface Design",
+      clientname: "James Smith",
+      invtitle: "Invoice#3534245",
+      due: "08 Aug, 17",
+      amt: "NGN 20,000",
+    },
+    {
+      id: 2,
+      name: "Product Sales",
+      clientname: "Amara Eneh",
+      invtitle: "Invoice#355245",
+      due: "08 Jun, 17",
+      amt: "NGN 20,000",
+    },
+    {
+      id: 3,
+      name: "Website Desing",
+      clientname: "Matovik",
+      invtitle: "Invoice#35235",
+      due: "20 Aug, 17",
+      amt: "NGN 20,000",
+    },
   ];
 
-  const createInvPrompt: JSX.Element[] = [
-    <div>
-      <Image src="/createInv.svg" width={300} height={300} />
-      <Typography>None Yet</Typography>
-      <ButtonComponent innerText="Create Invoice" />
-    </div>,
-  ];
+  const [optionModal, setOptionModal] = useState<boolean>(false);
 
-  const handlesucClose = (
-    event: Event | SyntheticEvent<any, Event>,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpensuccess(false);
-  };
+  const openOModal = (): void => setOptionModal(true);
+  const closeOModal = (): void => setOptionModal(false);
 
-  const handleOpenSaveInfo = () => setOpenSaved(true);
-  const handleOpenSaveInfoClose = () => setOpenSaved(false);
-
-  // Snackbar Alert
-  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref
-  ) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  const api: AxiosInstance = axios.create({
+    baseURL: "http://localhost:3000",
   });
-
-  const handleItemInput = (
-    e: Event | React.SyntheticEvent<any, Event>,
-    index: number,
-    name: keyof InvoiceItems
-  ): void => {
-    e.preventDefault();
-    const { value } = e.currentTarget;
-
-    dispatch(
-      updateInvoiceItem({
-        invItemName: name,
-        invIndex: index,
-        invValue: value,
-        invtaxrate: taxRate,
-      }))
+  
+  /**
+   * const getAssets = ():Promise<void> => {
+    const data = api.get('/api/assets', {
+      headers:{
+        'Content-Type': 'application/json'
+      },
+    }).then(response => {
+      setAsset(response.data)
+    })
+    return data
   }
-
-  const handleDetailInput = (
-    e: Event | SyntheticEvent<any, Event>,
-    name: keyof Invoice
-  ) => {
-    e.preventDefault()
-    const {value} = e.currentTarget
-    
-    dispatch(
-      updateInvoice({
-        invName: name,
-        invValue: value,
-      })
-    ); 
-  };
-
-  const componentRef = useRef(null);
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    copyStyles: true,
-    documentTitle: "Powered By Kwik.com",
-    onAfterPrint: () => handleOpenSaveInfo(),
-  });
-
-  const handleChange = (
-    name: keyof Invoice,
-    value: string | number | number[]
-  ) => {
-    dispatch(
-      updateInvoice({
-        invName: name,
-        invValue: value,
-      })
-    );
-  };
-
-  const addTC = () => {
-    dispatch(updateInvoiceItemNo());
-  };
-
-  const removeItem = (id: string | number | string[]) => {
-    dispatch(
-      deleteInvoiceItemNo({
-        invId: id,
-      })
-    ); 
-  };
-
-  const getTxRate = (e:Event | SyntheticEvent<any, Event>): void => {
-    const { value } = e.currentTarget
-    setTaxRate(value)
-    dispatch(
-      getTaxRate({
-        invtaxrate: taxRate 
-      })
-    )
-  }
-
-  const removeJSXElement = (elementid: string) => {
-    const element = document.getElementById(elementid) as HTMLElement;
-    element.style.display = "none";
-    element.style.transition = "0.5s fade-out";
-  };
+   */
 
   return (
-    <EditorLayout>
-      <div className={styles.fileAndEditor}>
-        {/**<div className={styles.lseditor}>{dispInvComponents}</div> */} 
-        <Editorbar
-          handlePrint={() => handlePrint()}
-        />
-        <div className={styles.editorFlex}>
-          <InvoiceMain
-            ref={componentRef}
-            options={countryList}
-            pdfMode={editPdf}
-            cur={currency}
-            itemArr={invoice.invoiceitems}
-            addTC={addTC}
-            tR={taxRate}
-            removeItem={removeItem}
-            handleChange={handleChange}
-            handleDetailInput={handleDetailInput}
-            handleItemInput={handleItemInput}
-            invoice={invoice}
-          ></InvoiceMain>
-          <MainEditor>
-            <div className={styles["edcToggler"]}>
-              <button
-                className={
-                  edcActive === true ? styles["edcBtnActive"] : styles["edcBtn"]
-                }
-                onClick={() => {
-                  handleActiveSideComponent();
-                  setShowEditComp(true);
-                }}
-              >
-                Edit Component
-              </button>
-              <button
-                className={
-                  invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
-                }
-                onClick={() => {
-                  handleActiveSideComponent();
-                  setShowEditComp(false);
-                }}
-              >
-                Edit Invoice
-              </button>
-            </div>
-            {showEditComp ? (
-              null
-            ) : (
-              <div className={styles["invComp"]}>
-                <Typography>Status</Typography>
-                <Chip label="complete" color="success" />
-                <Divider />
-                <Typography>Currency</Typography>
-                {/**<Muiselect
-                  state={currency}
-                  handleChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setCurrency(e.target.value)
-                  }
-                  label="Currency"
-                  options={currencyList}
-                /> */}
-                <Divider />
-                <Typography>Vat Rate %</Typography>
-                <input
-                  type="text"
-                  placeholder="Vat Rate"
-                  value={taxRate}
-                  onChange={getTxRate}
+    <Layout>
+      <Container>
+        <Top>
+          <Typography>Invoices</Typography>
+          <div>
+            <select title="filter-type">
+              <option value={0}>Invoice Type</option>
+            </select>
+            <select title="filter-category">
+              <option value={0}>Category</option>
+            </select>
+            <ButtonComponent
+              customStyle={{ background: "#2124b1" }}
+              innerText="Create Invoice"
+              onClick={openOModal}
+            />
+          </div>
+        </Top>
+        <Main>
+          {
+            invoices.map((inv, idx) => {
+              return (
+                <InvoiceBar 
+                amt={inv.total}
+                clientname={inv.clientName}
+                due={inv.invoiceDueDate}
+                invtitle={inv.invoiceTitle}
+                name={inv.title}
+                invId={inv._id}
                 />
-                <Typography>Background Image</Typography>
-                <input type="file" placeholder="upload PNG or JPEG" />
-              </div>
-            )}
-          </MainEditor>
-        </div>
-      </div>
+              )
+            })
+          }
+        </Main>
+      </Container>
 
-      <Snackbar
-        open={opensuccess}
-        autoHideDuration={4000}
-        onClose={handlesucClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handlesucClose}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          <Typography>Invoice Saved</Typography>
-        </Alert>
-      </Snackbar>
-
-      <Modals OpenModal={opensaved} handleCloseModal={handleOpenSaveInfoClose}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            justifyContent: "center",
-            flexDirection: "column",
-            marginBottom: "1rem",
-          }}
-        >
-          <Image src="/print2.svg" height={300} width={300} />
-          Invoice Saved
-        </div>
-        <ButtonComponent innerText={"Continue"} />
-      </Modals>
-    </EditorLayout>
+      {/**Modal */}
+      <Modal OpenModal={optionModal} handleCloseModal={closeOModal}>
+        <Prompt>
+          <Link href={'http://localhost:3000/invoice/create'}>Create Invoice</Link>
+        </Prompt>
+      </Modal>
+    </Layout>
   );
 };
 
 export default invoices;
+
+export async function getServerSideProps() {
+
+  const invoiceCollection = await axios.get('http://localhost:3000/api/invoices', {
+      headers:{
+        'Content-Type': 'application/json'
+      },
+    }).then(res => res.data)
+  
+  let invoices =  await JSON.parse(JSON.stringify(invoiceCollection));
+
+  return {
+    props: { invoices },
+  };
+}
+
+
+/**{fakeInvoice.map((inv, idx) => {
+            return (
+              <InvoiceBar
+                key={idx}
+                name={inv.name}
+                amt={inv.amt}
+                clientname={inv.clientname}
+                due={inv.due}
+                invtitle={inv.invtitle}
+              />
+            );
+          })} */
 
 /**
     /**if (name !== "invoiceitems") {
@@ -437,10 +251,7 @@ export default invoices;
         }
       }) */
 
-
-    
-
-    /**if (idx === index) {
+/**if (idx === index) {
           const newItems = {...itm}
 
           if (name === "id") return
@@ -465,7 +276,7 @@ export default invoices;
         if (itm !== undefined) return {...itm}
       }) */
 
-    /**dispatch(
+/**dispatch(
       updateInvoiceItem({
         invItemName: name,
         invIndex: index,
@@ -518,5 +329,119 @@ export default invoices;
 
     console.log(items[0])
     ); 
-    */ 
+    */
 
+/**<EditorLayout>
+      <div className={styles.fileAndEditor}>
+        {<div className={styles.lseditor}>{dispInvComponents}</div>
+         <Editorbar
+          handlePrint={() => handlePrint()}
+        />
+         }
+         <div className={styles.editorFlex}>
+         <InvoiceMain
+           ref={componentRef}
+           options={countryList}
+           pdfMode={editPdf}
+           cur={currency}
+           itemArr={invoice.invoiceitems}
+           addTC={addTC}
+           tR={taxRate}
+           removeItem={removeItem}
+           handleChange={handleChange}
+           handleDetailInput={handleDetailInput}
+           handleItemInput={handleItemInput}
+           invoice={invoice}
+         ></InvoiceMain>
+         <MainEditor>
+           <div className={styles["edcToggler"]}>
+             <button
+               className={
+                 edcActive === true ? styles["edcBtnActive"] : styles["edcBtn"]
+               }
+               onClick={() => {
+                 handleActiveSideComponent();
+                 setShowEditComp(true);
+               }}
+             >
+               Edit Component
+             </button>
+             <button
+               className={
+                 invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
+               }
+               onClick={() => {
+                 handleActiveSideComponent();
+                 setShowEditComp(false);
+               }}
+             >
+               Edit Invoice
+             </button>
+           </div>
+           {showEditComp ? (
+             null
+           ) : (
+             <div className={styles["invComp"]}>
+               <Typography>Status</Typography>
+               {invoice ? 
+               <Chip label="complete" color="success" /> :  
+               <Chip label="not-complete" color="warning" />
+               }
+               <Divider />
+               <Typography>Currency</Typography>
+               {<Muiselect
+                 state={currency}
+                 handleChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                   setCurrency(e.target.value)
+                 }
+                 label="Currency"
+                 options={currencyList}
+               /> }
+               <Divider />
+               <Typography>Vat Rate %</Typography>
+               <input
+                 type="text"
+                 placeholder="Vat Rate"
+                 value={taxRate}
+                 onChange={getTxRate}
+               />
+               <Typography>Background Image</Typography>
+               <input type="file" placeholder="upload PNG or JPEG" />
+             </div>
+           )}
+         </MainEditor>
+       </div>
+     </div>
+
+     <Snackbar
+       open={opensuccess}
+       autoHideDuration={4000}
+       onClose={handlesucClose}
+       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+     >
+       <Alert
+         onClose={handlesucClose}
+         severity="success"
+         sx={{ width: "100%" }}
+       >
+         <Typography>Invoice Saved</Typography>
+       </Alert>
+     </Snackbar>
+
+     <Modals OpenModal={opensaved} handleCloseModal={handleOpenSaveInfoClose}>
+       <div
+         style={{
+           display: "flex",
+           alignItems: "center",
+           gap: "0.5rem",
+           justifyContent: "center",
+           flexDirection: "column",
+           marginBottom: "1rem",
+         }}
+       >
+         <Image src="/print2.svg" height={300} width={300} />
+         Invoice Saved
+       </div>
+       <ButtonComponent innerText={"Continue"} />
+     </Modals>
+   </EditorLayout> */

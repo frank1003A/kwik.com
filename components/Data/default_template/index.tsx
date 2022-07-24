@@ -241,7 +241,7 @@ export const InvoiceTable: FC<ITProps> = ({
                   {itemArr?.map((inv, i) => {
                     return (
                       <TableRow
-                        key={inv.id}
+                        key={inv._id?.toString()}
                         sx={{
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
@@ -281,7 +281,7 @@ export const InvoiceTable: FC<ITProps> = ({
                           <DeleteForeverRounded
                             className={styles.deleteIcon}
                             onClick={() => {
-                              removeItem(inv.id);
+                              removeItem(inv._id !== undefined ? inv._id.toString() : 0);
                             }}
                           />
                         </TableCell>

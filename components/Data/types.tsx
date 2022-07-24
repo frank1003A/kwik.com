@@ -1,6 +1,7 @@
+import { ObjectId } from "mongodb"
 
 export interface InvoiceItems {
-  id: number
+  _id?: ObjectId
   description: string
   quantity: number
   rate: string
@@ -8,6 +9,7 @@ export interface InvoiceItems {
 }
 
 export interface Invoice {
+  _id?: ObjectId
   logo: string
   logoWidth: number
   title: string

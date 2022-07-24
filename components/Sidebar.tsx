@@ -7,15 +7,19 @@ import {
   Handshake,
   FileOpen,
   CreateRounded,
-  AddCircle
+  AddCircle,
+  Message,
+  Settings,
+  People
 } from "@mui/icons-material";
 import Link from "next/link";
 import Button from "./Button";
 import { useRouter } from "next/router";
-import { Box } from "@mui/material";
+import { Badge, Box } from "@mui/material";
 import Modal from "./Modal";
 import Image from "next/image";
 import { Typography } from "@mui/material";
+import SpeedDial from './SpeedDial'
 
 interface Props {
   id?: string
@@ -33,14 +37,6 @@ const Sidebar = ({id}: Props) => {
       id={id}
       sx={{ display: { xs: "none", md: "flex" } }}
     >
-      <div className={styles.upperContainer}>
-        <Button
-          className={styles.btnOutlined}
-          innerText={"KWIK CREATE"}
-          onClick={() => openOModal()}
-          icon={<CreateRounded />}
-        />
-      </div>
 
       <div className={styles.nav}>
         <Link href={"/"}>
@@ -58,21 +54,6 @@ const Sidebar = ({id}: Props) => {
           </div>
         </Link>
 
-        <Link href={"/contests"}>
-          <div
-            className={
-              router.pathname == "/contest"
-                ? styles.outercontainerActive
-                : styles.outercontainer
-            }
-          >
-            <div className={styles.smallcontainer}>
-              <Handshake />
-            </div>
-            <p>Contests</p>
-          </div>
-        </Link>
-
         <Link href={"/invoices"}>
           <div
             className={
@@ -87,37 +68,54 @@ const Sidebar = ({id}: Props) => {
             <p>Invoices</p>
           </div>
         </Link>
-
-        <Link href={"/quotations"}>
+        <Link href={"/clients"}>
           <div
             className={
-              router.pathname == "/quotations"
+              router.pathname == "/clients"
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
           >
             <div className={styles.smallcontainer}>
-              <PanoramaPhotosphereRounded />
+              <People />
             </div>
-            <p>Quotations</p>
+            <p>Clients</p>
           </div>
         </Link>
 
-        <Link href={"/resume"}>
+        <Link href={"/products"}>
           <div
             className={
-              router.pathname == "/resume"
+              router.pathname == "/products"
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
           >
             <div className={styles.smallcontainer}>
-              <FileOpen />
+              <FilePresent />
             </div>
-            <p>Resume</p>
+            <p>Products</p>
+          </div>
+        </Link>
+
+        <Link href={"/messages"}>
+          <div
+            className={
+              router.pathname == "/messages"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <Message />
+            </div>
+            <p>Messages</p>
+            <Box><Badge badgeContent={'new'} color="error"/></Box>
           </div>
         </Link>
       </div>
+
+      {/**Modal */}
       <Modal OpenModal={optionModal} handleCloseModal={closeOModal}>
         <div className={styles.optionContainer}>
         <Link href="/kwik_creator">
@@ -149,3 +147,33 @@ const Sidebar = ({id}: Props) => {
 };
 
 export default Sidebar;
+
+
+/**
+<div className={styles.sd}>
+<SpeedDial/>
+</div> */
+
+/**<Link href={"/settings"}>
+          <div
+            className={
+              router.pathname == "/settings"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <Settings />
+            </div>
+            <p>Settings</p>
+          </div>
+        </Link> */
+
+        /** <div className={styles.upperContainer}>
+        <Button
+          className={styles.btnCreate}
+          innerText={"KWIK CREATE"}
+          onClick={() => openOModal()}
+          icon={<CreateRounded />}
+        />
+      </div> */

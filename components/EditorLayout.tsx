@@ -13,6 +13,7 @@ const EditorLayout:FC<Props> = ({children}) => {
   return (
     <div>
       <Topbar/>
+      <Sidebar/>
       <div className={styles['pContainer']}>
           {children}
       </div>

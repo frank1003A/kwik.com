@@ -1,6 +1,9 @@
 import type { NextPage } from "next";
 import Layout from "../../components/Layout";
 import Dashboard from "../../components/Dashboard";
+import CustomDnd from '../../components/KwikCreator/CustomDnd'
+import styles from '../../styles/Home.module.css'
+import { Container } from "../../components/styled-component/Global";
 
 const Home: NextPage = () => {
   const dashbrd: React.CSSProperties = {
@@ -14,11 +17,13 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div style={dashbrd}>
-        <Dashboard />
-      </div>
+      <Container>
+      <Dashboard />
+      </Container>
     </Layout>
   );
 };
 
 export default Home;
+
+//<Dashboard />

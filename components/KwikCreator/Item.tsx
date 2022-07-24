@@ -9,7 +9,15 @@ interface Props {
   itemToDrag: JSX.Element[] | JSX.Element;
 }
 
-const item = ({ item, itemToDrag }: Props) => {
+/**const itemz = reorder(
+      components,
+      result.source.index,
+      result.destination.index
+    );
+
+    setter(itemz) */
+
+const item = ({ item, itemToDrag}: Props) => {
   const [{ isDragging }, drag] = useDrag({
     type: ITEM_TYPE,
     item: { ...item },
@@ -18,6 +26,12 @@ const item = ({ item, itemToDrag }: Props) => {
       isDropped: monitor.didDrop(),
       isDraggable: monitor.canDrag(),
     }),
+    canDrag(monitor) {
+      let value = true
+      if (item.id) return value
+      if (item.drop_id) return value = false
+      return value
+    },
   });
 
   return (

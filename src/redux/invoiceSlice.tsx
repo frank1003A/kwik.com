@@ -29,7 +29,8 @@ const invoiceSlice = createSlice({
         updateInvoice: (state, action: PayloadAction<Pload>) => { 
             const name = action.payload.invName
             const value = action.payload.invValue
-            if (name !== "invoiceitems") {
+            const ph = name as string
+            if (name !== "invoiceitems" && name !== "_id") {
           
                 if (name === "logoWidth" && typeof value === "number")
                     state.invoice[name] = value
@@ -37,7 +38,10 @@ const invoiceSlice = createSlice({
                 else if (name !== "logoWidth" && name !== "tax" 
                          && typeof value === "string" && name !== undefined) {
                     state.invoice[name] = value
-                } 
+                } else if (!value && name !== "logoWidth" && name !== "tax" 
+                && typeof value === "string" && name !== undefined) {
+                  state.invoice[name] = ph
+                }
             }
         }, 
         clearSelectValue: (state, action: PayloadAction<Pload>) => { 
@@ -59,7 +63,7 @@ const invoiceSlice = createSlice({
               const invItems: InvoiceItems = { ...itm };
 
               if (
-                invItemName === "id" &&
+                invItemName === "_id" &&
                 invItemName !== undefined && 
                 typeof invValue === "number"
               ) {
@@ -117,7 +121,7 @@ const invoiceSlice = createSlice({
         },
         deleteInvoiceItemNo: (state, action: PayloadAction<Pload>) => {
             const invId = action.payload.invId
-            const item = state.invoice.invoiceitems.filter(itm => itm.id !== invId)
+            const item = state.invoice.invoiceitems.filter(itm => itm._id !== invId)
            if (invId !== undefined && typeof invId === "number") {
                 state.invoice.invoiceitems = item
             } 

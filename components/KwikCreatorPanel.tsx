@@ -1,5 +1,5 @@
 import React, {FC} from 'react'
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Kwikeditor.module.css'
 
 interface Props {
     isOver?: boolean,

@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, {FC, useState} from "react";
 import CustomCard from "./CustomCard";
 import UpdateCard from "./UpdateCard";
 import SalesAnalytics from "./SalesAnalytics";
@@ -7,16 +7,66 @@ import {Typography} from '@mui/material'
 import Button from '../components/Button'
 import Views from './Views'
 import AddIcon from '@mui/icons-material/Add'
+import { ChartData } from "chart.js";
+import DougnutChart from "./Doughnut";
+
+interface Analytics {
+  id: number,
+  sales: number
+  quater: string
+}
 
 const dashboard: FC = () => {
+  const dataa: Analytics[] = [
+    {
+      id: 1,
+      sales: 2524,
+      quater: "Quater 1",
+    },
+    {
+      id: 2,
+      sales: 100024,
+      quater: "Quater 2",
+    },
+    {
+      id: 3,
+      sales: 85243,
+      quater: "Quater 3",
+    }
+  ]
+
+  const [data, setData] = useState<ChartData<"doughnut", number[], string>>({
+    labels: dataa.map((dta) => dta.quater),
+    datasets: [{
+      label: "Amount-gained",
+      data: dataa.map((dta) => dta.sales),
+      backgroundColor: ["#2124b1", "orange"],
+    }],
+  })
   return (
     <div className={styles['dashboardCont']}>
       <div className={styles['topCont']}>
+
         <div className={styles['innerdiv']}>
-        <CustomCard />
-        <CustomCard />
-        <CustomCard />
+        {dataa.map(dta => {
+          return (
+            <CustomCard amount={dta.sales} quat={dta.quater}  
+            chart={
+            <DougnutChart 
+            data={data}
+            options={{
+              plugins: {
+                legend: {
+                  display: false //This will do the task
+               }
+              }
+           }}
+            />
+          }/>
+          )
+        })}
         <div>
+
         <div className={styles['dheader']}><Typography>Recent Updates</Typography></div>
         <div className={styles['ucStack']}>
         <UpdateCard />

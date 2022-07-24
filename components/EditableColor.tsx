@@ -23,18 +23,20 @@ const EditabeColorInput: FC<Props> = ({color, displayColorPicker, handleClick, h
       },
       swatch: {
         padding: "10px",
-        background: "rgb(255, 255, 255)",
-        borderRadius: "2px",
+        height: "34px",
+        background: "transparent",
+        borderRadius: "4px",
         boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 0px 1px",
         cursor: "pointer",
-        width: "220px",
+        width: "243px",
+        border: "1px solid #555",
         display: "flex",
         justifyContent: "space-between",
         gap: "1rem",
         alignItems: "center",
       },
       popover: {
-        position: 'absolute' as const, 
+        position: "absolute" as const,
         zIndex: "2",
       },
       cover: {
@@ -45,12 +47,12 @@ const EditabeColorInput: FC<Props> = ({color, displayColorPicker, handleClick, h
         left: "0px",
       },
       label: {
-        color: "rgba(0, 0, 0, 0.6)",
-        fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-        fontWeight: "400",
-        fontSize: "1rem",
-        lineHeight: "1.4375em",
-        letterSpacing: "0.00938em",
+        color: '#eee',
+fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+fontWeight: '400',
+fontSize: '1rem',
+lineHeight: '1.4375em',
+letterSpacing: '0.00938em'
       },
     },
   });

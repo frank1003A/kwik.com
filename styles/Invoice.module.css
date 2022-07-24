@@ -374,11 +374,11 @@
 .edcToggler {
   display: flex;
   justify-content: space-between;
-  border: 1px solid #eee;
-  border-radius: 1rem;
+  border: 1px solid #fff;
+  border-radius: 4px;
   margin: 1rem;
   padding: .2rem;
-  background: #eee;
+  background: #fff;
   align-items: center;
   transition: ease-in-out 0.8s;
 }
@@ -386,7 +386,7 @@
 .edcToggler .edcBtn {
   background: #eee;
   border: none;
-  border-radius: 1rem;
+  border-radius: 4px;
   color: #555;
   padding: .5rem;
   cursor: pointer;
@@ -401,7 +401,7 @@
   background: #2124b1;
   color: #fff;
   border: none;
-  border-radius: 1rem;
+  border-radius: 4px;
   padding: .5rem;
   cursor: pointer;
 }
@@ -482,14 +482,15 @@
   left: 1100px;
   bottom: 0;
   display: flex;
-  top: 6.9rem;
+  top: 4rem;
   height: 100vh;
   /* padding: 1.5rem; */
   /* overflow: auto; */
-  background: #fff;
-  border-left: 1px solid #eee;
+  background: #eee;
+  border-left: 1px solid #ddd;
   flex-direction: column;
   justify-content: flex-start;
+  grid-gap: 1rem;
   grid-gap: 1rem;
   grid-gap: 1rem;
   gap: 1rem;
@@ -871,6 +872,9 @@
       border: 0px;
     }
   }
+
+
+
 
 /*
 .invoice-box table {

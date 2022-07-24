@@ -1,132 +1,145 @@
-import { FormLabel, TextareaAutosize, Typography } from '@mui/material';
-import React, { SetStateAction, SyntheticEvent, useEffect, useState } from 'react';
-import { ColorResult } from 'react-color';
+import { FormLabel, TextareaAutosize, Typography } from "@mui/material";
+import React, {
+  Fragment,
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useState,
+  useRef,
+  useLayoutEffect,
+} from "react";
+import { ColorResult } from "react-color";
 
-import component_data from '../../components/Data/Kwik_Creator/components';
-import { DropComponents, Inputprops, styleInputProps } from '../../components/Data/Kwik_Creator/types';
-import EditableColorInput from '../../components/EditableColor';
-import EditableImageFile from '../../components/EditableImageFile';
-import Editorbar from '../../components/Editorbar';
-import EditorLayout from '../../components/EditorLayout';
-import DropWrapper from '../../components/KwikCreator/DropWrapper';
-import Item from '../../components/KwikCreator/Item';
-import KwikCreatorPanel from '../../components/KwikCreatorPanel';
-import PropertyBar from '../../components/PropertyBar';
-import home_styles from '../../styles/Home.module.css';
-import styles from '../../styles/Invoice.module.css';
+import component_data from "../../components/Data/Kwik_Creator/components";
+import {
+  DropComponents,
+  Inputprops,
+  styleInputProps,
+} from "../../components/Data/Kwik_Creator/types";
+import EditableColorInput from "../../components/EditableColor";
+import EditableImageFile from "../../components/EditableImageFile";
+import Editorbar from "../../components/Editorbar";
+import EditorLayout from "../../components/EditorLayout";
+import DropWrapper from "../../components/KwikCreator/DropWrapper";
+import Item from "../../components/KwikCreator/Item";
+/**import Item from "../../components/CreatorDnd/item";
+import DropWrapper from "../../components/CreatorDnd/DropWrapper"; */
+import KwikCreatorPanel from "../../components/KwikCreatorPanel";
+import PropertyBar from "../../components/PropertyBar";
+import home_styles from "../../styles/Home.module.css";
+import styles from "../../styles/Invoice.module.css";
+import stx from "../../styles/Kwikeditor.module.css";
 
 import type { NextPage } from "next";
-import { Abc, Height, Opacity, TextFields } from '@mui/icons-material';
-import Image from 'next/image';
+import {
+  Abc,
+  Height,
+  Lightbulb,
+  LineWeight,
+  Opacity,
+  TextFields,
+} from "@mui/icons-material";
+import Image from "next/image";
+import EditableSlider from "../../components/EditableSlider";
+import ResizableBox from "../../components/ResizableBox";
+import Creatorbar from "../../components/KwikCreator/Creatorbar";
+import CreatorPropsbar from "../../components/KwikCreator/CreatorPropsbar";
+import CreatorLayout from "../../components/KwikCreator/CreatorLayout";
+import EditableDiv from "../../components/EditableDiv";
+import CreatorBox from "../../components/KwikCreator/CreatorBox";
+//import Draggable from "react-draggable";
+import GridbasedWrapper from "../../components/KwikCreator/GridbasedWrapper";
+import RxDiv from "../../components/RxDiv";
+import { reorder } from "../../components/KwikCreator/Helper";
+import {nanoid} from 'nanoid';
+import Droppable from "../../components/KwikCreator/Droppable";
+import { Draggable, DraggableProvided, DraggableStateSnapshot, DraggableRubric } from "react-beautiful-dnd";
+
+
 const kwik_creator: NextPage = () => {
   const [components, setComponents] = useState<DropComponents[]>([]);
-  const [phold, setphold] = useState<string>("TF");
-  const [cWitdth, setCwidth] = useState<number>();
+  const [newValue, setNewValue] = useState<DropComponents[]>([])
   const [color, setcolor] = useState<string>("#2124B1");
   const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
+  const [editComp, setEditComp] = useState<boolean>(false);
+  const [currentEdit, setCurrentEdit] = useState<number>();
+  const [slideValue, setSlideValue] = useState<
+    number | string | Array<number | string>
+  >(0);
+  const [rT, setRt] = useState<{
+    width: number | string;
+    height: number | string;
+  }>({ width: 0, height: 0 });
 
   const inputprops: Inputprops = {
-    placeholder: "TextField",
+    placeholder: "Textfield",
     style: {
       color: "#2124B1",
     },
-    
   };
 
-  const [compProperty, setCompProperty] = useState<Inputprops>({ ...inputprops });
+  const handleSliderChange = (
+    e: Event | SyntheticEvent<any, Event>,
+    name: keyof styleInputProps,
+    dropid: number
+  ) => {
+    const { value } = e.currentTarget;
+    /**set state for component */
+    setSlideValue(value === "" ? "" : Number(value));
+    /**main props change**/
+    const itemStyleEdit = components.filter((cmp) => {
+      if (cmp.drop_id === dropid && name !== undefined) {
+        const props: DropComponents = { ...cmp };
+        const stylez: styleInputProps = { ...cmp.component_props.style };
+        stylez[name] = value;
+        if (name === "fontSize") stylez[name] = `${value}px`;
+        props.component_props.style = stylez;
+        return props;
+      }
+      return cmp;
+    });
+    setComponents(itemStyleEdit);
+  };
 
-  const handleClick = ():void => {
+  const handleClick = (): void => {
     setdisplayColorPicker(!displayColorPicker);
   };
 
-  const handleClose = ():void => {
+  const handleClose = (): void => {
     setdisplayColorPicker(false);
   };
 
   const handleColorChange = (clr: ColorResult, dropid: number) => {
-    setcolor(clr.hex)
-    const compEdit = components.filter(cmp => {
+    setcolor(clr.hex);
+    const compEdit = components.filter((cmp) => {
       if (cmp.drop_id === dropid) {
         const props: DropComponents = { ...cmp };
-        const stylez: styleInputProps = { ...cmp.component_props.style }
-        
+        const stylez: styleInputProps = { ...cmp.component_props.style };
+
         if (color !== undefined) {
-          stylez.color = clr.hex
+          stylez.color = clr.hex;
         }
-        props.component_props.style = stylez
-        return props
+        props.component_props.style = stylez;
+        return props;
       }
-      return cmp
-    })
-    const con = {...compEdit[0].component_props}
-    setCompProperty(con)
+      return cmp;
+    });
+    setComponents(compEdit);
+    //setCompProperty(con)
   };
 
-  const addCompToPaper = (id: number) => {
-    let randomNumber = Math.random() * 1000;
-    const indexofdot = randomNumber.toString().indexOf(".");
-    randomNumber = Number(randomNumber.toString().slice(0, indexofdot));
-
+  const addCompToPaper = (id: number, setter: React.Dispatch<React.SetStateAction<DropComponents[]>>) => {
+    let genDropId = nanoid(5)
     const componentList = component_data.filter((comp) => id === comp.id);
-
-    let addedComponents: DropComponents;
-
-    switch (componentList[0].name && componentList[0].type) {
-      case "input" && "text":
-        addedComponents = {
-          root_id: componentList[0].id,
-          drop_id: randomNumber,
-          component: `${componentList[0].name}`,
-          component_type: `${componentList[0].type}`,
-          component_props: { ...compProperty },
-        };
-        break;
-
-      case "input" && "date":
-        addedComponents = {
-          root_id: componentList[0].id,
-          drop_id: randomNumber,
-          component: `${componentList[0].name}`,
-          component_type: `${componentList[0].type}`,
-          component_props: { ...compProperty },
-        };
-        break;
-
-      case "logo" && "image":
-        addedComponents = {
-          root_id: componentList[0].id,
-          drop_id: randomNumber,
-          component: `${componentList[0].name}`,
-          component_type: `${componentList[0].type}`,
-          component_props: { ...compProperty },
-        };
-        break;
-
-        case "container" && "div":
-        addedComponents = {
-          root_id: componentList[0].id,
-          drop_id: randomNumber,
-          component: `${componentList[0].name}`,
-          component_type: `${componentList[0].type}`,
-          component_props: { ...compProperty },
-        };
-        break;
-
-        case "input" && "TextareaAutosize":
-          addedComponents = {
-            root_id: componentList[0].id,
-            drop_id: randomNumber,
-            component: `${componentList[0].name}`,
-            component_type: `${componentList[0].type}`,
-            component_props: { ...compProperty },
-          };
-          break;
-
-      default:
-        break;
-    }
-    setComponents((comp) => [...comp, addedComponents]);
-  };
+    let addedComponents: DropComponents = {
+      root_id: componentList[0].id,
+      drop_id: genDropId,
+      component: `${componentList[0].name}`,
+      component_type: `${componentList[0].type}`,
+      component_props: { ...inputprops },
+    };
+    setter((comp) => [...comp, addedComponents]);
+  }
 
   const logoContainer: JSX.Element[] = [
     <div className={styles.title} id="dflogo">
@@ -135,15 +148,14 @@ const kwik_creator: NextPage = () => {
   ];
 
   const handleEdit = (dropid: number) => {
-    console.log("Edit:", dropid);
+    setEditComp(true);
+    setCurrentEdit(dropid);
   };
 
   const handleRemove = (dropid: number) => {
     const comp = components.filter((cmp) => cmp.drop_id !== dropid);
     setComponents(comp);
   };
-
-
 
   const handleInputPropertyChange = (
     e: Event | SyntheticEvent<any, Event>,
@@ -152,21 +164,17 @@ const kwik_creator: NextPage = () => {
   ) => {
     const { value } = e.currentTarget;
     const comp = components.filter((cmp) => {
-      if (name !== "style") {
+      if (cmp.drop_id === dropid && name !== undefined) {
         const props: DropComponents = { ...cmp };
-        const inputprops: Inputprops = { ...cmp.component_props }
-
-        if (name === "placeholder" && typeof name === "string") {
-          inputprops[name] = value;
-        }
-
+        const inputprops: Inputprops = { ...cmp.component_props };
+        inputprops[name] = value;
         props.component_props = inputprops;
-
-        return props
+        console.log(props.component_props.placeholder);
+        //return props
       }
-      return cmp
-    })
-    setCompProperty({...comp[0].component_props});
+    });
+    /** console.log(comp)
+    setComponents(comp) */
   };
 
   const handleInputStyle = (
@@ -175,26 +183,29 @@ const kwik_creator: NextPage = () => {
     dropid: number
   ) => {
     const { value } = e.currentTarget;
-    const itemStyleEdit = components.filter(cmp => {
+    const itemStyleEdit = components.filter((cmp) => {
       if (cmp.drop_id === dropid && name !== undefined) {
-            const props: DropComponents = { ...cmp };
-            const stylez: styleInputProps = {...cmp.component_props.style}
-            if (name) stylez[name] = value
-            if (typeof name === "string" && (value && name) !== undefined) 
-                stylez[name] = value
-            if (typeof name === ("number" || undefined) && (value && name) !== undefined) 
-                stylez[name] = value 
-            props.component_props.style = stylez
-            return props
+        const props: DropComponents = { ...cmp };
+        const stylez: styleInputProps = { ...cmp.component_props.style };
+        if (name) stylez[name] = value;
+        if (typeof name === "string" && (value && name) !== undefined)
+          stylez[name] = value;
+        if (
+          typeof name === ("number" || undefined) &&
+          (value && name) !== undefined
+        )
+          stylez[name] = value;
+        stylez.display = "flex";
+        props.component_props.style = stylez;
+        return props;
       }
-      return cmp
-    })
-    setCompProperty({...itemStyleEdit[0].component_props})
-  }
+      return cmp;
+    });
+    setComponents(itemStyleEdit);
+  };
 
-
-  /**Rerender component to pass editable React.HTMLInputTypeAttribute */
-  const renderEditable = (comp: DropComponents) => {
+  /**Direct rerender to instantiate editable React.HTMLInputTypeAttribute */
+  const renderEditable = (comp: DropComponents, props: Inputprops) => {
     if (
       comp.component_type === "text" &&
       comp.component === "input" &&
@@ -203,7 +214,7 @@ const kwik_creator: NextPage = () => {
       return (
         <Item
           item={comp}
-          itemToDrag={<input type="text" contentEditable="true" {...compProperty} />}
+          itemToDrag={<input type="text" contentEditable="true" {...props} />}
         />
       );
     }
@@ -215,7 +226,7 @@ const kwik_creator: NextPage = () => {
       return (
         <Item
           item={comp}
-          itemToDrag={<input type="date" contentEditable="true" {...compProperty}/>}
+          itemToDrag={<input type="date" contentEditable="true" {...props} />}
         />
       );
     }
@@ -230,58 +241,109 @@ const kwik_creator: NextPage = () => {
       comp.component_type === "div" &&
       comp.component === "container" &&
       comp.drop_id
-    ){
-      return <Item item={comp} itemToDrag={
-        <div className={styles["resizable_container"]} contentEditable="true" {...compProperty}/>
-      } />;
+    ) {
+      return (
+        <div></div>
+      );
     }
     if (
       comp.component_type === "TextareaAutosize" &&
       comp.component === "input" &&
       comp.drop_id
     ) {
-      return <Item item={comp} itemToDrag={
-        <TextareaAutosize
+      return (
+        <Item
+          item={comp}
+          itemToDrag={
+            <TextareaAutosize
               aria-label="minimum height"
               className={styles.tA}
               minRows={3}
-              style={{ width: 400 , color: '#555'}}
+              style={{ width: 400, color: "#555" }}
             />
-      } />;
+          }
+        />
+      );
+    }
+    if (
+      comp.component_type === "text" &&
+      comp.component === "Text" &&
+      comp.drop_id
+    ) {
+      return (
+        <Item
+          item={comp}
+          itemToDrag={
+            <ResizableBox extCompSize={rT}>
+              <span contentEditable="true" id={stx["Text"]} {...props}>
+                Lorem
+              </span>
+            </ResizableBox>
+          }
+        />
+      );
+    }
+    if (
+      comp.component_type === "Header" &&
+      comp.component === "input" &&
+      comp.drop_id
+    ) {
+      return (
+        <Item
+          item={comp}
+          itemToDrag={
+            <input
+              type="text"
+              className={stx["header"]}
+              contentEditable="true"
+              {...props}
+            />
+          }
+        />
+      );
+    }
+    if (
+      comp.component_type === "Title" &&
+      comp.component === "input" &&
+      comp.drop_id
+    ) {
+      return (
+        <Item
+          item={comp}
+          itemToDrag={
+            <input
+              type="text"
+              className={stx["topHeader"]}
+              contentEditable="true"
+              {...props}
+            />
+          }
+        />
+      );
     }
   };
 
+  /**
+   * <RxDiv item={components} addCompToDiv={addCompToDiv}/>
+  <div
+              className={styles["resizable_container"]}
+              contentEditable="true"
+              {...props}
+            />
+
+  <ResizableBox extCompSize={rT}>
+              <span contentEditable="true" id={stx["Text"]} {...props} ref={txtspn}>
+              Lorem
+            </span>
+            </ResizableBox> */
+
   const dropContainer: JSX.Element[] = [
-    <DropWrapper
-      addCompToPaper={addCompToPaper}
-      className={styles["invoice-box"]}
-      id={styles["invkc"]}
-      style={{ display: "flex", flexWrap: "wrap" }}
-    >
+    <DropWrapper addCompToPaper={addCompToPaper} setter={setComponents} className={stx["rxBx"]}>
       <>
         {components.map((i, idx) => {
           return (
-            <div className={home_styles["component_div"]} key={idx}>
-              {i.root_id !== 4 ? (
-                <div className={home_styles["component_edit"]}>
-                  <button
-                    type="button"
-                    className={home_styles["image__edit"]}
-                    onClick={() => handleEdit(i.drop_id)}
-                  >
-                    Resize Image
-                  </button>
-
-                  <button
-                    type="button"
-                    className={home_styles["image__remove"]}
-                    onClick={() => handleRemove(i.drop_id)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ) : null}
-              {renderEditable(i)}
+            <div className={home_styles["component_div"]} key={i.drop_id}>
+              {renderEditable(i, i.component_props)}
             </div>
           );
         })}
@@ -308,20 +370,22 @@ const kwik_creator: NextPage = () => {
   const renderTextfieldProp = (dropid: number) => {
     return (
       <>
-      <div className={styles["header"]}>
-      <TextFields/>
-      <Typography>Textfield Properties</Typography>
-      </div>
-        <div className={styles["prop"]}>
-          <label className={styles["labhdr"]}>PLACEHOLDER</label>
+        <div className={stx["header"]}>
+          <TextFields />
+          <Typography>Textfield Properties</Typography>
+        </div>
+        <div className={stx["prop"]}>
+          <label className={stx["labhdr"]}>PLACEHOLDER</label>
           <input
             type="text"
             placeholder="label"
-            onChange={(e) => handleInputPropertyChange(e, "placeholder", dropid)}
+            onChange={(e) =>
+              handleInputPropertyChange(e, "placeholder", dropid)
+            }
           />
         </div>
-        <div className={styles["prop"]}>
-        <label className={styles["labhdr"]}>COLOR</label>
+        <div className={stx["prop"]}>
+          <label className={stx["labhdr"]}>COLOR</label>
           <EditableColorInput
             color={color}
             displayColorPicker={displayColorPicker}
@@ -330,40 +394,40 @@ const kwik_creator: NextPage = () => {
             handleClose={handleClose}
           />
         </div>
-        <div className={styles.prop}>
-        <div className={styles.fwCnt}>
-          <div className={styles.hder}>
-            <Abc/>
-            <Typography>Text Settings</Typography>
-          </div>
-          <div className={styles.fwOpt}>
-          <button className={styles["btnFx"]}>Bolder</button>
-          <button className={styles["btnFx"]}>Bold</button>
-          <button className={styles["btnFx"]}>Normal</button>
-          </div>
-          <input type="number" style={{fontFamily: "cursive"}} onChange={(e) => handleInputStyle(e, 'fontWeight', dropid)} />
+        <div className={stx.prop}>
+          <EditableSlider
+            name="HEIGHT"
+            keys="fontSize"
+            dropid={dropid}
+            icon={<Height sx={{ fill: "#fff" }} />}
+            value={slideValue}
+            handleSliderChange={handleSliderChange}
+            setValue={setSlideValue}
+          />
         </div>
+        <div className={stx.prop}>
+          <EditableSlider
+            name="WEIGHT"
+            keys="fontWeight"
+            dropid={dropid}
+            icon={<LineWeight sx={{ fill: "#fff" }} />}
+            value={slideValue}
+            handleSliderChange={handleSliderChange}
+            setValue={setSlideValue}
+          />
         </div>
-        <div className={styles.prop}>
-        <label className={styles["labhdr"]}>FONT</label>
-         <select name="" id="" onChange={(e) => handleInputStyle(e, 'fontFamily', dropid)}>
-          <option value="sans-serif">sans-serif</option>
-          <option value="monospace">monospace</option>
-          <option value="fantasy">fantasy</option>
-          <option value="cursive">cursive</option>
-         </select>
-
-         <label>Size</label>
-         <div className={styles.sd}>
-          <Height/>
-         <input
-            type="text"/>
-         </div>
-         <div className={styles.sd}>
-          <Opacity/>
-         <input
-            type="text"/>
-         </div>
+        <div className={stx.prop}>
+          <label className={stx["labhdr"]}>FONT</label>
+          <select
+          name="font"
+          title="font-Change"
+            onChange={(e) => handleInputStyle(e, "fontFamily", dropid)}
+          >
+            <option value="sans-serif">sans-serif</option>
+            <option value="monospace">monospace</option>
+            <option value="fantasy">fantasy</option>
+            <option value="cursive">cursive</option>
+          </select>
         </div>
       </>
     );
@@ -375,62 +439,126 @@ const kwik_creator: NextPage = () => {
     </>,
   ];
 
+  const getChangedPos = (currentPos: number, newPos: number) => {
+    console.log(currentPos, newPos);
+  };
+
   return (
     <>
-      <EditorLayout>
-        <KwikCreatorPanel>
-          <div className={home_styles["editorCompOuter"]}>
-            {component_data.map((element, i) => {
-              return (
-                <div className={home_styles.editorComp} key={element.id}>
-                  <Item item={element} itemToDrag={element.icon} />
-                </div>
-              );
-            })}
-          </div>
-        </KwikCreatorPanel>
-        <div className={styles.fileAndEditor} id={styles["kc"]}>
-          <Editorbar
+      <CreatorLayout>
+        <Creatorbar />
+        {/**<Editorbar
             handlePrint={() => alert("print")}
             handleSave={() => alert("save Invoice")}
-          />
-          {/** */}
-        <div className={styles["resizable_container"]} contentEditable="true"/>
-        {/** */}
-          {/**<div className={styles.editorFlex} id={styles.edflex}>
-            {dropContainer}
-          </div> */}
-        </div>
-        <PropertyBar>
-          {
-            !components ? 
-            <Image src={"/kwik_favicon.png"} width={30} height={30}/>
-            :
-            components?.map((cmp) => {
-              if (cmp.root_id === 1)
+          /> */}
+        {/**<div className={styles["resizable_container"]} contentEditable="true"/> */}
+        <CreatorBox>
+          {/** {dropContainer} */}
+          <DropWrapper addCompToPaper={addCompToPaper} setter={setComponents} className={stx["rxBx"]}>
+            <>
+              {components.map((i, idx) => {
                 return (
-                  <div
-                    key={cmp.drop_id}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    {renderTextfieldProp(cmp.drop_id)}
+                  <div className={home_styles["component_div"]} key={i.drop_id}>
+                    {renderEditable(i, i.component_props)}
                   </div>
                 );
+              })}
+            </>
+          </DropWrapper>
+          {/**<Droppable items={components} setter={setComponents} className={stx["rxBx"]}>
+          {components.map((element, i) => (
+            <Draggable draggableId={element.drop_id.toString()} index={i}>
+            {(
+              provided: DraggableProvided,
+              snapshot: DraggableStateSnapshot,
+              rubric: DraggableRubric
+            ) => (
+              <div
+                className={styles.editorComp}
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                key={element.drop_id}
+              >
+                {renderEditable(element, element.component_props)}
+              </div>
+            )}
+            </Draggable>
+          ))}
+          </Droppable> */}
+          {/**<DropWrapper addCompToPaper={addCompToPaper} setter={setComponents} className={stx["rxBx"]}>
+            <>
+              {components.map((i, idx) => {
+                return (
+                  <div className={home_styles["component_div"]} key={i.drop_id}>
+                    {renderEditable(i, i.component_props)}
+                  </div>
+                );
+              })}
+            </>
+          </DropWrapper> */}
+        </CreatorBox>
+        <CreatorPropsbar>
+          {!components ? (
+            <Image src={"/kwik_favicon.png"} width={30} height={30} />
+          ) : (
+            components?.map((cmp) => {
+              if (cmp.root_id === 6 && cmp.drop_id === currentEdit)
+                return (
+                  <Fragment key={cmp.drop_id}>
+                    {renderTextfieldProp(cmp.drop_id)}
+                  </Fragment>
+                );
             })
-          }
-        </PropertyBar>
-      </EditorLayout>
+          )}
+        </CreatorPropsbar>
+      </CreatorLayout>
     </>
   );
 };
 
 export default kwik_creator;
 
+/**{i.root_id !== 4 ? (
+  <div className={home_styles["component_edit"]}>
+  <button
+    type="button"
+    className={home_styles["image__edit"]}
+    onClick={() => handleEdit(i.drop_id)}
+  >
+    Resize Image
+  </button>
+
+  <button
+    type="button"
+    className={home_styles["image__remove"]}
+    onClick={() => handleRemove(i.drop_id)}
+  >
+    Remove
+  </button>
+</div>
+) : null} */
+
 /**
+ * 
+ * <DropWrapper
+                addCompToPaper={addCompToPaper}
+                setter={setNewValue}
+                className={stx["resizable-container"]}
+              >
+                <>
+                  {newValue.map((i, idx) => {
+                    return (
+                      <div
+                        className={home_styles["component_div"]}
+                        key={i.drop_id}
+                      >
+                        {renderEditable(i, i.component_props)}
+                      </div>
+                    );
+                  })}
+                </>
+              </DropWrapper>
  * 
  * const removePaperComp = (compIndex) => {
     removeItemIcon(1); //opacity : 1

@@ -1,38 +1,75 @@
-import React, { FC } from "react";
+import Chip from "@mui/material/Chip";
+import { ChartData } from "chart.js";
+import React, { FC, useState } from "react";
 import styles from "../styles/Home.module.css";
-import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableCell,
-  TableBody,
-  TableRow,
-  Paper,
-  Chip,
-} from "@mui/material";
-import ButtonComponent from "./Button";
+import BarChart from "./BarChart"
+import DoughnutChart from "./Doughnut"
+
+interface view {
+  invoice: number,
+  type: string,
+  month: string,
+  finalAmount: number,
+  status: string
+}
 
 const Views: FC = () => {
-  const views = [
+  const views: view[] = [
     {
       invoice: 1,
       type: "Invoice",
-      finalAmount: "200,000",
+      month: "January",
+      finalAmount: 200000,
       status: "complete",
     },
     {
       invoice: 2,
       type: "Quotaion",
-      finalAmount: "200,000",
+      month: "February",
+      finalAmount: 450000,
       status: "Incomplete",
     },
     {
       invoice: 3,
       type: "Invoice",
-      finalAmount: "200,000",
+      month: "March",
+      finalAmount: 500000,
+      status: "complete",
+    },
+    {
+      invoice: 4,
+      type: "Invoice",
+      month: "April",
+      finalAmount: 400000,
+      status: "processing",
+    },
+    {
+      invoice: 5,
+      type: "Invoice",
+      month: "May",
+      finalAmount: 600000,
+      status: "complete",
+    },
+    {
+      invoice: 6,
+      type: "Invoice",
+      month: "June",
+      finalAmount: 600000,
       status: "complete",
     },
   ];
+  const [data, setData] = useState<ChartData<"bar", number[], string>>({
+    labels: views.map((dta) => dta.month),
+    datasets: [{
+      label: "Amount-gained",
+      data: views.map((dta) => dta.finalAmount),
+      backgroundColor: ["#2124b1"],
+      barThickness: 35,
+      borderRadius: 8,
+      borderColor: 'none',
+      categoryPercentage: 5
+    }],
+  })
 
   const statusChip = (currentStatus: string) => {
     if (currentStatus === "complete")
@@ -42,48 +79,17 @@ const Views: FC = () => {
   };
   return (
     <div>
-      <TableContainer component={Paper} className={styles.table}>
-        <Table
-          sx={{ minWidth: 650, border: "transparent", borderRadius: "0" }}
-          aria-label="simple table"
-          id="tablegen"
-        >
-          <TableHead
-            sx={{ background: "white", textAlign: "center", color: "black" }}
-          >
-            <TableRow sx={{ color: "black", textAlign: "center" }}>
-              <TableCell align="center">Invoice</TableCell>
-              <TableCell align="center">Invoice Type</TableCell>
-              <TableCell align="center">Total NGN</TableCell>
-              <TableCell align="center">Status</TableCell>
-              <TableCell align="center">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {views.map((v, i) => {
-              return (
-                <TableRow
-                  key={v.invoice}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                  }}
-                >
-                  <TableCell align="center">{v.invoice}</TableCell>
-                  <TableCell align="center">{v.type}</TableCell>
-                  <TableCell align="center">{v.finalAmount}</TableCell>
-                  <TableCell align="center">{statusChip(v.status)}</TableCell>
-                  <TableCell align="center">
-                    <ButtonComponent
-                      innerText="Detail"
-                      //className={styles['btnOutlined']}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div className={styles.table}>
+        <BarChart data={data} 
+        options={{
+          plugins: {
+            legend: {
+              display: false //This will do the task
+           }
+          }
+        }}
+        />
+      </div>
     </div>
   );
 };

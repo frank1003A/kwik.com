@@ -3,11 +3,11 @@
     align-items: stretch;
 }
 .ContainerHorizontal {
-    composes: Container;
+    /*composes: Container;*/
     flex-flow: row nowrap;
 }
 .ContainerVertical {
-    composes: Container;
+    /*composes: Container;*/
     flex-flow: column nowrap;
 }
 .ResizeContent {

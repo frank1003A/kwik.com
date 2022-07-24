@@ -1,7 +1,8 @@
+import { ObjectId } from 'mongodb'
+import { nanoid } from 'nanoid'
 import { InvoiceItems, Invoice } from './types'
 
 export const initialInvoiceItems: InvoiceItems = {
-  id: Math.random() * 100,
   description: '',
   quantity: 0,
   rate: '',
