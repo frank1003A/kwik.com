@@ -16,6 +16,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Image from 'next/image';
+import Avatar from 'react-avatar';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -153,7 +154,12 @@ export default function PrimarySearchAppBar({bg}: Props) {
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <Avatar 
+          name="Frank Ezene"
+          color="#2124B1"
+          round="50%"
+          size="40px"
+          />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -162,7 +168,7 @@ export default function PrimarySearchAppBar({bg}: Props) {
 
   return (
     <Box sx={{ flexGrow: 1}}>
-      <AppBar sx={{position: 'fixed', background: !bg ? '#eee' : bg, color: '#2124B1', boxShadow: 0}}>
+      <AppBar sx={{position: 'fixed', background: !bg ? '#fff' : bg, color: '#2124B1', boxShadow: 0}}>
         <Toolbar>
           <IconButton
             size="large"
@@ -208,7 +214,12 @@ export default function PrimarySearchAppBar({bg}: Props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+             <Avatar 
+          name="Frank Ezene"
+          color="#2124B1"
+          round="50%"
+          size="40px"
+          />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

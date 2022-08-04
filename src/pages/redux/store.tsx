@@ -3,11 +3,13 @@ import {
     useDispatch as useDispatchBase,
     useSelector as useSelectorBase,
   } from 'react-redux';
-import invoiceReducer from './invoiceSlice'
+import clientReducer from './clientSlice'
+import productReducer from './productSlice'
 
 export const store = configureStore({ 
     reducer: {
-        invoice: invoiceReducer,
+        client : clientReducer,
+        product: productReducer
     }
 })
 

@@ -1,18 +1,155 @@
-import { Typography } from '@mui/material';
+import { Chip, Typography } from '@mui/material';
+import Link from 'next/link';
 import React, { FC, SyntheticEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
+import { ScaleLoader } from 'react-spinners';
 import styled from 'styled-components';
 
+import AsyncSelect from '../../components/AsyncSelect';
 import ButtonComponent from '../../components/Button';
+import { Invoice } from '../../components/Data/types';
 import InvoiceBar from '../../components/InvoiceBar';
 import Layout from '../../components/Layout';
+import Modal from '../../components/Modal';
+import useGetter from '../../hooks/useGetter';
+import { deleteRequest } from '../../lib/axios/axiosClient';
 
 import type { NextPage } from "next";
-import axios, { AxiosInstance } from 'axios';
-import { Invoice } from '../../components/Data/types';
-import Link from 'next/link';
-import Modal from '../../components/Modal';
+import Disclaimer from '../../components/Disclaimer';
+
+interface Props {
+  invoices: Invoice[]
+}
+
+const invoices: NextPage<Props> = () => {
+
+  const { data, isError, isLoading } = useGetter('/api/invoices')
+
+  const [optionModal, setOptionModal] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<Invoice[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+
+  const openOModal = (): void => setOptionModal(true);
+  const closeOModal = (): void => setOptionModal(false);
+
+  const setter = () => {
+    if (data !== undefined) setInvoices(data)
+    if (isError) console.log(isError)
+  }
+
+  useEffect(() => {
+    setter()
+  }, [data])
+
+  const deleteInvoice = async (id :string) => {
+    try {
+      const deleteInvoice = await deleteRequest(`api/invoices/?invoice_id=${id}`)
+      if (deleteInvoice) alert(`you deleted invoice ${id}`)
+    } catch (error: any) {
+       console.log(error.message)
+    }
+  }
+
+  const dispStats = (status: string) => {
+    if (status === "draft") {
+      return (
+        <Chip
+          label={status}
+          sx={{ borderRadius: "4px" }}
+          variant="filled"
+          color="error"
+          size="medium"
+        />
+      )
+    } else if (status === "pending") {
+      return (
+        <Chip
+          label={status}
+          sx={{ borderRadius: "4px" }}
+          variant="filled"
+          color="warning"
+          size="medium"
+        />
+      )
+    }
+    if (status === "complete") {
+      return (
+        <Chip
+          label={status}
+          sx={{ borderRadius: "4px" }}
+          variant="filled"
+          color="success"
+          size="medium"
+        />
+      )
+    }
+  }
+
+  return (
+    <Layout>
+      <Container>
+        <Top>
+          <Typography>Invoices</Typography>
+          <div>
+            <AsyncSelect 
+            Invoices={invoices} 
+            setter={setSearchValue}
+            selectedValue={searchValue}
+            />
+            <select title="filter-type">
+              <option value={0}>Invoice Type</option>
+            </select>
+            <select title="filter-category">
+              <option value={0}>Category</option>
+            </select>
+            <Disclaimer title='Create New Invoice'
+            />
+          </div>
+        </Top>
+        <Main>
+          {
+            isLoading ? 
+            <Center>
+              <ScaleLoader color='blue'/>
+            </Center>
+            : 
+            invoices.map((inv, idx) => {
+              return (
+                <InvoiceBar 
+                handleDelete={() => deleteInvoice(inv._id!?.toString())}
+                amt={inv.total}
+                clientname={inv.clientName}
+                due={inv.invoiceDueDate}
+                invtitle={inv.invoiceTitle}
+                name={inv.title}
+                invId={inv._id}
+                status={dispStats(inv.status!)}
+                />
+              )
+            })
+          }
+        </Main> 
+      </Container>
+
+      {/**Modal */}
+      <Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="2rem">
+        <Center>
+          <Link href={'http://localhost:3000/invoice/create'}>Create Invoice</Link>
+        </Center>
+      </Modal>
+    </Layout>
+  );
+};
+
+export default invoices;
+
+/**
+            <ButtonComponent
+              customStyle={{ background: "#2124b1" }}
+              innerText="Create Invoice"
+              onClick={openOModal}
+            /> */
 
 const Container = styled.div`
   width: 100%;
@@ -35,13 +172,14 @@ const Container = styled.div`
 `;
 const Top = styled.div`
   right: 0;
-  left: 250px;
-  display: flex;
-  padding: 0.5rem 3rem;
-  background: #eee;
-  align-items: center;
-  position: fixed;
-  justify-content: space-between;
+    left: 250px;
+    display: flex;
+    padding: .5rem 3rem;
+    background: #eee;
+    border-bottom: 1px solid #2221;
+    align-items: center;
+    position: fixed;
+    justify-content: space-between;
   div {
     display: flex;
     gap: 1rem;
@@ -58,22 +196,57 @@ const Main = styled.div`
   display: flex;
   height: 100%;
   background: #eee;
-  margin-top: 5rem;
+  padding-top: 5rem;
   align-items: flex-start;
   justify-content: space-evenly;
   flex-wrap: wrap;
 `;
 
-const Prompt = styled.div`
+const Center = styled.div`
 margin: auto auto auto auto;
 `
 
-interface Props {
-  invoices: Invoice[]
+/**invoices.map((inv, idx) => {
+              return (
+                <InvoiceBar 
+                amt={inv.total}
+                clientname={inv.clientName}
+                due={inv.invoiceDueDate}
+                invtitle={inv.invoiceTitle}
+                name={inv.title}
+                invId={inv._id}
+                />
+              )
+            }) */
+
+
+/**export async function getStaticProps () {
+  // `getStaticProps` is executed on the server side.
+  const invoiceCollection = await getRequest('api/invoices')
+  return {
+    props: {
+      fallback: {
+        '/api/invoices': invoiceCollection
+      }
+    }
+  }
 }
 
-const invoices: NextPage<Props> = ({invoices}) => {
-  const fakeInvoice: {
+export async function getServerSideProps() {
+
+  const invoiceCollection = await getRequest('api/invoices')
+  
+  let invoices =  await JSON.parse(JSON.stringify(invoiceCollection));
+
+  return {
+    props: { invoices },
+  };
+} */
+
+
+/**
+ * 
+ const fakeInvoice: {
     id: number;
     name: string;
     clientname: string;
@@ -131,94 +304,8 @@ const invoices: NextPage<Props> = ({invoices}) => {
     },
   ];
 
-  const [optionModal, setOptionModal] = useState<boolean>(false);
 
-  const openOModal = (): void => setOptionModal(true);
-  const closeOModal = (): void => setOptionModal(false);
-
-  const api: AxiosInstance = axios.create({
-    baseURL: "http://localhost:3000",
-  });
-  
-  /**
-   * const getAssets = ():Promise<void> => {
-    const data = api.get('/api/assets', {
-      headers:{
-        'Content-Type': 'application/json'
-      },
-    }).then(response => {
-      setAsset(response.data)
-    })
-    return data
-  }
-   */
-
-  return (
-    <Layout>
-      <Container>
-        <Top>
-          <Typography>Invoices</Typography>
-          <div>
-            <select title="filter-type">
-              <option value={0}>Invoice Type</option>
-            </select>
-            <select title="filter-category">
-              <option value={0}>Category</option>
-            </select>
-            <ButtonComponent
-              customStyle={{ background: "#2124b1" }}
-              innerText="Create Invoice"
-              onClick={openOModal}
-            />
-          </div>
-        </Top>
-        <Main>
-          {
-            invoices.map((inv, idx) => {
-              return (
-                <InvoiceBar 
-                amt={inv.total}
-                clientname={inv.clientName}
-                due={inv.invoiceDueDate}
-                invtitle={inv.invoiceTitle}
-                name={inv.title}
-                invId={inv._id}
-                />
-              )
-            })
-          }
-        </Main>
-      </Container>
-
-      {/**Modal */}
-      <Modal OpenModal={optionModal} handleCloseModal={closeOModal}>
-        <Prompt>
-          <Link href={'http://localhost:3000/invoice/create'}>Create Invoice</Link>
-        </Prompt>
-      </Modal>
-    </Layout>
-  );
-};
-
-export default invoices;
-
-export async function getServerSideProps() {
-
-  const invoiceCollection = await axios.get('http://localhost:3000/api/invoices', {
-      headers:{
-        'Content-Type': 'application/json'
-      },
-    }).then(res => res.data)
-  
-  let invoices =  await JSON.parse(JSON.stringify(invoiceCollection));
-
-  return {
-    props: { invoices },
-  };
-}
-
-
-/**{fakeInvoice.map((inv, idx) => {
+{fakeInvoice.map((inv, idx) => {
             return (
               <InvoiceBar
                 key={idx}

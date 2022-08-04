@@ -1,8 +1,11 @@
 import { ObjectId } from 'mongodb'
 import { nanoid } from 'nanoid'
+import clients from '../../model/clients'
+import products from '../../model/products'
 import { InvoiceItems, Invoice } from './types'
 
 export const initialInvoiceItems: InvoiceItems = {
+  _id: nanoid(5),
   description: '',
   quantity: 0,
   rate: '',
@@ -22,6 +25,7 @@ export const initialInvoice: Invoice = {
   clientAddress: '',
   clientAddress2: '',
   clientCountry: '',
+  invoicedetailsheader: "Invoice Details",
   invoiceTitleLabel: 'Invoice#',
   invoiceTitle: '',
   invoiceDateLabel: 'Invoice Date',
@@ -43,4 +47,20 @@ export const initialInvoice: Invoice = {
   notes: 'It was great doing business with you.',
   termLabel: 'Terms & Conditions',
   term: 'Please make the payment by the due date.',
+  status: 'draft'
+}
+
+export const initialClientData: clients = {
+  fullname: '',
+  email: '',
+  buisness: 'buisness name,  if any',
+  phone: 'number',
+  countryCode: '',
+}
+
+export const initialProductData: products = {
+  description: '',
+  rate: '',
+  type: '',
+  qty: 0
 }

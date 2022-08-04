@@ -1,7 +1,11 @@
 import { ObjectId } from "mongodb"
 
+export interface STATUS {
+  status: 'draft' | 'pending' | 'complete' 
+}
+
 export interface InvoiceItems {
-  _id?: ObjectId
+  _id?: ObjectId | string
   description: string
   quantity: number
   rate: string
@@ -24,6 +28,7 @@ export interface Invoice {
   clientAddress2: string
   clientCountry: string
 
+  invoicedetailsheader: string
   invoiceTitleLabel: string
   invoiceTitle: string
   invoiceDateLabel: string
@@ -47,4 +52,6 @@ export interface Invoice {
   notes: string
   termLabel: string
   term: string
+
+  status?: STATUS["status"]
 }

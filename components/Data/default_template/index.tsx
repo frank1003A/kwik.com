@@ -52,13 +52,15 @@ export const LogoContainer: FC<LcProps> = ({pdfMode, handleChange,invoice}) =>  
 }
 
 /**Default Template Title Container */
-export const TitleContainer: FC<TcProps> = ({handleDetailInput}) =>  {
+export const TitleContainer: FC<TcProps> = ({handleDetailInput, invoice, contentEditable}) =>  {
     return (
         <div id="dftitle">
           <input
             type="text"
             className={styles.topHeader}
             placeholder="Invoice Type"
+            disabled={!contentEditable ? false : contentEditable}
+            value={invoice.title}
             onChange={(e) => handleDetailInput(e, "title")}
           />
         </div>
@@ -76,27 +78,31 @@ export const Header: FC<HProps> = ({titleInput ,logo}) => {
 }
 
 /**Default Template Company Section */
-export const CompanySection: FC<CSProps> = ({handleDetailInput, options}) => {
+export const CompanySection: FC<CSProps> = ({handleDetailInput, options, invoice}) => {
     return (
         <div className={styles.sectionTwo} id="dfcompanydetail">
             <input
               type="text"
               className={styles.header}
               placeholder="Company Name"
+              value={invoice.companyName}
               onChange={(e) => handleDetailInput(e, "companyName")}
             />
             <input
               type="text"
               placeholder="Companys Address"
+              value={invoice.companyAddress}
               onChange={(e) => handleDetailInput(e, "companyAddress")}
             />
             <input
               type="text"
               placeholder="City, State, Zip"
+              value={invoice.companyAddress2}
               onChange={(e) => handleDetailInput(e, "companyAddress2")}
             />
             <EditableSelect
               options={options}
+              invoice={invoice}
               onSelectChange={(e) => handleDetailInput(e, "companyCountry")}
             />
           </div>
@@ -104,28 +110,32 @@ export const CompanySection: FC<CSProps> = ({handleDetailInput, options}) => {
 }
 
 /**Default Template Reciever Section: Billed To*/
-export const RecieverSection: FC<RSProps> = ({handleDetailInput}) => {
+export const RecieverSection: FC<RSProps> = ({handleDetailInput, invoice}) => {
     return (
             <div className={styles.sendTO} id="dfbilldetail">
               <input
                 type="text"
                 className={styles.header}
                 placeholder="Billed To"
+                value={invoice.billTo}
                 onChange={(e) => handleDetailInput(e, "billTo")}
               />
               <input
                 type="text"
                 placeholder="Client's Name"
+                value={invoice.clientName}
                 onChange={(e) => handleDetailInput(e, "clientName")}
               />
               <input
                 type="text"
                 placeholder="Client's Address"
+                value={invoice.clientAddress}
                 onChange={(e) => handleDetailInput(e, "clientAddress")}
               />
               <input
                 type="text"
                 placeholder="City, State, Zip"
+                value={invoice.clientAddress2}
                 onChange={(e) => handleDetailInput(e, "clientAddress2")}
               />
             </div>
@@ -139,45 +149,54 @@ export const RecieverSection: FC<RSProps> = ({handleDetailInput}) => {
 */
 
 /**default template Invoice information */
-export const InvoiceDescription:FC<IDProps> = ({handleDetailInput, invoice,}) =>  {
+export const InvoiceDescription:FC<IDProps> = ({handleDetailInput, invoice}) =>  {
     return (
         <div className={styles.invDetails} id="dfinvoicedetail">
               <input
                 type="text"
                 className={styles.header}
                 placeholder="Invoice Details"
+                value={invoice.invoicedetailsheader}
+                onChange={(e) => handleDetailInput(e, "invoicedetailsheader")}
               />
               <div className={styles.mainInvDet}>
                 <input
                   type="text"
                   placeholder="Invoice#"
+                  value={invoice.invoiceTitleLabel}
                   onChange={(e) => handleDetailInput(e, "invoiceTitleLabel")}
                 />
                 :
                 <input
                   type="text"
                   placeholder=" 123"
+                  value={invoice.invoiceTitle}
+                  disabled
                   onChange={(e) => handleDetailInput(e, "invoiceTitle")}
                 />
                 <input
                   type="text"
                   placeholder="Invoice Date"
+                  value={invoice.invoiceDateLabel}
                   onChange={(e) => handleDetailInput(e, "invoiceDateLabel")}
                 />
                 :
                 <EditableDate
                   selectedDate={invoice.invoiceDate}
                   dateName={"invoiceDate"}
+                  invoice={invoice}
                   handleDateInput={(e) => handleDetailInput(e, "invoiceDate")}
                 />
                 <input
                   type="text"
                   placeholder="Due Date"
+                  value={invoice.invoiceDueDateLabel}
                   onChange={(e) => handleDetailInput(e, "invoiceDueDateLabel")}
                 />
                 :
                 <EditableDate
                   selectedDate={invoice.invoiceDueDate}
+                  invoice={invoice}
                   dateName={"invoiceDueDate"}
                   handleDateInput={(e) =>
                     handleDetailInput(e, "invoiceDueDate")
@@ -253,6 +272,7 @@ export const InvoiceTable: FC<ITProps> = ({
                             minRows={2}
                             style={{ width: 200, height: 28, color: '#555' }}
                             placeholder="item description"
+                            value={inv.description}
                             onChange={(e) =>
                                 handleItemInput(e, i, "description")
                             }
@@ -263,6 +283,7 @@ export const InvoiceTable: FC<ITProps> = ({
                             className={styles.tableInput}
                             type="text"
                             placeholder="2"
+                            value={inv.quantity}
                             onChange={(e) =>
                               handleItemInput(e, i, "quantity")
                             }
@@ -273,6 +294,7 @@ export const InvoiceTable: FC<ITProps> = ({
                             className={styles.tableInput}
                             type="text"
                             placeholder="1000"
+                            value={inv.rate}
                             onChange={(e) => handleItemInput(e, i, "rate")}
                           />
                         </TableCell>
@@ -315,6 +337,7 @@ export const TotalContainer:FC<TCNProps> = ({cur, invoice, handleDetailInput, tR
                   <input
                     type="text"
                     placeholder={`Sub Total`}
+                    value={invoice.subTotalLabel}
                     onChange={(e) => handleDetailInput(e, "subTotalLabel")}
                   />{" "}
                   <Typography>
@@ -327,6 +350,7 @@ export const TotalContainer:FC<TCNProps> = ({cur, invoice, handleDetailInput, tR
                   <input
                     type="text"
                     placeholder={`Sale Vat/Tax`}
+                    value={invoice.taxLabel}
                     onChange={(e) => handleDetailInput(e, "taxLabel")}
                   /><Typography>{`(${tR !== (0 || undefined) ? tR : 0}) %`}</Typography>
                   <Typography>
@@ -338,6 +362,7 @@ export const TotalContainer:FC<TCNProps> = ({cur, invoice, handleDetailInput, tR
                     className={styles.totalText}
                     type="text"
                     placeholder="Total"
+                    value={invoice.totalLabel}
                     onChange={(e) => handleDetailInput(e, "totalLabel")}
                   />
                   <Typography variant="h6" fontWeight={800}>
@@ -349,13 +374,14 @@ export const TotalContainer:FC<TCNProps> = ({cur, invoice, handleDetailInput, tR
 }
 
 /**Notes Section: Default Template*/
-export const NotesContainer:FC<NCProps> = ({handleDetailInput}) => {
+export const NotesContainer:FC<NCProps> = ({handleDetailInput, invoice}) => {
     return (
         <div id="dfinvoicenotes">
         <input
               type="text"
               className={styles.header}
               placeholder="Notes"
+              value={invoice.notesLabel}
               onChange={(e) => handleDetailInput(e, "notesLabel")}
             />
             <br />
@@ -364,6 +390,7 @@ export const NotesContainer:FC<NCProps> = ({handleDetailInput}) => {
               className={styles.tA}
               minRows={3}
               onChange={(e) => handleDetailInput(e, "notes")}
+              value={invoice.notes}
               placeholder="It was great doing buisness with you"
               style={{ width: 400 , color: '#555'}}
             />
@@ -372,19 +399,21 @@ export const NotesContainer:FC<NCProps> = ({handleDetailInput}) => {
 }
 
 /** */
-export const TandC_Container:FC<TACProps> = ({handleDetailInput}) => {
+export const TandC_Container:FC<TACProps> = ({handleDetailInput, invoice}) => {
     return (
         <div id="dfinvoicetandc">
         <input
               type="text"
               className={styles.header}
               placeholder="Terms & Condition"
+              value={invoice.termLabel}
               onChange={(e) => handleDetailInput(e, "termLabel")}
             />
             <TextareaAutosize
               aria-label="minimum height"
               className={styles.tA}
               minRows={3}
+              value={invoice.term}
               onChange={(e) => handleDetailInput(e, "term")}
               placeholder="please make payments by due date"
               style={{ width: 685 , color: '#555'}}

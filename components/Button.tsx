@@ -6,7 +6,7 @@ interface Props {
   innerText?: string,
   compvariant?: "text" | "contained" | "outlined" | undefined,
   className?: string,
-  onClick?: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: () => void,
   id?: string,
   icon?: JSX.Element,
   onMouseEnter?: React.MouseEventHandler,

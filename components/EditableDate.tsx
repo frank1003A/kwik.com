@@ -7,30 +7,34 @@ import { Invoice } from './Data/types'
 interface Props {
     handleDateInput: (e:React.ChangeEvent<HTMLInputElement>) => void, 
     selectedDate: string,
-    dateName: keyof Invoice
+    dateName: keyof Invoice,
+    invoice: Invoice
 }
 
-const EditableDate: FC<Props> = ({handleDateInput, selectedDate,  dateName}) => {
-  const dispatch = useAppDispatch()
-  const selectedCinInvoice = useAppSelector(state => state.invoice.invoice)
-
-  const clearDateValue = () => {
-    dispatch(
-      clearSelectValue({
-      invName: dateName
-    }))
-  }
+const EditableDate: FC<Props> = ({handleDateInput, selectedDate,  dateName, invoice}) => {
+ /** const dispatch = useAppDispatch() */
+  
+  const clearDateValue = () => { }
 
   return (
     <div>
       {
-            selectedCinInvoice[dateName]  ?
-            <input type="text" defaultValue={selectedCinInvoice[dateName] as string} onFocus={() => clearDateValue()} />
+            invoice[dateName]  ?
+            <input type="text" defaultValue={invoice[dateName] as string} onFocus={() => clearDateValue()} />
             :
-            <input type="date" value={selectedCinInvoice[dateName] as string} onChange={handleDateInput}/>
+            <input type="date" value={invoice[dateName] as string} onChange={handleDateInput}/>
       }
     </div>
   )
 }
 
 export default EditableDate
+
+/**const selectedCinInvoice = useAppSelector(state => state.invoice.invoice)
+
+  const clearDateValue = () => {
+    dispatch(
+      clearSelectValue({
+      invName: dateName
+    }))
+  } */

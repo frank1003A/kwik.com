@@ -136,9 +136,6 @@ const EditableFileImage = ({ className, placeholder, value, width, onChangeImage
 }
 
 export default EditableFileImage
-function compose(arg0: string) {
-  throw new Error('Function not implemented.')
-}
 
 /**
  if (pdfMode) {

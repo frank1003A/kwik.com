@@ -5,10 +5,10 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import type { AppProps } from "next/app";
 //import React, { useState, useEffect } from "react";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
 import { DndProvider} from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { store } from './redux/store'
+import { Provider } from 'react-redux'
 //import { useRouter } from "next/router";
 //import { BeatLoader } from "react-spinners";
 
@@ -48,14 +48,19 @@ function MyApp({ Component, pageProps }: AppProps) {
     size={80}
   />
   </div> */
-
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
-    </DndProvider>
+      <DndProvider backend={HTML5Backend}>
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </DndProvider>
   );
 }
 
 export default MyApp;
+
+/**<DndProvider backend={HTML5Backend}>
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
+    </DndProvider> */

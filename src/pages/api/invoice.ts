@@ -8,7 +8,6 @@ export default async function (req: NextApiRequest,res: NextApiResponse) {
   if (req.method === "GET") {
     try {
       const query = req.query.invoice_id 
-      console.log(query)
       const client = await clientPromise;
       const db = client.db("Kwik");
       const Invoice = await db.collection("Invoices").findOne(

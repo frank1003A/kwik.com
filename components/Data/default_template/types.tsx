@@ -12,20 +12,25 @@ export interface LcProps {
   
 export interface TcProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
+    invoice: typeof initialInvoice,
+    contentEditable?: boolean
   }
   
 export interface HProps {
     titleInput: JSX.Element,
     logo: JSX.Element,
+    invoice: typeof initialInvoice,
   }
   
 export interface CSProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     options: typeof countryList,
+    invoice: typeof initialInvoice
   }
   
 export interface RSProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
+    invoice: typeof initialInvoice
   }
   
 export interface IDProps {
@@ -39,7 +44,8 @@ export interface ITProps {
       cur: string, 
       itemArr: typeof initialInvoiceItems[],
       removeItem: (id: number | string | string[]) => void,
-      handleItemInput: (e: Event | SyntheticEvent<any, Event>, index: number, name: keyof InvoiceItems) => void
+      handleItemInput: (e: Event | SyntheticEvent<any, Event>, index: number, name: keyof InvoiceItems) => void,
+      invoice: typeof initialInvoice
   }
   
 export interface BAProps {
@@ -55,8 +61,10 @@ export interface TCNProps {
   
 export interface NCProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
+    invoice: typeof initialInvoice
   }
   
 export interface TACProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
+    invoice: typeof initialInvoice
   }

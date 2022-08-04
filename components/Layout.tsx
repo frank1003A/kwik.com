@@ -4,6 +4,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
+import { ClientContextProvider } from '../helper/context/clientContext/ClientContextprovider'
 
 interface Props {
     children: ReactNode,

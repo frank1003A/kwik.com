@@ -1,51 +1,46 @@
-import { Divider, Typography } from '@mui/material';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import Chip from '@mui/material/Chip';
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
-import axios, { AxiosInstance } from 'axios';
-import { ObjectId } from 'mongodb';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { NextPageContext } from 'next/types';
-import { ParsedUrlQuery } from 'node:querystring';
-import { SyntheticEvent, useEffect, useState } from 'react';
-import { useRef } from 'react';
-import { useReactToPrint } from 'react-to-print';
-import { Container } from '../../../components/styled-component/Global';
-import ButtonComponent from '../../../components/Button';
-import { countryList } from '../../../components/Data/countryList';
-import currencyList from '../../../components/Data/currencyList';
-import { initialInvoice } from '../../../components/Data/initialData';
-import { Invoice, InvoiceItems } from '../../../components/Data/types';
-import Editorbar from '../../../components/Editorbar';
-import InvoiceMain from '../../../components/InvoiceMain';
-import Layout from '../../../components/Layout';
-import MainEditor from '../../../components/MainEditor';
-import Modals from '../../../components/Modal';
-import Muiselect from '../../../components/MuiSelect';
-import styles from '../../../styles/Invoice.module.css';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  deleteInvoiceItemNo,
-  getTaxRate,
-  updateInvoice,
-  updateInvoiceItem,
-  updateInvoiceItemNo,
-} from '../../redux/invoiceSlice';
+import { Divider, Typography } from "@mui/material";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import Chip from "@mui/material/Chip";
+import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
+import { nanoid } from "nanoid";
+import Image from "next/image";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { useRef } from "react";
+import React from "react";
+import { useReactToPrint } from "react-to-print";
+import ButtonComponent from "../../../components/Button";
+import { countryList } from "../../../components/Data/countryList";
+import { initialInvoice } from "../../../components/Data/initialData";
+import { Invoice, InvoiceItems, STATUS } from "../../../components/Data/types";
+import Editorbar from "../../../components/Editorbar";
+import InvoiceMain from "../../../components/InvoiceMain";
+import Layout from "../../../components/Layout";
+import MainEditor from "../../../components/MainEditor";
+import Modals from "../../../components/Modal";
+import { Container } from "../../../components/styled-component/Global";
+import { postRequest } from "../../../lib/axios/axiosClient";
+import styles from "../../../styles/Invoice.module.css";
+import type { NextPage } from "next";
+import { ProductSelectedContext } from "../../../helper/context/sp/ContextProdvider";
+import { CustomerSelectedContext } from "../../../helper/context/clientContext/ClientContextprovider";
+import { resolve } from "path";
+import useLocalStorage from "../../../hooks/localStorage";
+import clients from "../../../model/clients";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { useAppDispatch } from "../redux/hooks";
+import { clearProducts } from "../redux/productSlice";
+import { PhotoFilter } from "@mui/icons-material";
+import { CompactPicker } from "react-color";
+import { PropertyEditor, PropertiesContainer, Property, Header } from "../../../components/styled-component/editorbar";
 
-import type { NextPage } from 'next';
-import React from 'react';
-import { api, postRequest } from '../../../lib/axios/axiosClient'
-import { ConnectingAirportsOutlined } from '@mui/icons-material';
-
-interface Props{
-    invoice: Invoice
+interface Props {
+  invoice: Invoice;
 }
 
-const createInvoice: NextPage<Props> = ()=> {
-    const router = useRouter()
+const createInvoice: NextPage<Props> = () => {
 
-    const [editPdf, seteditPdf] = useState<boolean>(false);
+  const [editPdf, seteditPdf] = useState<boolean>(false);
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
   const [opensaved, setOpenSaved] = useState<boolean>(false);
   const [taxRate, setTaxRate] = useState<number>();
@@ -53,11 +48,100 @@ const createInvoice: NextPage<Props> = ()=> {
   const [showEditComp, setShowEditComp] = useState<boolean>(false);
   const [edcActive, setEdcActive] = useState<boolean>(false);
   const [invComp, setInvComp] = useState<boolean>(false);
-  const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>({...initialInvoice});
+  const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>({
+    ...initialInvoice,
+  });
+  const [editable, setEditable] = useState<boolean>(true);
+  const [background, setBackground] = useState<string>("#fff");
+  const [font, setFont] = useState("");
+  const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
+  const [passed, setPassed] = useState<boolean>(false);
+  const [passedClient, setPassedClient] = useState<boolean>(false);
+  const [genNo, setGenNo] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-  const invoiceReducer = useAppSelector((state) => state.invoice.invoice); // Invoice State
-  console.log(invoiceReducer)
+  const SelectedProducts = useSelector((state: RootState) => state.product)
+  const SelectedClient = useSelector((state: RootState) => state.client)
+  const dispatch =  useAppDispatch()
+
+  /**generate unique number for invoice */
+  const generateInvoiceNo = (): string => {
+    const newId = `invoice#${nanoid(5)}`;
+    setGenNo(true);
+    return newId;
+  };
+
+  const assignInvoiceNo = () => {
+    if (InvoiceRepo) {
+      const resInv: Invoice = { ...InvoiceRepo };
+      resInv.invoiceTitle = generateInvoiceNo();
+      console.log(resInv.invoiceTitle);
+      setInvoiceRepo(resInv);
+    } else {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    /**Assign uniqiue number to Invoice once page is loaded */
+    assignInvoiceNo();
+  }, [genNo]);
+
+  /** 
+   * we need to pass the products selected from products page
+   *  to itemArr for our invoice to display.
+   *  so we create a new method to eliminate type error
+   *  this method will render data passed from useContext to accomodate
+   *  the model of items in our Invoice.
+   */
+  const handleProductTransfer = () => {
+      const resInv: Invoice = { ...InvoiceRepo };
+       resInv.invoiceitems = SelectedProducts.product?.map((sp) => {
+         let somedata = {
+        _id: nanoid(5),
+        description: sp.description!,
+        quantity: 0,
+        rate: sp.rate!,
+        amount: "0.00",
+      };
+      return somedata;
+    });
+    setInvoiceRepo({...resInv});
+    setPassed(true)
+  };
+
+  /**
+   *  Once the Product data has been passed to our invoice.
+   *  We need to clear the useContext array, so when users
+   *  navigate back to product page, they don't see the same
+   *  product in the product selected list
+   */
+  const clearProductData = () => {
+    //clear array of selected products
+    dispatch(clearProducts())
+  };
+
+  const handleClientTransfer = () => {
+      const resInv: Invoice = { ...InvoiceRepo };
+      resInv.billTo = SelectedClient.client?.buisness!
+      resInv.clientName = SelectedClient.client?.fullname!
+      setInvoiceRepo({...resInv});
+  }
+
+  useEffect(() => {
+    if (SelectedProducts.product.length >= 1 && SelectedClient.client)
+    /**Transfer products data to invoice - if any */
+    handleProductTransfer();
+
+    if (SelectedProducts.product.length <= 0 && SelectedClient.client) {
+      /**Transfer client data to invoice - if any */
+      handleClientTransfer()
+    }
+  },[]);
+
+  useEffect(() => {
+    /**remove products data to invoice - if any */
+    clearProductData();
+  },[passed]);
 
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
@@ -116,28 +200,89 @@ const createInvoice: NextPage<Props> = ()=> {
   ): void => {
     e.preventDefault();
     const { value } = e.currentTarget;
+    let MInvoice: Invoice = { ...InvoiceRepo };
+    let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
 
-    dispatch(
-      updateInvoiceItem({
-        invItemName: name,
-        invIndex: index,
-        invValue: value,
-        invtaxrate: taxRate,
-      }))
-  }
+    const items = Items.map((itm, idx) => {
+      if (index === idx) {
+        const invItems: InvoiceItems = { ...itm };
+        if (name === "_id" && name !== undefined && typeof value === "number") {
+          throw new Error(
+            "An attempt has been made to mutate an Id field which is not allowed"
+          );
+        } else if (
+          name === "quantity" &&
+          name !== undefined &&
+          typeof value === "string"
+        ) {
+          invItems[name] = Number(value);
+        } else if (name == "description" && typeof value === "string") {
+          invItems[name] = value;
+        } else if (name == "rate" && typeof value === "string") {
+          invItems[name] = value;
+        }
+
+        if (invItems.quantity && invItems.rate) {
+          invItems.amount = (
+            invItems.quantity * Number(invItems.rate)
+          ).toString();
+        }
+
+        return invItems;
+      }
+      return itm;
+    });
+    //
+    /**set mutable Invoice */
+    MInvoice.invoiceitems = items;
+    //
+    getSubTotal(MInvoice);
+    //
+    getTxRate(MInvoice);
+    //
+    getTotal(MInvoice);
+
+    setInvoiceRepo(MInvoice); //setter
+  };
 
   const handleDetailInput = (
     e: Event | SyntheticEvent<any, Event>,
     name: keyof Invoice
   ) => {
-    e.preventDefault()
-    const {value} = e.currentTarget
-    dispatch(
-      updateInvoice({
-        invName: name,
-        invValue: value,
-      })
-    ); 
+    e.preventDefault();
+    const { value } = e.currentTarget;
+
+    const newInvoice: Invoice = { ...InvoiceRepo };
+    if (name !== "invoiceitems" && name !== "_id" && name !== "status") {
+      if (
+        name !== "logoWidth" &&
+        name !== "tax" &&
+        typeof value === "string" &&
+        name !== undefined
+      ) {
+        newInvoice[name] = value;
+      } else if (
+        !value &&
+        name !== "logoWidth" &&
+        name !== "tax" &&
+        typeof value === "string" &&
+        name !== undefined
+      ) {
+        newInvoice[name] = "";
+      }
+    }
+    setInvoiceRepo(newInvoice);
+  };
+
+  const updateInvoiceStatus = (
+    name: keyof Invoice,
+    status: STATUS["status"]
+  ) => {
+    const newInvoice: Invoice = { ...InvoiceRepo };
+
+    if (name === "status") newInvoice[name] = status;
+
+    setInvoiceRepo(newInvoice);
   };
 
   const componentRef = useRef(null);
@@ -156,173 +301,197 @@ const createInvoice: NextPage<Props> = ()=> {
     name: keyof Invoice,
     value: string | number | number[]
   ) => {
-    dispatch(
-      updateInvoice({
-        invName: name,
-        invValue: value,
-      })
-    );
+    const newInvoice: Invoice = { ...InvoiceRepo };
+    if (name === "logo" && typeof value === "string") newInvoice[name] = value;
+    if (name === "logoWidth" && typeof value === "number")
+      newInvoice[name] = value;
+
+    setInvoiceRepo(newInvoice); //update Image or logo
   };
 
   const addTC = () => {
-    dispatch(updateInvoiceItemNo());
+    const newInvoice: Invoice = { ...InvoiceRepo };
+    const newItem = {
+      _id: nanoid(5),
+      description: "",
+      quantity: 0,
+      rate: "",
+      amount: "0.00",
+    };
+    newInvoice.invoiceitems.push(newItem);
+    setInvoiceRepo(newInvoice);
   };
 
   const removeItem = (id: string | number | string[]) => {
-    dispatch(
-      deleteInvoiceItemNo({
-        invId: id,
-      })
-    ); 
+    const newInvoice: Invoice = { ...InvoiceRepo };
+    const item = newInvoice.invoiceitems.filter((itm) => itm._id !== id);
+    newInvoice.invoiceitems = item;
+    setInvoiceRepo(newInvoice);
   };
 
-  const getTxRate = (e:Event | SyntheticEvent<any, Event>): void => {
-    const { value } = e.currentTarget
-    setTaxRate(value)
-    dispatch(
-      getTaxRate({
-        invtaxrate: taxRate 
-      })
-    )
-  }
+  const getSubTotal = (inv: Invoice): void => {
+    const subTotal = inv.invoiceitems
+      .reduce((acc, item) => acc + Number(item.amount || 0), 0)
+      .toString();
+    inv.subTotal = subTotal === undefined ? "0.00" : subTotal;
+  };
 
-  const removeJSXElement = (elementid: string) => {
+  const getTxRate = (inv: Invoice): void => {
+    if (taxRate && taxRate !== undefined) {
+      const tax =
+        taxRate !== undefined
+          ? (taxRate / 100) * Number(inv.subTotal)
+          : taxRate;
+      if (tax !== undefined) inv.tax = tax;
+    }
+  };
+
+  const getTotal = (inv: Invoice): void => {
+    const total =
+      Number(inv.subTotal) + (Number(inv.tax) !== 0 ? Number(inv.tax) : 0);
+    inv.total = total.toString();
+  };
+
+  /**const removeJSXElement = (elementid: string) => {
     const element = document.getElementById(elementid) as HTMLElement;
     element.style.display = "none";
     element.style.transition = "0.5s fade-out";
+  }; */
+
+  const handleInvoicePost = async (): Promise<void> => {
+    try {
+      const InvoicePost = await postRequest("api/invoices", InvoiceRepo);
+      console.log(InvoicePost);
+      alert("saved");
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
-  const handleInvoicePost = async ():Promise<void> => {
-    try {
-      const InvoicePost = await postRequest('api/invoices', invoiceReducer)
-      console.log(InvoicePost)
-      alert('saved')
-    } catch (error: any) {
-      console.log(error.message)
-    }
-  }
-
-    return (
-      <Layout>
-        <Container>
+  return (
+    <Layout>
+      <Container>
         <div className={styles.fileAndEditor}>
-        {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
-         <Editorbar
-          handlePrint={() => handlePrint()}
-          handleSave={() => handleInvoicePost()}
-        />
-         <div className={styles.editorFlex}>
-         <InvoiceMain
-           ref={componentRef}
-           options={countryList}
-           pdfMode={editPdf}
-           cur={currency}
-           itemArr={invoiceReducer.invoiceitems}
-           addTC={addTC}
-           tR={taxRate}
-           removeItem={removeItem}
-           handleChange={handleChange}
-           handleDetailInput={handleDetailInput}
-           handleItemInput={handleItemInput}
-           invoice={invoiceReducer}
-         ></InvoiceMain>
-         <MainEditor>
-           <div className={styles["edcToggler"]}>
-             <button
-               className={
-                 edcActive === true ? styles["edcBtnActive"] : styles["edcBtn"]
-               }
-               onClick={() => {
-                 handleActiveSideComponent();
-                 setShowEditComp(true);
-               }}
-             >
-               Edit Component
-             </button>
-             <button
-               className={
-                 invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
-               }
-               onClick={() => {
-                 handleActiveSideComponent();
-                 setShowEditComp(false);
-               }}
-             >
-               Edit Invoice
-             </button>
-           </div>
-           {showEditComp ? (
-             null
-           ) : (
-             <div className={styles["invComp"]}>
-               <Typography>Status</Typography>
-               {invoiceReducer ? 
-               <Chip label="complete" color="success" /> :  
-               <Chip label="not-complete" color="warning" />
-               }
-               <Divider />
-               <Typography>Currency</Typography>
-               {/**{<Muiselect
-                 state={currency}
-                 handleChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                   setCurrency(e.target.value)
-                 }
-                 label="Currency"
-                 options={currencyList}
-               /> } */}
-               <Divider />
-               <Typography>Vat Rate %</Typography>
-               <input
-                 type="text"
-                 placeholder="Vat Rate"
-                 value={taxRate}
-                 onChange={getTxRate}
-               />
-               <Typography>Background Image</Typography>
-               <input type="file" placeholder="upload PNG or JPEG" />
-             </div>
-           )}
-         </MainEditor>
-       </div>
-     </div>
+          {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
+          <Editorbar
+            saveText="SAVE"
+            handlePrint={() => handlePrint()}
+            handleSave={() => handleInvoicePost()}
+          />
+          <div className={styles.editorFlex}>
+            <InvoiceMain
+              ref={componentRef}
+              options={countryList}
+              pdfMode={editPdf}
+              cur={currency}
+              itemArr={InvoiceRepo.invoiceitems}
+              addTC={addTC}
+              tR={taxRate}
+              removeItem={removeItem}
+              handleChange={handleChange}
+              handleDetailInput={handleDetailInput}
+              handleItemInput={handleItemInput}
+              invoice={InvoiceRepo}
+            ></InvoiceMain>
+            <PropertyEditor>
+              <Header>
+                <PhotoFilter />
+                <Typography variant="subtitle1" color="#555">
+                  Page Design
+                </Typography>
+              </Header>
+              <PropertiesContainer>
+                <Property>
+                  <Typography variant="overline" color="#555">
+                    Font Family
+                  </Typography>
+                  <select
+                    name="font"
+                    title="font-Change"
+                    onChange={(e) => setFont(e.target.value)}
+                  >
+                    <option value="sans-serif">sans-serif</option>
+                    <option value="monospace">monospace</option>
+                    <option value="fantasy">fantasy</option>
+                    <option value="cursive">cursive</option>
+                  </select>
+                </Property>
+                <Property>
+                  <Typography variant="overline" color="#555">
+                    Background Color
+                  </Typography>
+                  <CompactPicker
+                    onChange={(color) => setBackground(color.hex)}
+                  />
+                </Property>
+                <Property>
+                  <Typography variant="overline" color="#555">
+                    Language
+                  </Typography>
+                  <div style={{width: '230px', padding: '0px 2px'}}>
+                  <select
+                    name="font"
+                    title="font-Change"
+                    onChange={(e) => setFont(e.target.value)}
+                  >
+                    <option value="sans-serif">English</option>
+                    <option value="monospace">monospace</option>
+                    <option value="fantasy">fantasy</option>
+                    <option value="cursive">cursive</option>
+                  </select>
+                  </div>
+                </Property>
+                <Property>
+                  <Typography variant="overline" color="#555">
+                    Composer
+                  </Typography>
+                </Property>
+              </PropertiesContainer>
+            </PropertyEditor>
+          </div>
+        </div>
 
-     <Snackbar
-       open={opensuccess}
-       autoHideDuration={4000}
-       onClose={handlesucClose}
-       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-     >
-       <Alert
-         onClose={handlesucClose}
-         severity="success"
-         sx={{ width: "100%" }}
-       >
-         <Typography>Invoice Saved</Typography>
-       </Alert>
-     </Snackbar>
+        <Snackbar
+          open={opensuccess}
+          autoHideDuration={4000}
+          onClose={handlesucClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handlesucClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            <Typography>Invoice Saved</Typography>
+          </Alert>
+        </Snackbar>
 
-     <Modals OpenModal={opensaved} handleCloseModal={handleOpenSaveInfoClose}>
-       <div
-         style={{
-           display: "flex",
-           alignItems: "center",
-           gap: "0.5rem",
-           justifyContent: "center",
-           flexDirection: "column",
-           marginBottom: "1rem",
-         }}
-       >
-         <Image src="/print2.svg" height={300} width={300} />
-         Invoice Saved
-       </div>
-       <ButtonComponent innerText={"Continue"} />
-     </Modals>
-        </Container>
-      </Layout>
-    )
-}
+        <Modals
+          OpenModal={opensaved}
+          handleCloseModal={handleOpenSaveInfoClose}
+          pd="1rem"
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              justifyContent: "center",
+              flexDirection: "column",
+              marginBottom: "1rem",
+            }}
+          >
+            <Image src="/print2.svg" height={300} width={300} />
+            Invoice Saved
+          </div>
+          <ButtonComponent innerText={"Continue"} />
+        </Modals>
+      </Container>
+    </Layout>
+  );
+};
 
-export default createInvoice
+export default createInvoice;
 
 /**const handleInvoicePost = ():Promise<void> => {
   const data = api.post('/api/invoices', invoiceReducer, {

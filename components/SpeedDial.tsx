@@ -17,10 +17,11 @@ import { ObjectId } from "mongodb";
 
 interface Props {
   handleExport?: () => void,
-  handleCreate?: JSX.Element,
+  handleCreate?: () => void,
   handlePrint?: () => void,
   handleShare?: () => void,
-  id?: ObjectId
+  id?: ObjectId | string,
+  handleClick?: (e: MouseEvent,id: string) => void
 }
 
 const Container = styled.div`
@@ -45,7 +46,7 @@ const Container = styled.div`
 //box-shadow: 0 0 10px rgb(0 0 0 / 15%);
 
 export default function BasicSpeedDial(
-  {handleCreate,handleShare, handleExport, handlePrint, id}:Props) 
+  {handleCreate,handleShare, handleExport, handlePrint, id, handleClick}:Props) 
   {
 
   const actions = [
@@ -59,15 +60,17 @@ export default function BasicSpeedDial(
     <Container>
       {actions.map((action, idx) => (
         <span key={idx}>
-          <Link href={`http://localhost:3000/invoice/${id?.toString()}`}>
-            <Tooltip title={action.name}>{action.icon}</Tooltip>
-          </Link>
+            <Tooltip title={action.name} onClick={() => action.handler}>{action.icon}</Tooltip>
         </span>
       ))}
     </Container>
   );
 }
 
+/** <Link href={`http://localhost:3000/invoice/update}`}>
+            <Tooltip title={action.name}>{action.icon}</Tooltip>
+          </Link> */
+//http://localhost:3000/invoice/${id?.toString()
 /**<Box sx={{ transform: 'translateZ(0px)', flexGrow: 1}}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"

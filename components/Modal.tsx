@@ -5,9 +5,10 @@ interface Props{
     children: JSX.Element[] | JSX.Element,
     OpenModal: boolean,
     handleCloseModal: () => void, 
+    pd: string
 }
 
-const ModalComponent = ({children, OpenModal, handleCloseModal}:Props) => {
+const ModalComponent = ({children, OpenModal, handleCloseModal, pd}:Props) => {
     /**modal */
   const style: React.CSSProperties = {
     position: "absolute",
@@ -16,12 +17,12 @@ const ModalComponent = ({children, OpenModal, handleCloseModal}:Props) => {
     transform: "translate(-50%, -50%)",
     background: "white",
     boxShadow: "24px",
-    //padding: pd,
-    borderColor: 'none',
-    /**p: 4, */
-    overflow: 'hidden',
-    //maxWidth: '600px',
-    borderRadius: '8px'
+    maxWidth: "400px",
+    width: "350px",
+    padding: "2rem",
+    borderColor: "none",
+    overflow: "hidden",
+    borderRadius: "8px",
   };
   /**modal end */
   return (

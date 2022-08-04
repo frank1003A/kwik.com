@@ -10,34 +10,33 @@ import {
   AddCircle,
   Message,
   Settings,
-  People
+  People,
 } from "@mui/icons-material";
 import Link from "next/link";
 import Button from "./Button";
 import { useRouter } from "next/router";
-import { Badge, Box } from "@mui/material";
+import { Badge, Box, Chip } from "@mui/material";
 import Modal from "./Modal";
 import Image from "next/image";
-import { Typography } from "@mui/material";
-import SpeedDial from './SpeedDial'
+import { Typography, Tooltip, FormControlLabel, Checkbox } from "@mui/material";
+import SpeedDial from "./SpeedDial";
 
 interface Props {
-  id?: string
+  id?: string;
 }
-const Sidebar = ({id}: Props) => {
-  const router = useRouter()
+const Sidebar = ({ id }: Props) => {
+  const router = useRouter();
   const [optionModal, setOptionModal] = useState<boolean>(false);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
-  
+
   return (
     <Box
       className={styles.sidebar}
       id={id}
       sx={{ display: { xs: "none", md: "flex" } }}
     >
-
       <div className={styles.nav}>
         <Link href={"/"}>
           <div
@@ -110,36 +109,40 @@ const Sidebar = ({id}: Props) => {
               <Message />
             </div>
             <p>Messages</p>
-            <Box><Badge badgeContent={'new'} color="error"/></Box>
+            <Chip
+              label={"new"}
+              sx={{ borderRadius: "4px", height: '30px', width: '30px', fontSize: 'xx-small' }}
+              variant="filled"
+              color="error"
+              size="medium"
+            ></Chip>
           </div>
         </Link>
       </div>
 
       {/**Modal */}
-      <Modal OpenModal={optionModal} handleCloseModal={closeOModal}>
+      <Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
         <div className={styles.optionContainer}>
-        <Link href="/kwik_creator">
-          <div className={styles.option}>
-            <div  className={styles['card']}>
-            <span className={styles['AddIcon']}>
-            <AddCircle sx={{fontSize: '150px'}}/>
-            </span>
-            <Typography>
-                Kwik Invoice Creator
-            </Typography>
+          <Link href="/kwik_creator">
+            <div className={styles.option}>
+              <div className={styles["card"]}>
+                <span className={styles["AddIcon"]}>
+                  <AddCircle sx={{ fontSize: "150px" }} />
+                </span>
+                <Typography>Kwik Invoice Creator</Typography>
+              </div>
             </div>
-          </div>
           </Link>
-        <Link href="#">
-        <div className={styles.option}>
-          <div  className={styles['card']}>
-            <span className={styles['AddIcon']}>
-            <AddCircle sx={{fontSize: '150px'}}/>
-            </span>
-            <Typography>Kwik Default Template</Typography>
-          </div>
-        </div>
-        </Link>
+          <Link href="#">
+            <div className={styles.option}>
+              <div className={styles["card"]}>
+                <span className={styles["AddIcon"]}>
+                  <AddCircle sx={{ fontSize: "150px" }} />
+                </span>
+                <Typography>Kwik Default Template</Typography>
+              </div>
+            </div>
+          </Link>
         </div>
       </Modal>
     </Box>
@@ -147,7 +150,6 @@ const Sidebar = ({id}: Props) => {
 };
 
 export default Sidebar;
-
 
 /**
 <div className={styles.sd}>
@@ -169,7 +171,7 @@ export default Sidebar;
           </div>
         </Link> */
 
-        /** <div className={styles.upperContainer}>
+/** <div className={styles.upperContainer}>
         <Button
           className={styles.btnCreate}
           innerText={"KWIK CREATE"}
