@@ -1,17 +1,16 @@
 import React, { FC } from 'react'
 import styles from '../styles/Invoice.module.css'
-import { clearSelectValue } from '../src/redux/invoiceSlice'
-import {useAppDispatch, useAppSelector} from '../src/redux/hooks'
 import { Invoice } from './Data/types'
 
 interface Props {
     handleDateInput: (e:React.ChangeEvent<HTMLInputElement>) => void, 
     selectedDate: string,
     dateName: keyof Invoice,
-    invoice: Invoice
+    invoice: Invoice,
+    customStyle?: React.CSSProperties
 }
 
-const EditableDate: FC<Props> = ({handleDateInput, selectedDate,  dateName, invoice}) => {
+const EditableDate: FC<Props> = ({handleDateInput, customStyle,  dateName, invoice}) => {
  /** const dispatch = useAppDispatch() */
   
   const clearDateValue = () => { }
@@ -20,9 +19,17 @@ const EditableDate: FC<Props> = ({handleDateInput, selectedDate,  dateName, invo
     <div>
       {
             invoice[dateName]  ?
-            <input type="text" defaultValue={invoice[dateName] as string} onFocus={() => clearDateValue()} />
+            <input type="text" 
+            defaultValue={invoice[dateName] as string} 
+            onFocus={() => clearDateValue()}
+            style={customStyle}
+             />
             :
-            <input type="date" value={invoice[dateName] as string} onChange={handleDateInput}/>
+            <input type="date" 
+            value={invoice[dateName] as string} 
+            onChange={handleDateInput}
+            style={customStyle}
+            />
       }
     </div>
   )

@@ -1,6 +1,12 @@
-import React, { ChangeEvent, MouseEventHandler, useEffect, useState, useContext } from "react";
+import React, {
+  ChangeEvent,
+  MouseEventHandler,
+  useEffect,
+  useState,
+  useContext,
+} from "react";
 import { NextPage } from "next";
-import { Container } from "../../components/styled-component/Global";
+import { Container, ControlledInput } from "../../components/styled-component/Global";
 import Layout from "../../components/Layout";
 import {
   Card,
@@ -10,29 +16,44 @@ import {
   Row,
   Top,
 } from "../../components/styled-component/products/Global";
-import { Divider, IconButton, TextField, Typography, Checkbox, Tooltip } from "@mui/material";
+import {
+  Divider,
+  IconButton,
+  Typography,
+  Checkbox,
+  Tooltip,
+} from "@mui/material";
 import ButtonComponent from "../../components/Button";
 import {
   Add,
   AddCircle,
   Clear,
   Edit,
+  PrintDisabled,
+  TryRounded,
 } from "@mui/icons-material";
 import useGetter from "../../hooks/useGetter";
 import productsClass from "../../model/products";
 import { ScaleLoader } from "react-spinners";
-import Image from 'next/image'
+import Image from "next/image";
 import AlertDialogSlide from "../../components/AlertDialog";
 import { initialProductData } from "../../components/Data/initialData";
-import { postRequest, deleteRequest } from "../../lib/axios/axiosClient";
+import {
+  postRequest,
+  deleteRequest,
+  patchRequest,
+} from "../../lib/axios/axiosClient";
 import ModalComponent from "../../components/Modal";
 import Avatar from "react-avatar";
 import AsyncSelect from "react-select/async";
 import useLocalStorage from "../../hooks/localStorage";
 import Link from "next/link";
-import styles from '../../styles/Home.module.css'
+import styles from "../../styles/Home.module.css";
 import { useRouter } from "next/router";
-import { ContextProvider, ProductSelectedContext } from "../../helper/context/sp/ContextProdvider";
+import {
+  ContextProvider,
+  ProductSelectedContext,
+} from "../../helper/context/sp/ContextProdvider";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "./redux/hooks";
 import { updateProducts, updateProductSelected } from "./redux/productSlice";
@@ -44,11 +65,14 @@ const products: NextPage = () => {
 
   /**states */
   const [products, setProducts] = useState<productsClass[]>([]);
-  const [singleProduct, setSProduct] = useState<productsClass>({...initialProductData})
-  const [dialogResponse, setDialogResponse] = useState<boolean>(false)
+  const [singleProduct, setSProduct] = useState<productsClass>({
+    ...initialProductData,
+  });
+  const [dialogResponse, setDialogResponse] = useState<boolean>(false);
+  const [updateValue, setUpdateValue] = useState<string[]>([]);
 
-  const SelectedProducts = useSelector((state: RootState) => state.product)
-  const dispatch =  useAppDispatch()
+  const SelectedProducts = useSelector((state: RootState) => state.product);
+  const dispatch = useAppDispatch();
 
   const setter = () => {
     if (data !== undefined) setProducts(data);
@@ -62,12 +86,16 @@ const products: NextPage = () => {
   /**Modals */
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openSFModal, setOpenSFModal] = useState<boolean>(false);
+  const [openUpdateModal, setopenUpdateModal] = useState(false);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
   const handleOpenSFModal = () => setOpenSFModal(true);
   const handleCloseSFModal = () => setOpenSFModal(false);
+
+  const handleUpdateModal = () => setopenUpdateModal(true);
+  const handleCloseUpdateModal = () => setopenUpdateModal(false);
 
   /**Dialog */
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
@@ -77,70 +105,116 @@ const products: NextPage = () => {
   };
 
   const handleNoCloseDialog = () => {
-    setDialogResponse(false)
+    setDialogResponse(false);
     setOpenDialog(false);
   };
 
   const handleYesCloseDialog = () => {
-    setDialogResponse(true)
+    setDialogResponse(true);
     setOpenDialog(false);
   };
 
-  const handleCheckboxClick = (
-    event: React.ChangeEvent<HTMLInputElement>, product: productsClass) => {
-    const value = event.target.checked
+  const handleProductSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    product: productsClass
+  ) => {
+    const value = event.target.checked;
     if (value === true) {
       // update context state
       dispatch(
         updateProductSelected({
-          products: product
+          products: product,
         })
-      )
+      );
     }
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    name: keyof productsClass
+  ) => {
+    const value = e.target.value;
+    const nC: productsClass = { ...singleProduct };
+    if (name === "_id") throw new Error("_id fields are mutable fields");
+    if (name === "description") nC[name] = value;
+    if (name === "rate") nC[name] = value;
+    if (name === "type") nC[name] = value;
+    if (name === "qty") nC[name] = Number(value);
+    setSProduct(nC);
+  };
+
+  const handleUpdate = (
+    e: ChangeEvent<HTMLInputElement>,
+    name: keyof productsClass,
+  ) => {
+    const value = e.target.value;
+    let prod: Array<productsClass> = [...products];
+    const valueUpdates = prod.filter((p, i) => {
+      const obj: productsClass = { ...p };
+      if (name !== "_id" && name !== undefined) {
+        if (name !== "qty") obj[name] = value;
+        if (name === "qty") obj[name] = Number(value);
+      }
+      console.log(obj);
+      //return obj
+    });
+    prod = valueUpdates;
+    //console.log(prod)
+    //setProducts(prod)
+  };
+
+  const updateField = (cli: productsClass) => {
+    setSProduct(cli)
   }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, name: keyof productsClass) => {
-    const value = e.target.value
-    const nC: productsClass =  {...singleProduct}
-    if (name === "_id") throw new Error("_id fields are mutable fields")
-    if (name === "description") nC[name] = value 
-    if (name === "rate") nC[name] = value
-    if (name === "type") nC[name] = value
-    if (name === "qty") nC[name] = Number(value)
-    setSProduct(nC)
-  }
-
-  const postNewProduct = async ( ): Promise<void> => {
+  const postNewProduct = async (): Promise<void> => {
     try {
-      const newProduct = await postRequest('api/products', singleProduct)
-      if (newProduct.data) alert('new Product Added')
+      const newProduct = await postRequest("api/products", singleProduct);
+      if (newProduct.data) alert("new Product Added");
     } catch (error: any) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
-  const handleDelete = async(id : string): Promise<void> => {
-    handleOpenDialog()
+  const handleDelete = async (id: string): Promise<void> => {
+    handleOpenDialog();
     if (dialogResponse === true) {
       try {
-        const productData = await deleteRequest(`api/products/?product_id=${id}`)
-        if (productData.data) alert(`product <${id}> has been removed from database`)
-    } catch (error: any) {
-      console.log(error.message)
-    }
+        const productData = await deleteRequest(
+          `api/products/?product_id=${id}`
+        );
+        if (productData.data)
+          alert(`product <${id}> has been removed from database`);
+      } catch (error: any) {
+        console.log(error.message);
+      }
     } else {
-      return 
+      return;
     }
-  }
+  };
+
+  const updateProduct = async (id: string): Promise<void> => {
+    const { _id, ...ProUpdate } = singleProduct; // REMOVE ID FIELD
+    try {
+      const UpdatedProduct = await patchRequest(
+        `api/products/?product_id=${id}`,
+        ProUpdate
+      );
+      if (UpdatedProduct.data) alert(`updated Product ${id}`);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const deleteFromSelectedProducts = (id: string) => {
     dispatch(
       updateProducts({
-        Id: id
+        Id: id,
       })
-    )
-  }
+    );
+  };
 
+  /**Controlled Renders */
   const renderProducts = () => {
     return isLoading ? (
       <Center>
@@ -148,7 +222,7 @@ const products: NextPage = () => {
       </Center>
     ) : (
       [
-        products.map((cli) => {
+        products.map((cli, index) => {
           return (
             <Card>
               <Row>
@@ -160,14 +234,18 @@ const products: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
-                  <Checkbox 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCheckboxClick(e, cli)}
-                  />
-                  <Typography id={"clientname"}>{cli.description}</Typography>
+                  <Tooltip title="Select Product">
+                    <Checkbox
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleProductSelect(e, cli)
+                      }
+                    />
+                  </Tooltip>
+                  <Typography color="#555">{cli.description}</Typography>
                 </div>
-                <Typography id={"email"}>{cli.rate}</Typography>
-                <Typography id={"email"}>{cli.type}</Typography>
-                <Typography id={"email"}>{cli.qty}</Typography>
+                <Typography color="#555">{cli.rate}</Typography>
+                <Typography color="#555">{cli.type}</Typography>
+                <Typography color="#555">{cli.qty}</Typography>
                 <div
                   style={{
                     display: "flex",
@@ -176,25 +254,33 @@ const products: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
-                  <Tooltip title="Create Invoice for this product">
+                  <Tooltip title="Select Product">
                   <ButtonComponent
-                    icon={<Add />}
-                    customStyle={{
-                      borderRadius: "50%",
-                        boxShadow: "0",
-                        background: "red",
-                    }}
-                  />
+                icon={<Add/>}
+                customStyle={{borderRadius: '30px', boxShadow: "0", background: 'red'}}
+                />
                   </Tooltip>
-                  
-                  <IconButton>
+
+                  <IconButton
+                    onClick={
+                      () => {
+                        handleUpdateModal(); 
+                        updateField(cli);
+                      }
+                      //updateProduct(cli._id ? cli._id.toString() : "")
+                    }
+                  >
                     <Tooltip title="Update">
                       <Edit />
                     </Tooltip>
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(cli._id ? cli._id.toString() : "")}>
-                  <Tooltip title="Delete">
-                    <Clear />
+                  <IconButton
+                    onClick={() =>
+                      handleDelete(cli._id ? cli._id.toString() : "")
+                    }
+                  >
+                    <Tooltip title="Delete">
+                      <Clear />
                     </Tooltip>
                   </IconButton>
                 </div>
@@ -207,10 +293,9 @@ const products: NextPage = () => {
   };
 
   return (
-      <Layout>
+    <Layout>
       <Container>
-        {
-         data && products.length < 1 ? (
+        {data && products.length < 1 ? (
           <Center>
             <div
               style={{
@@ -220,7 +305,7 @@ const products: NextPage = () => {
                 alignItems: "center",
               }}
             >
-              <Image src="/485.svg" width={400} height={400}/>
+              <Image src="/485.svg" width={400} height={400} />
               {/**<Typography> No Products Yet</Typography> */}
               <ButtonComponent
                 innerText="Product"
@@ -234,15 +319,17 @@ const products: NextPage = () => {
             <Top>
               <Typography>Products</Typography>
               <div>
-              <AsyncSelect />
-              <ButtonComponent innerText="New Invoice" 
-              icon={<AddCircle />} 
-              onClick={handleOpenSFModal}
-              />
-              <ButtonComponent innerText="New Product"
-              icon={<AddCircle />} 
-              onClick={handleOpenModal}
-              />
+                <AsyncSelect />
+                <ButtonComponent
+                  innerText="New Invoice"
+                  icon={<AddCircle />}
+                  onClick={handleOpenSFModal}
+                />
+                <ButtonComponent
+                  innerText="New Product"
+                  icon={<AddCircle />}
+                  onClick={handleOpenModal}
+                />
               </div>
             </Top>
             <FlexContainer>
@@ -251,7 +338,11 @@ const products: NextPage = () => {
           </React.Fragment>
         )}
       </Container>
-      <ModalComponent OpenModal={openModal} handleCloseModal={handleCloseModal} pd={'2rem'}>
+      <ModalComponent
+        OpenModal={openModal}
+        handleCloseModal={handleCloseModal}
+        pd={"2rem"}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography>New Product</Typography>
           <Divider />
@@ -261,28 +352,94 @@ const products: NextPage = () => {
               display: "flex",
               flexDirection: "column",
               gap: "1rem",
+              width: "100%",
             }}
           >
-            <TextField variant="standard" placeholder="Product Description" 
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'description')} />
-            <TextField variant="standard" placeholder="Price / rate"
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'rate')}
-             />
-            <TextField variant="standard" placeholder="type ofproduct"
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'type')}
-             />
-             <TextField type="number" variant="standard" placeholder="quantity - (in-stock)"
-             onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'qty')}
-             />
+            <ControlledInput
+              placeholder="Product Description"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "description")
+              }
+            />
+            <ControlledInput
+              placeholder="Price / rate"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "rate")
+              }
+            />
+            <ControlledInput
+              placeholder="type ofproduct"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "type")
+              }
+            />
+            <ControlledInput
+              type="number"
+              placeholder="quantity - (in-stock)"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "qty")
+              }
+            />
           </div>
-          <ButtonComponent innerText="Save" onClick={postNewProduct} />
+          <ButtonComponent
+            customStyle={{ background: "green" }}
+            innerText="Save"
+            onClick={postNewProduct}
+          />
+        </div>
+      </ModalComponent>
+
+      {/**Update Modal */}
+      <ModalComponent
+        OpenModal={openUpdateModal}
+        handleCloseModal={handleCloseUpdateModal}
+        pd={"2rem"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <Typography>Update Product</Typography>
+          <Divider />
+          <div
+            style={{
+              padding: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              width: "100%",
+            }}
+          >
+            <ControlledInput type={"text"} 
+            value={singleProduct.description}
+            onChange={(e: ChangeEvent<HTMLInputElement> ) => handleChange(e, "description")}
+            />
+            <ControlledInput type={"text"}
+            value={singleProduct.rate}
+             onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e, "rate")}
+             />
+            <ControlledInput type={"text"} 
+            value={singleProduct.type}
+             onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e, "type")}
+            />
+            <ControlledInput type={"number"}
+            value={singleProduct.qty}
+             onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e, "qty")}
+            />
+            <ButtonComponent
+              customStyle={{ background: "green" }}
+              onClick={() => updateProduct(singleProduct._id?.toString()!)}
+              innerText="Update"
+            />
+          </div>
         </div>
       </ModalComponent>
 
       {/**create from selected products */}
-      <ModalComponent OpenModal={openSFModal} handleCloseModal={handleCloseSFModal} pd={'2rem'}>
+      <ModalComponent
+        OpenModal={openSFModal}
+        handleCloseModal={handleCloseSFModal}
+        pd={"2rem"}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <Typography>New Invoice</Typography>
+          <Typography>New Invoice For Product</Typography>
           <Divider />
           <div
             style={{
@@ -290,63 +447,78 @@ const products: NextPage = () => {
               display: "flex",
               flexDirection: "column",
               gap: "1rem",
-              width: '100%'
+              width: "100%",
             }}
           >
-            {SelectedProducts.product?.map((pr)=> {
+            {SelectedProducts.product?.map((pr) => {
               return (
                 <div
-                style={{
-                  width: '100%',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  background: 'whitesmoke',
-                  //boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
-                  justifyContent: 'space-between',
-                  padding: '.5rem',
-                  alignItems: 'center',
-                  gap: '.5rem'
-              }}
+                  style={{
+                    width: "100%",
+                    borderRadius: "8px",
+                    display: "flex",
+                    background: "whitesmoke",
+                    //boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
+                    justifyContent: "space-between",
+                    padding: ".5rem",
+                    alignItems: "center",
+                    gap: ".5rem",
+                  }}
                 >
-                  <div style={{display: 'flex', gap: '1rem'}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "1rem",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
                     <Avatar
-                  name={pr.description}
-                  color="#2124B1"
-                  round="8px"
-                  size="40px"
-                />
-                  <Typography>
-                    {pr.description}
-                  </Typography>
+                      name={pr.description}
+                      color="#2124B1"
+                      round="8px"
+                      size="40px"
+                    />
+                    <Typography>{pr.description}</Typography>
                   </div>
-                 
-                  <Tooltip title="Delete" onClick={() => deleteFromSelectedProducts(pr._id?.toString()!)}>
+
+                  <Tooltip
+                    title="Delete"
+                    onClick={() =>
+                      deleteFromSelectedProducts(pr._id?.toString()!)
+                    }
+                  >
                     <Clear />
-                    </Tooltip>
+                  </Tooltip>
                 </div>
-              )
+              );
             })}
             <Typography>Note</Typography>
             <Divider />
             <Typography variant="subtitle2" color="#555">
-              Invoice will be generated for this products <br/>
-              You cannot edit the item description and rate <br/>
-              You can only change the quantity of the items
+              Invoice will be generated for this products You cannot edit the
+              item description and rate You can only change the quantity of the
+              items
             </Typography>
-            <Link href={{
-              pathname: `http://localhost:3000/invoice/create`,
-            }} >
-              <ButtonComponent innerText="Create Invoice"/>
+            <Link
+              href={{
+                pathname: `http://localhost:3000/invoice/create`,
+              }}
+            >
+              <ButtonComponent
+                innerText="Create Invoice"
+                btnDisabled={SelectedProducts.product.length > 0 ? false : true}
+              />
             </Link>
-        </div>
+          </div>
         </div>
       </ModalComponent>
-      <AlertDialogSlide 
-      dialogTitle="Delete Product Data" 
-      dialogText="Are you sure you want to delete this data?"
-      openDialog={openDialog}
-      handleNoCloseDialog={handleNoCloseDialog}
-      handleYesCloseDialog={handleYesCloseDialog}
+      <AlertDialogSlide
+        dialogTitle="Delete Product Data"
+        dialogText="Are you sure you want to delete this data?"
+        openDialog={openDialog}
+        handleNoCloseDialog={handleNoCloseDialog}
+        handleYesCloseDialog={handleYesCloseDialog}
       />
     </Layout>
   );

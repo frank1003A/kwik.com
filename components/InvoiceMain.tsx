@@ -1,4 +1,4 @@
-import React, { FC, SyntheticEvent, useState } from "react";
+import React, { FC, LegacyRef, SyntheticEvent, useState } from "react";
 import styles from "../styles/Invoice.module.css";
 import { Typography } from "@mui/material";
 import { Divider } from "@mui/material";
@@ -45,7 +45,10 @@ interface Props {
     name: keyof InvoiceItems
   ) => void;
   style?: React.CSSProperties,
-  contentEditable?: boolean
+  contentEditable?: boolean,
+  id?:string,
+  clientInputRef?:LegacyRef<HTMLDivElement>,
+  customStyle?: React.CSSProperties
 }
 
 const invoiceMain = React.forwardRef(
@@ -63,7 +66,10 @@ const invoiceMain = React.forwardRef(
       handleDetailInput,
       handleItemInput,
       style,
-      contentEditable
+      contentEditable,
+      id,
+      clientInputRef,
+      customStyle
     }: Props,
     ref: React.LegacyRef<HTMLDivElement>
   ) => {
@@ -85,6 +91,7 @@ const invoiceMain = React.forwardRef(
                 invoice={invoice}
                 contentEditable={contentEditable}
                 handleDetailInput={handleDetailInput}
+                customStyle={customStyle}
               />
             }
           />
@@ -103,17 +110,24 @@ const invoiceMain = React.forwardRef(
               invoice={invoice}
               handleDetailInput={handleDetailInput}
               options={options}
+              contentEditable={contentEditable}
+              customStyle={customStyle}
             />
           </div>
 
-          <div className={styles.invInfo}>
+          <div className={styles.invInfo} ref={clientInputRef}>
             <RecieverSection
               invoice={invoice}
               handleDetailInput={handleDetailInput}
+              contentEditable={contentEditable}
+              id={id}
+              customStyle={customStyle}
             />
             <InvoiceDescription
               handleDetailInput={handleDetailInput}
               invoice={invoice}
+              contentEditable={contentEditable}
+              customStyle={customStyle}
             />
           </div>
 
@@ -122,7 +136,7 @@ const invoiceMain = React.forwardRef(
               height: "auto",
               width: "100%",
               overflow: "auto",
-              background: "#fff",
+              background: "transparent",
             }}
           >
             <InvoiceTable
@@ -133,6 +147,7 @@ const invoiceMain = React.forwardRef(
               itemArr={itemArr}
               removeItem={removeItem}
               handleItemInput={handleItemInput}
+              customStyle={customStyle}
             />
 
             <div className={styles.btnAndTotal}>
@@ -143,12 +158,16 @@ const invoiceMain = React.forwardRef(
                 invoice={invoice}
                 handleDetailInput={handleDetailInput}
                 tR={tR}
+                contentEditable={contentEditable}
+                customStyle={customStyle}
               />
             </div>
 
             <NotesContainer
               invoice={invoice}
               handleDetailInput={handleDetailInput}
+              contentEditable={contentEditable}
+              customStyle={customStyle}
             />
 
             <br />
@@ -156,6 +175,8 @@ const invoiceMain = React.forwardRef(
             <TandC_Container
               invoice={invoice}
               handleDetailInput={handleDetailInput}
+              contentEditable={contentEditable}
+              customStyle={customStyle}
             />
           </div>
         </div>

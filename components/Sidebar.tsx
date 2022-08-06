@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import Button from "./Button";
 import { useRouter } from "next/router";
-import { Badge, Box, Chip } from "@mui/material";
+import { Badge, Box, Chip, Divider } from "@mui/material";
 import Modal from "./Modal";
 import Image from "next/image";
 import { Typography, Tooltip, FormControlLabel, Checkbox } from "@mui/material";
@@ -27,9 +27,13 @@ interface Props {
 const Sidebar = ({ id }: Props) => {
   const router = useRouter();
   const [optionModal, setOptionModal] = useState<boolean>(false);
+  const [settingsModal, setSettingsModal] = useState<boolean>(false);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
+
+  const openSModal = (): void => setSettingsModal(true);
+  const closeSModal = (): void => setSettingsModal(false);
 
   return (
     <Box
@@ -37,6 +41,15 @@ const Sidebar = ({ id }: Props) => {
       id={id}
       sx={{ display: { xs: "none", md: "flex" } }}
     >
+      <div className={styles.upperContainer}>
+        <Button
+          className={styles.btnCreate}
+          innerText={"KWIK CREATE"}
+          onClick={() => openOModal()}
+          icon={<CreateRounded />}
+        />
+      </div>
+
       <div className={styles.nav}>
         <Link href={"/"}>
           <div
@@ -110,18 +123,66 @@ const Sidebar = ({ id }: Props) => {
             </div>
             <p>Messages</p>
             <Chip
-              label={"new"}
-              sx={{ borderRadius: "4px", height: '30px', width: '30px', fontSize: 'xx-small' }}
+              label={"2"}
+              sx={{
+                borderRadius: "4px",
+                height: "30px",
+                width: "30px",
+                fontSize: "xx-small",
+              }}
               variant="filled"
               color="error"
               size="medium"
-            ></Chip>
+            />
           </div>
         </Link>
       </div>
 
-      {/**Modal */}
+      <div className={styles.upperContainer}>
+        <Button
+          className={styles.btnCreate}
+          innerText={"Settings"}
+          onClick={() => openSModal()}
+          icon={<Settings/>}
+        />
+      </div>
+
+      {/**Create Invoice Modal */}
       <Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
+        <div className={styles.optionContainer}>
+            <div className={styles.option}>
+            <Typography variant="body1" color="initial">New Invoice</Typography>
+            <Divider/>
+            <Image src={'/485.svg'} width={450} height={300} />
+              <div className={styles["card"]}>
+              <Link href="http://localhost:3000/invoice/create">
+                <Typography>Kwik Default Template</Typography>
+                </Link>
+              </div>
+            </div>
+        </div>
+      </Modal>
+
+      {/**Settings Modal */}
+      <Modal OpenModal={settingsModal} handleCloseModal={closeSModal} pd="">
+        <div
+        style={{
+          display:'flex',
+          flexDirection: 'row',
+          gap: '1rem'
+        }}
+        >
+          <Typography variant="body1" color="initial">Settings</Typography>
+          <Divider/>
+        </div>
+      </Modal>
+    </Box>
+  );
+};
+
+export default Sidebar;
+
+/**<Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
         <div className={styles.optionContainer}>
           <Link href="/kwik_creator">
             <div className={styles.option}>
@@ -144,12 +205,7 @@ const Sidebar = ({ id }: Props) => {
             </div>
           </Link>
         </div>
-      </Modal>
-    </Box>
-  );
-};
-
-export default Sidebar;
+      </Modal> */
 
 /**
 <div className={styles.sd}>

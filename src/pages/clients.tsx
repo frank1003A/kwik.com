@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { NextPage } from "next";
-import { Container } from "../../components/styled-component/Global";
+import { Container, ControlledInput } from "../../components/styled-component/Global";
 import Layout from "../../components/Layout";
 import {
   Card,
@@ -226,15 +226,15 @@ const clients: NextPage = () => {
               gap: "1rem",
             }}
           >
-            <TextField variant="standard" placeholder="fullname" 
+            <ControlledInput placeholder="fullname" 
             onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'fullname')} />
-            <TextField variant="standard" placeholder="email"
+            <ControlledInput placeholder="email"
             onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'email')}
              />
-            <TextField variant="standard" placeholder="buisness name, if any"
+            <ControlledInput placeholder="buisness name, if any"
             onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'buisness')}
              />
-             <TextField variant="standard" placeholder="+234_phonenumber"
+             <ControlledInput placeholder="+234_phonenumber"
             onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'phone')}
              />
           </div>

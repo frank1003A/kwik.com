@@ -1,4 +1,4 @@
-import { Divider, Typography } from "@mui/material";
+import { Checkbox, Divider, FormControlLabel, Typography } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
@@ -58,6 +58,7 @@ const createInvoice: NextPage<Props> = () => {
   const [passed, setPassed] = useState<boolean>(false);
   const [passedClient, setPassedClient] = useState<boolean>(false);
   const [genNo, setGenNo] = useState<boolean>(false);
+  const [override, setOverride] = useState<boolean>(false);
 
   const SelectedProducts = useSelector((state: RootState) => state.product)
   const SelectedClient = useSelector((state: RootState) => state.client)
@@ -74,7 +75,6 @@ const createInvoice: NextPage<Props> = () => {
     if (InvoiceRepo) {
       const resInv: Invoice = { ...InvoiceRepo };
       resInv.invoiceTitle = generateInvoiceNo();
-      console.log(resInv.invoiceTitle);
       setInvoiceRepo(resInv);
     } else {
       return;
@@ -90,7 +90,7 @@ const createInvoice: NextPage<Props> = () => {
    * we need to pass the products selected from products page
    *  to itemArr for our invoice to display.
    *  so we create a new method to eliminate type error
-   *  this method will render data passed from useContext to accomodate
+   *  this method will render data passed from ReduxToolkit to accomodate
    *  the model of items in our Invoice.
    */
   const handleProductTransfer = () => {
@@ -111,7 +111,7 @@ const createInvoice: NextPage<Props> = () => {
 
   /**
    *  Once the Product data has been passed to our invoice.
-   *  We need to clear the useContext array, so when users
+   *  We need to clear the ReduxToolkit array, so when users
    *  navigate back to product page, they don't see the same
    *  product in the product selected list
    */
@@ -125,6 +125,7 @@ const createInvoice: NextPage<Props> = () => {
       resInv.billTo = SelectedClient.client?.buisness!
       resInv.clientName = SelectedClient.client?.fullname!
       setInvoiceRepo({...resInv});
+      setPassedClient(true)
   }
 
   useEffect(() => {
@@ -143,6 +144,14 @@ const createInvoice: NextPage<Props> = () => {
     clearProductData();
   },[passed]);
 
+
+  /**
+   * I need to handle the editability of 
+   * products and clients info from 
+   * products and clients page 
+   * will do that when this goes live
+  */
+  
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
       setInvComp(false);
@@ -157,20 +166,6 @@ const createInvoice: NextPage<Props> = () => {
   useEffect(() => {
     setInvComp(true);
   }, []);
-
-  const parentStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  };
-
-  const createInvPrompt: JSX.Element[] = [
-    <div>
-      <Image src="/createInv.svg" width={300} height={300} />
-      <Typography>None Yet</Typography>
-      <ButtonComponent innerText="Create Invoice" />
-    </div>,
-  ];
 
   const handlesucClose = (
     event: Event | SyntheticEvent<any, Event>,
@@ -374,12 +369,33 @@ const createInvoice: NextPage<Props> = () => {
         <div className={styles.fileAndEditor}>
           {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
           <Editorbar
+           editController={
+            <FormControlLabel
+                label={`Override`}
+                sx={{
+                  margin: "0",
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontWeight: "500",
+                  textTransform: "capitalize",
+                  color: "#555",
+                  fontSize: "0.875rem",
+                  lineHeight: "1.5",
+                  letterSpacing: "0.00938em",
+                }}
+                labelPlacement="end"
+                control={
+                <Checkbox color="primary"  
+                onChange={() => setOverride(true)}/>
+              }
+              />
+           }
             saveText="SAVE"
             handlePrint={() => handlePrint()}
             handleSave={() => handleInvoicePost()}
           />
           <div className={styles.editorFlex}>
             <InvoiceMain
+              style={{ background: background, fontFamily: font }}
               ref={componentRef}
               options={countryList}
               pdfMode={editPdf}
@@ -503,3 +519,43 @@ export default createInvoice;
   })
   return data
 } */
+
+ /**Disale Input when passed from product or client page */
+  /**const handleClientEditableInput = (elm: HTMLDivElement) => {
+    if (elm) {
+      const elements = elm.children;
+      const len = elements.length;
+      for (let i = 0; i < len; i++) {
+        const chld = elements[i].children;
+        const divOne = chld[3].children[0].children
+        for (let i = 0; i < divOne.length; i++){
+          if(passedClient === true){
+            const inputs = divOne[i] as HTMLInputElement
+            override === false ? inputs.disabled = true : inputs.disabled = false
+          }
+        }
+      }
+    }
+  }; */
+
+  /**const clientInputRef = useRef<HTMLDivElement | null>(null)
+
+  /**
+   * Disable Input when data is passed from client page
+   * This is to control the integrity of data from the backend 
+   * If the data passed is easily editable, then it means the data
+   * at the client database is lacking some level of data integrirty
+   * 
+  const handleClientEditableInput = (elm: HTMLDivElement) => {
+    const parent = elm.children[0].children
+    const len = parent.length
+    for (let i = 0; i < len; i++){
+        let inputs = parent[i] as HTMLInputElement
+        override === false ? inputs.disabled = true : inputs.removeAttribute('disabled')
+    }
+  }
+
+  useEffect(() => {
+    const inputs = clientInputRef.current!
+    handleClientEditableInput(inputs)
+  }, [override]) */

@@ -18,6 +18,7 @@ export const PropertyEditor = styled.div`
 export const PropertiesContainer = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 `;
 
 export const Header = styled.section`

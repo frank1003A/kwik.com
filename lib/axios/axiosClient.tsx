@@ -25,7 +25,7 @@ export const postRequest = async (URL: string, payload: any ) => {
 /**@alias `patchRequest` axios patch request base config */
 export const patchRequest = async (URL: string, payload: any ) => {
     const response = await api.patch(`/${URL}`, payload).then(response => response);
-    return response.data;
+    return response;
   }
   
 /**@alias `deleteRequest` axios delete request base config: url + id*/

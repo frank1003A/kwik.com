@@ -7,9 +7,10 @@ interface Props {
     value: string | number | readonly string[] | undefined,
     onChange: React.ChangeEventHandler<HTMLInputElement> | undefined,
     editPdf: boolean,
+    customStyle?: React.CSSProperties
 }
 
-const EditableInput = ({ placeholder, value, onChange, editPdf }: Props) => {
+const EditableInput = ({ placeholder, value, onChange, editPdf, customStyle }: Props) => {
   return (
     <>
       {editPdf ? (
@@ -19,6 +20,7 @@ const EditableInput = ({ placeholder, value, onChange, editPdf }: Props) => {
           className={styles["input"]}
           placeholder={placeholder}
           value={value || ''}
+          style={customStyle}
           onChange={onChange}
         />
       )}

@@ -110,6 +110,7 @@
   width: 250px;
   font-family: 'roboto';
   font-size: medium;
+  background: transparent;
   vertical-align: middle;
 }
 
@@ -203,6 +204,7 @@
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
   font-size: 1rem;
+  background: transparent;
   line-height: 1.5;
   color: #555;
   letter-spacing: 0.00938em;
@@ -229,7 +231,7 @@
   font-size: 3rem;
   line-height: 1.167;
   letter-spacing: 0em;
-  width: 300px;
+  width: 400px;
   text-align: end;
   /* margin-left: auto; */
 }
@@ -241,6 +243,7 @@
   font-size: 1rem;
   width: fit-content;
   line-height: 1.5;
+  background: transparent;
   letter-spacing: 0.00938em;
   width: 100px;
   border: 1px dotted transparent;
@@ -254,6 +257,7 @@
   border-radius: 0 !important;
   box-shadow: none !important;
   width: 100%;
+  background: transparent;
   border-bottom: 1px solid #ddd;
   overflow-x: auto;
 }

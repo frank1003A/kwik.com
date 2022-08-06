@@ -11,9 +11,20 @@ interface Props {
   icon?: JSX.Element,
   onMouseEnter?: React.MouseEventHandler,
   customStyle?: React.CSSProperties
+  btnDisabled? :boolean
 }
 
-const ButtonComponent = ({innerText, icon, compvariant, className, onClick, id, onMouseEnter, customStyle}: Props) => {
+const ButtonComponent = ({
+  innerText, 
+  icon, 
+  compvariant, 
+  className, 
+  onClick, 
+  id, 
+  onMouseEnter, 
+  customStyle,
+  btnDisabled
+}: Props) => {
 
   return (
     <div>
@@ -22,6 +33,7 @@ const ButtonComponent = ({innerText, icon, compvariant, className, onClick, id, 
         className={!className ? styles.muiButton : className}
         onClick={onClick}
         sx={customStyle}
+        disabled={!btnDisabled ? false : btnDisabled}
         onMouseEnter={onMouseEnter}
         >{icon}{innerText}</Button>
     </div>

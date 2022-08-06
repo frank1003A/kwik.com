@@ -5,7 +5,9 @@ import {
   Divider,
   FormControlLabel,
   Switch,
-  Typography, MenuItem, TextField,
+  Typography,
+  MenuItem,
+  TextField,
 } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
@@ -41,7 +43,7 @@ import type { NextPage } from "next";
 import useGetter from "../../../hooks/useGetter";
 import { SquareLoader } from "react-spinners";
 import Editorbar from "../../../components/Editorbar";
-import { CompactPicker } from "react-color";
+import { CirclePicker, CompactPicker } from "react-color";
 import { PhotoFilter } from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
 
@@ -60,8 +62,17 @@ const EditInvoice: NextPage = () => {
   const [showEditComp, setShowEditComp] = useState<boolean>(false);
   const [edcActive, setEdcActive] = useState<boolean>(false);
   const [invComp, setInvComp] = useState<boolean>(false);
+
+  /**
+   * edtable true means the core input element is disabled.
+   * function handleEditable() takes care of the core logic
+   * not the best or simple logic, but it works
+  **/
   const [editable, setEditable] = useState<boolean>(true);
+  const [notifyEdit, setNotifyEdit] = useState<boolean>(false)
+
   const [background, setBackground] = useState<string>("#fff");
+  const [fontColor, setFontColor] = useState<string>("#555");
   const [font, setFont] = useState("");
   const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
   const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
@@ -84,6 +95,17 @@ const EditInvoice: NextPage = () => {
 
   const handleClose = (): void => {
     setdisplayColorPicker(false);
+  };
+
+  const handleOpenNotifyEdit = () => setNotifyEdit(true)
+  const handleCloseNotifyEdit = (
+    event: Event | SyntheticEvent<any, Event>,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNotifyEdit(false);
   };
 
   const handleActiveSideComponent = (): void => {
@@ -430,7 +452,7 @@ const EditInvoice: NextPage = () => {
         `api/invoices/?invoice_id=${query.invoice_id}`,
         InvUpdate
       );
-      if (UpdatedInvoice) alert(`updated invoice ${query.invoice_id}`);
+      if (UpdatedInvoice.data) alert(`updated invoice ${query.invoice_id}`);
     } catch (error: any) {
       console.log(error);
     }
@@ -492,6 +514,28 @@ const EditInvoice: NextPage = () => {
       });
   }, []);
 
+  const handleEditable = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value: boolean = e.target.checked;
+    /**
+     * If you are looking at this and wondering: 
+     * WTH is this ?
+     * You are not alone "😜"
+     */
+
+    if (value === false) {
+      //const setEditable: (value: React.SetStateAction<boolean>) => void
+        setEditable(true);
+
+        /**Nothing special here 
+         * just informing user of 
+         * current mode */
+
+    } else if (value === true) {
+         setEditable(false);
+         handleOpenNotifyEdit();
+    }
+  };
+
   return (
     <Layout>
       <Container>
@@ -499,18 +543,40 @@ const EditInvoice: NextPage = () => {
           {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
           <Editorbar
             saveText="UPDATE"
+            updateDisabled={editable === false ? false : true}
             handlePrint={() => handlePrint()}
             handleSave={() => updateInvoice()}
             status={dispStats(InvoiceRepo.status!)}
+            editController={
+              <FormControlLabel
+                label={`EDIT`}
+                sx={{
+                  margin: "0",
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontWeight: "500",
+                  textTransform: "capitalize",
+                  color: "#555",
+                  fontSize: "0.875rem",
+                  lineHeight: "1.5",
+                  letterSpacing: "0.00938em",
+                }}
+                labelPlacement="end"
+                control={
+                <Checkbox color="primary"  
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEditable(e)}/>
+              }
+              />
+            }
           />
           <div className={styles.editorFlex}>
             {isLoading ? (
               <SquareLoader style={{ margin: "auto auto auto auto" }} />
             ) : (
               <InvoiceMain
-                style={{ background: background, fontFamily: font }}
+                style={{ background: background}}
                 contentEditable={editable}
                 ref={componentRef}
+                customStyle={{color: fontColor, fontFamily: font}}
                 options={countryList}
                 pdfMode={editPdf}
                 cur={currency}
@@ -557,19 +623,27 @@ const EditInvoice: NextPage = () => {
                 </Property>
                 <Property>
                   <Typography variant="overline" color="#555">
+                    Font Color
+                  </Typography>
+                  <CompactPicker
+                    onChange={(color) => setFontColor(color.hex)}
+                  />
+                </Property>
+                <Property>
+                  <Typography variant="overline" color="#555">
                     Language
                   </Typography>
-                  <div style={{width: '230px', padding: '0px 2px'}}>
-                  <select
-                    name="font"
-                    title="font-Change"
-                    onChange={(e) => setFont(e.target.value)}
-                  >
-                    <option value="sans-serif">English</option>
-                    <option value="monospace">monospace</option>
-                    <option value="fantasy">fantasy</option>
-                    <option value="cursive">cursive</option>
-                  </select>
+                  <div style={{ width: "230px", padding: "0px 2px" }}>
+                    <select
+                      name="font"
+                      title="font-Change"
+                      onChange={(e) => setFont(e.target.value)}
+                    >
+                      <option value="sans-serif">English</option>
+                      <option value="monospace">monospace</option>
+                      <option value="fantasy">fantasy</option>
+                      <option value="cursive">cursive</option>
+                    </select>
                   </div>
                 </Property>
                 <Property>
@@ -594,6 +668,22 @@ const EditInvoice: NextPage = () => {
             sx={{ width: "100%" }}
           >
             <Typography>Invoice Saved</Typography>
+          </Alert>
+        </Snackbar>
+
+        {/**Notify of Editable Status */}
+        <Snackbar
+          open={notifyEdit}
+          autoHideDuration={4000}
+          onClose={handleCloseNotifyEdit}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert
+            onClose={handleCloseNotifyEdit}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            <Typography>Content is now Editable</Typography>
           </Alert>
         </Snackbar>
 
