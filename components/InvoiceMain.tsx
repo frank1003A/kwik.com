@@ -148,10 +148,11 @@ const invoiceMain = React.forwardRef(
               removeItem={removeItem}
               handleItemInput={handleItemInput}
               customStyle={customStyle}
+              contentEditable={contentEditable}
             />
 
             <div className={styles.btnAndTotal}>
-              <Button_Add addTC={addTC} />
+              <Button_Add addTC={addTC} contentEditable={contentEditable} />
 
               <TotalContainer
                 cur={cur}

@@ -18,8 +18,21 @@ import { useRouter } from "next/router";
 import { Badge, Box, Chip, Divider } from "@mui/material";
 import Modal from "./Modal";
 import Image from "next/image";
-import { Typography, Tooltip, FormControlLabel, Checkbox } from "@mui/material";
+import {
+  Typography,
+  Tooltip,
+  FormControlLabel,
+  Checkbox,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  TextField,
+  Switch,
+} from "@mui/material";
 import SpeedDial from "./SpeedDial";
+import { Property } from "./styled-component/editorbar";
+import { ControlledInput } from "./styled-component/Global";
+import SettingComponent from './Settings'
 
 interface Props {
   id?: string;
@@ -143,38 +156,31 @@ const Sidebar = ({ id }: Props) => {
           className={styles.btnCreate}
           innerText={"Settings"}
           onClick={() => openSModal()}
-          icon={<Settings/>}
+          icon={<Settings />}
         />
       </div>
 
       {/**Create Invoice Modal */}
       <Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
         <div className={styles.optionContainer}>
-            <div className={styles.option}>
-            <Typography variant="body1" color="initial">New Invoice</Typography>
-            <Divider/>
-            <Image src={'/485.svg'} width={450} height={300} />
-              <div className={styles["card"]}>
+          <div className={styles.option}>
+            <Typography variant="body1" color="initial">
+              New Invoice
+            </Typography>
+            <Divider />
+            <Image src={"/485.svg"} width={450} height={300} />
+            <div className={styles["card"]}>
               <Link href="http://localhost:3000/invoice/create">
                 <Typography>Kwik Default Template</Typography>
-                </Link>
-              </div>
+              </Link>
             </div>
+          </div>
         </div>
       </Modal>
 
       {/**Settings Modal */}
       <Modal OpenModal={settingsModal} handleCloseModal={closeSModal} pd="">
-        <div
-        style={{
-          display:'flex',
-          flexDirection: 'row',
-          gap: '1rem'
-        }}
-        >
-          <Typography variant="body1" color="initial">Settings</Typography>
-          <Divider/>
-        </div>
+        <SettingComponent/>
       </Modal>
     </Box>
   );

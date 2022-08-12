@@ -346,7 +346,7 @@ export const InvoiceTable: FC<TableProps> = ({
                     onChange={(e) => handleItemInput(e, i, "description")}
                   />
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="center" aria-disabled>
                   <input
                     className={styles.tableInput}
                     type="text"
@@ -389,13 +389,14 @@ export const InvoiceTable: FC<TableProps> = ({
 };
 
 /**default button for adding new item line*/
-export const Button_Add: FC<AddBtnProps> = ({ addTC }) => {
+export const Button_Add: FC<AddBtnProps> = ({ addTC,contentEditable }) => {
   return (
     <div className={styles.addBtn}>
       <ButtonComponent
         id={styles.btnadd}
         onClick={() => addTC()}
         icon={<AddIcon />}
+        btnDisabled={!contentEditable ? false : contentEditable}
       />
     </div>
   );

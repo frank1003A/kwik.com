@@ -8,6 +8,8 @@ import {
   Edit,
   EditAttributes,
   PictureAsPdf,
+  Percent,
+  Settings,
 } from "@mui/icons-material";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
@@ -17,7 +19,8 @@ interface Props {
   saveText?: string;
   status?: ReactNode;
   editController?: JSX.Element,
-  updateDisabled?: boolean
+  updateDisabled?: boolean,
+  handleVat?: () => void
 }
 
 const Editorbar: FC<Props> = ({
@@ -26,7 +29,8 @@ const Editorbar: FC<Props> = ({
   saveText,
   status,
   editController,
-  updateDisabled
+  updateDisabled,
+  handleVat
 }) => {
   return (
     <div className={styles.editorContainer}>
@@ -47,8 +51,9 @@ const Editorbar: FC<Props> = ({
 
       <ButtonComponent
         className={btnStyles.muiButtonBackground}
-        icon={<EditAttributes />}
-        innerText="COLOR SCHEME"
+        icon={<Settings />}
+        innerText="Custom Settings"
+        onClick={handleVat}
       />
 
       {editController}

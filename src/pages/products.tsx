@@ -50,14 +50,11 @@ import useLocalStorage from "../../hooks/localStorage";
 import Link from "next/link";
 import styles from "../../styles/Home.module.css";
 import { useRouter } from "next/router";
-import {
-  ContextProvider,
-  ProductSelectedContext,
-} from "../../helper/context/sp/ContextProdvider";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "./redux/hooks";
 import { updateProducts, updateProductSelected } from "./redux/productSlice";
 import { RootState } from "./redux/store";
+import { Transition } from "react-transition-group";
 
 const products: NextPage = () => {
   /**Get request with swr */
@@ -70,6 +67,7 @@ const products: NextPage = () => {
   });
   const [dialogResponse, setDialogResponse] = useState<boolean>(false);
   const [updateValue, setUpdateValue] = useState<string[]>([]);
+  const [inProps, setIProp]= useState<boolean>(false)
 
   const SelectedProducts = useSelector((state: RootState) => state.product);
   const dispatch = useAppDispatch();
@@ -264,10 +262,9 @@ const products: NextPage = () => {
                   <IconButton
                     onClick={
                       () => {
-                        handleUpdateModal(); 
+                        handleUpdateModal();
                         updateField(cli);
                       }
-                      //updateProduct(cli._id ? cli._id.toString() : "")
                     }
                   >
                     <Tooltip title="Update">
@@ -291,6 +288,18 @@ const products: NextPage = () => {
       ]
     );
   };
+
+  const duration: number = 300;
+
+const defaultStyle: React.CSSProperties = {
+  transition: `opacity ${duration}ms ease-in-out`,
+  opacity: 0,
+}
+
+const transitionStyles = {
+  entering: { opacity: 1 },
+  entered:  { opacity: 1 },
+};
 
   return (
     <Layout>
@@ -452,7 +461,8 @@ const products: NextPage = () => {
           >
             {SelectedProducts.product?.map((pr) => {
               return (
-                <div
+                <Transition in={inProps} duration={duration} addEndListener={() => setIProp(true)}>
+                  <div
                   style={{
                     width: "100%",
                     borderRadius: "8px",
@@ -463,6 +473,8 @@ const products: NextPage = () => {
                     padding: ".5rem",
                     alignItems: "center",
                     gap: ".5rem",
+                    ...defaultStyle,
+                    ...transitionStyles
                   }}
                 >
                   <div
@@ -491,6 +503,7 @@ const products: NextPage = () => {
                     <Clear />
                   </Tooltip>
                 </div>
+                </Transition>
               );
             })}
             <Typography>Note</Typography>

@@ -17,6 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Image from 'next/image';
 import Avatar from 'react-avatar';
+import { UserBadge } from './styled-component/Global';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -59,10 +60,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 interface Props {
-  bg?: string
+  bg?: string,
+  userEmail?: string,
 }
 
-export default function PrimarySearchAppBar({bg}: Props) {
+export default function PrimarySearchAppBar({bg, userEmail}: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -167,8 +169,15 @@ export default function PrimarySearchAppBar({bg}: Props) {
   );
 
   return (
-    <Box sx={{ flexGrow: 1}}>
-      <AppBar sx={{position: 'fixed', background: !bg ? '#fff' : bg, color: '#2124B1', boxShadow: 0}}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar
+        sx={{
+          position: "fixed",
+          background: !bg ? "#fff" : bg,
+          color: "#2124B1",
+          boxShadow: 0,
+        }}
+      >
         <Toolbar>
           <IconButton
             size="large"
@@ -179,32 +188,29 @@ export default function PrimarySearchAppBar({bg}: Props) {
           >
             <MenuIcon />
           </IconButton>
-            <Image src={'/kwik.png'} alt="Kwik Logo" width={128} height={43}/>
+          <Image src={"/kwik.png"} alt="Kwik Logo" width={128} height={43} />
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{ "aria-label": "search" }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+          <Box
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+              justifyContent: "center",
+              alignItems: "center",
+              width: 250,
+            }}
+          >
+            <UserBadge>{userEmail}</UserBadge>
             <IconButton
               size="large"
               edge="end"
@@ -214,15 +220,15 @@ export default function PrimarySearchAppBar({bg}: Props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-             <Avatar 
-          name="Frank Ezene"
-          color="#2124B1"
-          round="50%"
-          size="40px"
-          />
+              <Avatar
+                name="Frank Ezene"
+                color="#2124B1"
+                round="50%"
+                size="40px"
+              />
             </IconButton>
           </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="show more"

@@ -18,49 +18,60 @@ import useGetter from "../../hooks/useGetter";
 import clientClass from "../../model/clients";
 import { ScaleLoader } from "react-spinners";
 import ModalComponent from "../../components/Modal";
-import { deleteRequest, postRequest } from "../../lib/axios/axiosClient";
+import {
+  deleteRequest,
+  patchRequest,
+  postRequest,
+} from "../../lib/axios/axiosClient";
 import { initialClientData } from "../../components/Data/initialData";
 import AlertDialogSlide from "../../components/AlertDialog";
 import { useRouter } from "next/router";
 import useLocalStorage from "../../hooks/localStorage";
 import { useAppDispatch } from "./redux/hooks";
 import { useSelector } from "react-redux";
-import { updateClient } from './redux/clientSlice'
+import { updateClient } from "./redux/clientSlice";
 import { RootState } from "./redux/store";
 
 const clients: NextPage = () => {
   const { data, isError, isLoading } = useGetter("api/clients");
 
-  const router = useRouter()
+  const router = useRouter();
 
   const [clients, setClients] = useState<clientClass[]>([]);
-  const [singleClient, setSCleint] = useState<clientClass>(
-    data ? {...data} : {...initialClientData})
-  const [dialogResponse, setDialogResponse] = useState<string>('')
-  const [contextCreated, setContextCreated] = useState<boolean>(false)
+  const [singleClient, setSClient] = useState<clientClass>(
+    data ? { ...data } : { ...initialClientData }
+  );
+  const [dialogResponse, setDialogResponse] = useState<string>("");
+  const [contextCreated, setContextCreated] = useState<boolean>(false);
 
-  const SelectedClient = useSelector((state: RootState) => state.client)
-  const dispatch =  useAppDispatch()
+  const [openUpdateModal, setopenUpdateModal] = useState(false);
+
+  const handleUpdateModal = () => setopenUpdateModal(true);
+  const handleCloseUpdateModal = () => setopenUpdateModal(false);
+
+  const SelectedClient = useSelector((state: RootState) => state.client);
+  const dispatch = useAppDispatch();
 
   const createSingleClientInvoice = (cli: clientClass) => {
     dispatch(
       updateClient({
-        client: cli
+        client: cli,
       })
-    )
-    setContextCreated(true)
-  }
+    );
+    setContextCreated(true);
+  };
 
   const navigateToInvoiceCeationRoute = () => {
-    if (contextCreated === true) router.push('http://localhost:3000/invoice/create')
-  }
+    if (contextCreated === true)
+      router.push("http://localhost:3000/invoice/create");
+  };
 
- useEffect(() => {
+  useEffect(() => {
     /**Naviagte to route if context client data is retrieved */
-    navigateToInvoiceCeationRoute()
-  }, [contextCreated]) 
+    navigateToInvoiceCeationRoute();
+  }, [contextCreated]);
 
-    /**Modal */
+  /**Modal */
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const handleOpenModal = () => setOpenModal(true);
@@ -75,12 +86,12 @@ const clients: NextPage = () => {
 
   const handleNoCloseDialog = () => {
     setOpenDialog(false);
-    setDialogResponse('No')
+    setDialogResponse("No");
   };
 
   const handleYesCloseDialog = () => {
     setOpenDialog(false);
-    setDialogResponse('Yes')
+    setDialogResponse("Yes");
   };
 
   const setter = () => {
@@ -92,36 +103,56 @@ const clients: NextPage = () => {
     setter();
   }, [data]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, name: keyof clientClass) => {
-    const value = e.target.value
-    const nC =  {...singleClient}
-    if (name !== "_id" && typeof value === "string")
-        nC[name] = value
-    setSCleint(nC)
-  }
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    name: keyof clientClass
+  ) => {
+    const value = e.target.value;
+    const nC = { ...singleClient };
+    if (name !== "_id" && typeof value === "string") nC[name] = value;
+    setSClient(nC);
+  };
 
-  const postNewClient = async ( ): Promise<void> => {
+  const postNewClient = async (): Promise<void> => {
     try {
-      const newClient = await postRequest('api/clients', singleClient)
-      if (newClient.data) alert('new Client added')
+      const newClient = await postRequest("api/clients", singleClient);
+      if (newClient.data) alert("new Client added");
     } catch (error: any) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
-  const deleteClientData = async(id : string): Promise<void> => {
-    handleOpenDialog() // open delete dialog
+  const deleteClientData = async (id: string): Promise<void> => {
+    handleOpenDialog(); // open delete dialog
     if (dialogResponse === "Yes") {
       try {
-        const clientData = await deleteRequest(`api/clients/?client_id=${id}`)
-        if (clientData.data) alert(`client <${id}> has been removed from database`)
+        const clientData = await deleteRequest(`api/clients/?client_id=${id}`);
+        if (clientData.data)
+          alert(`client <${id}> has been removed from database`);
       } catch (error: any) {
-        console.log(error.message)
+        console.log(error.message);
       }
     } else {
-      return
+      return;
     }
-  }
+  };
+
+  const updateField = (cli: clientClass) => {
+    setSClient(cli);
+  };
+
+  const updateCleintData = async (id: string): Promise<void> => {
+    const { _id, ...ClientUpdate } = singleClient; // REMOVE ID FIELD
+    try {
+      const UpdateClient = await patchRequest(
+        `api/clients/?client_id=${id}`,
+        ClientUpdate
+      );
+      if (UpdateClient.data) alert(`updated client ${id}`);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const renderClients = () => {
     return isLoading ? (
@@ -134,38 +165,57 @@ const clients: NextPage = () => {
           return (
             <Card>
               <Row>
-               <div style={{
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                gap: '.5rem'
-                }}>
-               <Avatar
-                  name={cli.fullname}
-                  color="#2124B1"
-                  round="4px"
-                  size="40px"
-                />
-                <Typography id={"clientname"}>{cli.fullname}</Typography>
-               </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: ".5rem",
+                  }}
+                >
+                  <Avatar
+                    name={cli.fullname}
+                    color="#2124B1"
+                    round="4px"
+                    size="40px"
+                  />
+                  <Typography id={"clientname"}>{cli.fullname}</Typography>
+                </div>
                 <Typography id={"email"}>{cli.email}</Typography>
                 <Typography id={"email"}>{cli.buisness}</Typography>
                 <Typography id={"email"}>{cli.phone}</Typography>
-                <div style={{
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  gap: '.5rem'
-                }}>
-                <ButtonComponent
-                icon={<Add/>}
-                onClick={() => createSingleClientInvoice(cli)}
-                customStyle={{borderRadius: '30px', boxShadow: "0", background: 'red'}}
-                />
-                <IconButton><Edit/></IconButton>
-                <IconButton 
-                onClick={() => deleteClientData(cli._id ? cli._id.toString() : "")}
-                ><Clear/></IconButton>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: ".5rem",
+                  }}
+                >
+                  <ButtonComponent
+                    icon={<Add />}
+                    onClick={() => createSingleClientInvoice(cli)}
+                    customStyle={{
+                      borderRadius: "30px",
+                      boxShadow: "0",
+                      background: "red",
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => {
+                      handleUpdateModal();
+                      updateField(cli);
+                    }}
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      deleteClientData(cli._id ? cli._id.toString() : "")
+                    }
+                  >
+                    <Clear />
+                  </IconButton>
                 </div>
               </Row>
             </Card>
@@ -176,45 +226,108 @@ const clients: NextPage = () => {
   };
 
   return (
-      <Layout>
+    <Layout>
       <Container>
-        {
-          clients.length < 1 && data ? 
-          (<Center>
-            <div style={
-              {
-                display: 'flex', 
-                flexDirection: 'column', 
-                justifyContent: 'center',
-                alignItems: 'center'
-                }}>
-            <Typography> No Client Yet</Typography>
-            <ButtonComponent
-                  innerText="Invoice"
-                  icon={<Add/>}
-                  customStyle={{borderRadius: '30px', boxShadow: "0", background: 'red'}}
-                  />
+        {clients.length < 1 && data ? (
+          <Center>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography> No Client Yet</Typography>
+              <ButtonComponent
+                innerText="Invoice"
+                icon={<Add />}
+                customStyle={{
+                  borderRadius: "30px",
+                  boxShadow: "0",
+                  background: "red",
+                }}
+              />
             </div>
-          </Center>)
-          :
+          </Center>
+        ) : (
           <React.Fragment>
             <Top>
-          <Typography>Clients</Typography>
-          <ButtonComponent
-            innerText="New Client"
-            icon={<PersonAdd />}
-            onClick={handleOpenModal}
-          />
-        </Top>
-        <FlexContainer>
-          <List>{renderClients()}</List>
-        </FlexContainer>
+              <Typography>Clients</Typography>
+              <ButtonComponent
+                innerText="New Client"
+                icon={<PersonAdd />}
+                onClick={handleOpenModal}
+              />
+            </Top>
+            <FlexContainer>
+              <List>{renderClients()}</List>
+            </FlexContainer>
           </React.Fragment>
-        }
+        )}
       </Container>
 
+      {/**Update Modal */}
+      <ModalComponent
+        OpenModal={openUpdateModal}
+        handleCloseModal={handleCloseUpdateModal}
+        pd={"2rem"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <Typography>Update Client Information</Typography>
+          <Divider />
+          <div
+            style={{
+              padding: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              width: "100%",
+            }}
+          >
+            <ControlledInput
+              type={"text"}
+              value={singleClient.fullname}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "fullname")
+              }
+            />
+            <ControlledInput
+              type={"text"}
+              value={singleClient.email}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "email")
+              }
+            />
+            <ControlledInput
+              type={"text"}
+              value={singleClient.buisness}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "buisness")
+              }
+            />
+            <ControlledInput
+              type={"text"}
+              value={singleClient.phone}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "phone")
+              }
+            />
+            <ButtonComponent
+              customStyle={{ background: "green" }}
+              onClick={() => updateCleintData(singleClient._id?.toString()!)}
+              innerText="Update"
+            />
+          </div>
+        </div>
+      </ModalComponent>
+
       {/**add customer modal */}
-      <ModalComponent OpenModal={openModal} handleCloseModal={handleCloseModal} pd={'2rem'}>
+      <ModalComponent
+        OpenModal={openModal}
+        handleCloseModal={handleCloseModal}
+        pd={"2rem"}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography>New Customer</Typography>
           <Divider />
@@ -226,27 +339,40 @@ const clients: NextPage = () => {
               gap: "1rem",
             }}
           >
-            <ControlledInput placeholder="fullname" 
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'fullname')} />
-            <ControlledInput placeholder="email"
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'email')}
-             />
-            <ControlledInput placeholder="buisness name, if any"
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'buisness')}
-             />
-             <ControlledInput placeholder="+234_phonenumber"
-            onChange={(e:ChangeEvent<HTMLInputElement>) => handleChange(e,'phone')}
-             />
+            <ControlledInput
+              placeholder="fullname"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "fullname")
+              }
+            />
+            <ControlledInput
+              placeholder="email"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "email")
+              }
+            />
+            <ControlledInput
+              placeholder="buisness name, if any"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "buisness")
+              }
+            />
+            <ControlledInput
+              placeholder="+234_phonenumber"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleChange(e, "phone")
+              }
+            />
           </div>
           <ButtonComponent innerText="Save" onClick={postNewClient} />
         </div>
       </ModalComponent>
-      <AlertDialogSlide 
-      dialogTitle="Delete Client Data" 
-      dialogText="Are you sure you want to delete this data?"
-      openDialog={openDialog}
-      handleNoCloseDialog={handleNoCloseDialog}
-      handleYesCloseDialog={handleYesCloseDialog}
+      <AlertDialogSlide
+        dialogTitle="Delete Client Data"
+        dialogText="Are you sure you want to delete this data?"
+        openDialog={openDialog}
+        handleNoCloseDialog={handleNoCloseDialog}
+        handleYesCloseDialog={handleYesCloseDialog}
       />
     </Layout>
   );

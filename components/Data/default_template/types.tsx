@@ -40,7 +40,7 @@ export interface RecieverProps {
     contentEditable?: boolean,
     ref?: LegacyRef<HTMLInputElement>
     id?: string,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
   }
   
 export interface InvoiceDescriptionProps {
@@ -61,11 +61,13 @@ export interface TableProps {
       contentEditable?: boolean,
       ref?: LegacyRef<HTMLInputElement>,
       id?: string,
-      customStyle?: React.CSSProperties
+      customStyle?: React.CSSProperties,
+
   }
   
 export interface AddBtnProps {
     addTC: () => void,
+    contentEditable?: boolean,
   }
   
 export interface TotalContainerProps {

@@ -21,8 +21,6 @@ import { Container } from "../../../components/styled-component/Global";
 import { postRequest } from "../../../lib/axios/axiosClient";
 import styles from "../../../styles/Invoice.module.css";
 import type { NextPage } from "next";
-import { ProductSelectedContext } from "../../../helper/context/sp/ContextProdvider";
-import { CustomerSelectedContext } from "../../../helper/context/clientContext/ClientContextprovider";
 import { resolve } from "path";
 import useLocalStorage from "../../../hooks/localStorage";
 import clients from "../../../model/clients";
@@ -33,9 +31,24 @@ import { clearProducts } from "../redux/productSlice";
 import { PhotoFilter } from "@mui/icons-material";
 import { CompactPicker } from "react-color";
 import { PropertyEditor, PropertiesContainer, Property, Header } from "../../../components/styled-component/editorbar";
+import user from "../../../model/user";
+import SettingsComponent from '../../../components/InvoiceSettings'
+import { ThemeSelectedContext, ContextObj } from "../../../helper/context/ThemeContext";
+
 
 interface Props {
   invoice: Invoice;
+}
+
+/** settings */ 
+
+interface Settings {
+    current_tax_rate?: number,
+    theme?: {
+      dark:{},
+      light:{},
+    }, // dark or ligth mode
+    logo?: string
 }
 
 const createInvoice: NextPage<Props> = () => {
@@ -59,10 +72,22 @@ const createInvoice: NextPage<Props> = () => {
   const [passedClient, setPassedClient] = useState<boolean>(false);
   const [genNo, setGenNo] = useState<boolean>(false);
   const [override, setOverride] = useState<boolean>(false);
+  const [settings, setSetting] = useState<Settings>()
+  const [sModal, setSModal] = useState<boolean>(false)
 
   const SelectedProducts = useSelector((state: RootState) => state.product)
   const SelectedClient = useSelector((state: RootState) => state.client)
   const dispatch =  useAppDispatch()
+
+  const darkTheme: React.CSSProperties = {
+    background: "black",
+  }
+
+  const ligthTheme: React.CSSProperties = {
+    background: "#eee",
+  }
+
+  const {theme, setTheme } = useContext<ContextObj>(ThemeSelectedContext)
 
   /**generate unique number for invoice */
   const generateInvoiceNo = (): string => {
@@ -180,6 +205,9 @@ const createInvoice: NextPage<Props> = () => {
   const handleOpenSaveInfo = () => setOpenSaved(true);
   const handleOpenSaveInfoClose = () => setOpenSaved(false);
 
+  const handleShowSettingsModal = () => setSModal(true)
+  const handleCloseSettingsModal = () => setSModal(false)
+
   // Snackbar Alert
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -292,7 +320,7 @@ const createInvoice: NextPage<Props> = () => {
     onAfterPrint: () => handleOpenSaveInfo(),
   });
 
-  const handleChange = (
+  const handleImageChange = (
     name: keyof Invoice,
     value: string | number | number[]
   ) => {
@@ -303,6 +331,17 @@ const createInvoice: NextPage<Props> = () => {
 
     setInvoiceRepo(newInvoice); //update Image or logo
   };
+
+  /**
+   * const handleDefaultLogoChange = (
+    name: keyof Invoice,
+    value: string | number | number[]
+  ) => {
+    const newInvoice: Invoice = { ...InvoiceRepo };
+    if (name === "defaultLogo" && typeof value === "string") newInvoice[name] = value;
+    setInvoiceRepo(newInvoice); //update default logo
+  }
+   */
 
   const addTC = () => {
     const newInvoice: Invoice = { ...InvoiceRepo };
@@ -340,6 +379,17 @@ const createInvoice: NextPage<Props> = () => {
       if (tax !== undefined) inv.tax = tax;
     }
   };
+
+  const handleTxRateChange = () => {
+    const inv: Invoice = {...InvoiceRepo}
+    getTxRate(inv)
+    setInvoiceRepo(inv)
+  }
+
+  useEffect(() => {
+    /**Handle User Rate */
+    handleTxRateChange()
+  },[taxRate])
 
   const getTotal = (inv: Invoice): void => {
     const total =
@@ -387,11 +437,12 @@ const createInvoice: NextPage<Props> = () => {
                 <Checkbox color="primary"  
                 onChange={() => setOverride(true)}/>
               }
-              />
+              />     
            }
             saveText="SAVE"
             handlePrint={() => handlePrint()}
             handleSave={() => handleInvoicePost()}
+            handleVat={() => handleShowSettingsModal()}
           />
           <div className={styles.editorFlex}>
             <InvoiceMain
@@ -404,11 +455,11 @@ const createInvoice: NextPage<Props> = () => {
               addTC={addTC}
               tR={taxRate}
               removeItem={removeItem}
-              handleChange={handleChange}
+              handleChange={handleImageChange}
               handleDetailInput={handleDetailInput}
               handleItemInput={handleItemInput}
               invoice={InvoiceRepo}
-            ></InvoiceMain>
+            />
             <PropertyEditor>
               <Header>
                 <PhotoFilter />
@@ -501,6 +552,20 @@ const createInvoice: NextPage<Props> = () => {
             Invoice Saved
           </div>
           <ButtonComponent innerText={"Continue"} />
+        </Modals>
+
+        <Modals
+        OpenModal={sModal}
+        handleCloseModal={handleCloseSettingsModal}
+        pd="1rem"
+        >
+          <SettingsComponent 
+          taxOnChangeHandler={
+            (e: React.ChangeEvent<HTMLInputElement>) => setTaxRate(Number(e.target.value))
+            }
+            currentTaxRate={taxRate}
+            /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+            />
         </Modals>
       </Container>
     </Layout>

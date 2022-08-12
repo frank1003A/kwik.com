@@ -1,13 +1,48 @@
-import React from 'react'
-import styles from "../../styles/Login.module.css";
+import React, { useState } from 'react'
+import styles from "../../../styles/Login.module.css";
 import { Typography, TextField } from "@mui/material";
 import Image from "next/image";
 import Link from "next/Link";
-import ButtonComponent from "../../components/Button";
+import ButtonComponent from "../../../components/Button";
 import Head from 'next/head'
 import { NextPage } from 'next';
+import user from '../../../model/user';
+import { postRequest } from '../../../lib/axios/axiosClient';
+import { initialUserData } from '../../../components/Data/initialData';
 
 const register: NextPage = () => {
+  const [userState, setUserState] = useState<user>(initialUserData)
+
+  const handlePostUser = async (): Promise<void> => {
+    try {
+      const userData = await postRequest("api/users", userState)
+      if (userData.data) console.log(userData)
+      alert('Your account has successfully been created')
+    } catch (error: any) {
+      console.log(error.message)
+    }
+  }
+
+  const handleControls = (): JSX.Element => {
+    if (!(userState.email && userState.fullname  && userState.password)){
+      return (
+        <ButtonComponent 
+        onClick={handlePostUser}
+        innerText="Sign Up" 
+        className={styles["loginbtn"]}
+        btnDisabled={true}
+         />
+      )
+    }else {
+      return (
+        <ButtonComponent 
+        onClick={handlePostUser}
+        innerText="Sign Up" 
+        className={styles["loginbtn"]} />
+      )
+    }
+  }
+
   return (
     <div className={styles["signup-container"]}>
       <Head>
@@ -29,7 +64,7 @@ const register: NextPage = () => {
           color={"#666"}
           fontSize={"12px"}
         >
-          see your growth and get consultig support!
+          see your growth and get consulting support!
         </Typography>
         <ButtonComponent
           innerText="Sign in with Google"
@@ -44,19 +79,31 @@ const register: NextPage = () => {
           <Typography className={styles["frmtxt"]}>
             Name<span>*</span>
           </Typography>
-          <input type="text" placeholder="name" />
+          <input 
+          value={userState.fullname}
+          onChange={({target}) => setUserState({...userState, fullname: target.value})}
+          type="text" 
+          placeholder="name" />
         </div>
         <div className={styles["form-control"]}>
           <Typography className={styles["frmtxt"]}>
             Email<span>*</span>
           </Typography>
-          <input type="text" placeholder="mail@website.com" />
+          <input 
+          value={userState.email}
+          onChange={({target}) => setUserState({...userState, email: target.value})}
+          type="text" 
+          placeholder="mail@website.com" />
         </div>
         <div className={styles["form-control"]}>
           <Typography className={styles["frmtxt"]}>
             Password<span>*</span>
           </Typography>
-          <input type="password" placeholder="min. 8 characters" />
+          <input 
+          value={userState.password}
+          onChange={({target}) => setUserState({...userState, password: target.value})}
+          type="password" 
+          placeholder="min. 8 characters" />
         </div>
         <div className={styles["frm"]}>
           <div className={styles["chckbxlogin"]}>
@@ -65,11 +112,11 @@ const register: NextPage = () => {
           </div>
           <Link href="#">Terms & Condition</Link>
         </div>
-        <ButtonComponent innerText="Sign Up" className={styles["loginbtn"]} />
+        {handleControls()}
       </div>
       <div className={styles["frmout"]}>
         <span>Already have an Account?</span>
-        <Link href="/login"> Sign in</Link>
+        <Link href="/auth/login"> Sign in</Link>
       </div>
       <div className={styles["rights"]}>
         <span>@2022 Protek All right reserved</span>

@@ -9,58 +9,19 @@ import { DndProvider} from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
-//import { useRouter } from "next/router";
-//import { BeatLoader } from "react-spinners";
+import { SessionProvider } from "next-auth/react"
 
-function MyApp({ Component, pageProps }: AppProps) {
-  /**const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const bg: React.CSSProperties = {
-    display: "flex",
-    width: "100%",
-    height: "100vh",
-    alignItems: "center",
-  }
-
-  const override: React.CSSProperties = {
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-  };
-
-  useEffect(() => {
-    const handleStart = (url: string) => {
-      url !== router.pathname ? setLoading(true) : setLoading(false);
-    };
-    const handleComplete = (url: string) => setLoading(false);
-
-    router.events.on("routeChangeStart", handleStart);
-    router.events.on("routeChangeComplete", handleComplete);
-    router.events.on("routeChangeError", handleComplete);
-  }, [router]);
-
-  <div style={bg}>
-  <BeatLoader
-    color="red"
-    loading={loading}
-    cssOverride={override}
-    size={80}
-  />
-  </div> */
+function MyApp({ Component, pageProps: { session, ...pageProps }, }: AppProps) {
   return (
+    <SessionProvider session={session}>
       <DndProvider backend={HTML5Backend}>
         <Provider store={store}>
-          <Component {...pageProps} />
+            <Component {...pageProps} />
         </Provider>
       </DndProvider>
+    </SessionProvider>
   );
 }
 
 export default MyApp;
 
-/**<DndProvider backend={HTML5Backend}>
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
-    </DndProvider> */

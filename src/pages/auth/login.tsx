@@ -1,17 +1,33 @@
-import React from "react";
-import styles from "../../styles/Login.module.css";
+import React, { useState } from "react";
+import styles from "../../../styles/Login.module.css";
 import { Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/Link";
 import Head from 'next/head'
-import ButtonComponent from "../../components/Button";
+import ButtonComponent from "../../../components/Button";
 import GoogleIcon from "@mui/icons-material/Google";
-import PasswordEmojifier from "../../components/PasswordEmojifier";
+import PasswordEmojifier from "../../../components/PasswordEmojifier";
 import { useRouter } from "next/dist/client/router";
 import type { NextPage } from "next";
+import { signIn } from "next-auth/react"
 
 const login: NextPage = () => {
-  const router = useRouter();
+
+  const router = useRouter()
+
+  const [userInfo , setUserInfo] = useState<{email: string, password: string }>({
+    email: "",
+    password: ""
+  })
+
+  const handleSubmit = async () => {
+    const res = await signIn("credentials", {
+      email: userInfo.email,
+      password: userInfo.password,
+      redirect: false,
+    })
+    if (res?.ok) router.push("/")
+  }
   return (
     <div className={styles["login-container"]}>
       <Head>
@@ -48,13 +64,22 @@ const login: NextPage = () => {
             <Typography className={styles["frmtxt"]}>
               Email<span>*</span>
             </Typography>
-            <input type="text" placeholder="mail@website.com" />
+            <input 
+            value={userInfo.email}
+            type="text" 
+            placeholder="mail@website.com" 
+            onChange={({target}) => setUserInfo({...userInfo, email: target.value})} />
           </div>
           <div className={styles["form-control"]}>
             <Typography className={styles["frmtxt"]}>
               Password<span>*</span>
             </Typography>
-            <input type="password" placeholder="min. 8 characters" />
+            <input 
+            value={userInfo.password}
+            type="password" 
+            placeholder="min. 8 characters"
+            onChange={({target}) => setUserInfo({...userInfo, password: target.value})}
+             />
           </div>
           <div className={styles["frm"]}>
             <div className={styles["chckbx"]}>
@@ -66,11 +91,11 @@ const login: NextPage = () => {
           <ButtonComponent 
            innerText="Login" 
            className={styles["loginbtn"]}
-           onClick={() => router.push('/')} />
+           onClick={handleSubmit} />
         </div>
         <div className={styles["frmout"]}>
           <span>Not yet registered?</span>
-          <Link href="/register"> Create Account</Link>
+          <Link href="/auth/register"> Create Account</Link>
         </div>
         <div className={styles["rights"]}>
           <span>@2022 Protek All right reserved</span>

@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb'
 import { nanoid } from 'nanoid'
 import clients from '../../model/clients'
 import products from '../../model/products'
+import user from '../../model/user'
 import { InvoiceItems, Invoice } from './types'
 
 export const initialInvoiceItems: InvoiceItems = {
@@ -63,4 +64,16 @@ export const initialProductData: products = {
   rate: '',
   type: '',
   qty: 0
+}
+
+export const initialUserData: user = {
+  username: "",
+  email: "",
+  password: "",
+  phone_number: "",
+  buisness_name: "",
+  buisness_address: "",
+  buisness_address2: "",
+  buisness_logo: "",
+  country: ""
 }

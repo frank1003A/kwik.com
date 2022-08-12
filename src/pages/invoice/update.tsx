@@ -46,6 +46,16 @@ import Editorbar from "../../../components/Editorbar";
 import { CirclePicker, CompactPicker } from "react-color";
 import { PhotoFilter } from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
+import SettingsComponent from '../../../components/InvoiceSettings'
+
+/**Google Translate Data Response Type */
+interface languageResponse {
+  data?: {
+    languages: {
+      language: string
+    }[]
+  }
+}
 
 const EditInvoice: NextPage = () => {
   const { query } = useRouter();
@@ -62,14 +72,16 @@ const EditInvoice: NextPage = () => {
   const [showEditComp, setShowEditComp] = useState<boolean>(false);
   const [edcActive, setEdcActive] = useState<boolean>(false);
   const [invComp, setInvComp] = useState<boolean>(false);
+  const [languages, setLanguages] = useState<languageResponse>({});
+  const [sModal, setSModal] = useState<boolean>(false)
 
   /**
    * edtable true means the core input element is disabled.
    * function handleEditable() takes care of the core logic
    * not the best or simple logic, but it works
-  **/
+   **/
   const [editable, setEditable] = useState<boolean>(true);
-  const [notifyEdit, setNotifyEdit] = useState<boolean>(false)
+  const [notifyEdit, setNotifyEdit] = useState<boolean>(false);
 
   const [background, setBackground] = useState<string>("#fff");
   const [fontColor, setFontColor] = useState<string>("#555");
@@ -97,7 +109,10 @@ const EditInvoice: NextPage = () => {
     setdisplayColorPicker(false);
   };
 
-  const handleOpenNotifyEdit = () => setNotifyEdit(true)
+  const handleShowSettingsModal = () => setSModal(true)
+  const handleCloseSettingsModal = () => setSModal(false)
+
+  const handleOpenNotifyEdit = () => setNotifyEdit(true);
   const handleCloseNotifyEdit = (
     event: Event | SyntheticEvent<any, Event>,
     reason?: SnackbarCloseReason
@@ -493,12 +508,14 @@ const EditInvoice: NextPage = () => {
     }
   };
 
+  /**
+   * /**get all google translate anguages  
   const options: AxiosRequestConfig = {
     method: "GET",
     url: "https://google-translate1.p.rapidapi.com/language/translate/v2/languages",
     headers: {
       "Accept-Encoding": "application/gzip",
-      "X-RapidAPI-Key": "6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c",
+      "X-RapidAPI-Key": '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
       "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
     },
   };
@@ -507,32 +524,86 @@ const EditInvoice: NextPage = () => {
     axios
       .request(options)
       .then(function (response) {
-        console.log(response.data);
+        setLanguages(response.data);
       })
       .catch(function (error) {
         console.error(error);
       });
   }, []);
 
+  /**detect current language 
+
+  const encodeParamsTranslate = new URLSearchParams();
+  encodeParamsTranslate.append("q", `${InvoiceRepo.notes}`);
+
+  const detectoption: AxiosRequestConfig = {
+    method: "POST",
+    url: "https://google-translate1.p.rapidapi.com/language/translate/v2/detect",
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      "Accept-Encoding": "application/gzip",
+      "X-RapidAPI-Key": '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
+      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
+    },
+    data: encodeParamsTranslate,
+  };
+
+  useEffect(() => {
+    axios
+      .request(detectoption)
+      .then(function (response) {
+        console.log('detectedLanguage:', response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }, []);
+   */
+
+  /**
+   * Translate current language 
+   */
+
+   const encodeParamsTranslate = new URLSearchParams();
+   encodeParamsTranslate.append("q", "Hello, world!");
+   encodeParamsTranslate.append("target", "es");
+   encodeParamsTranslate.append("source", "en");
+   
+   const optionsTranslate: AxiosRequestConfig = {
+     method: 'POST',
+     url: 'https://google-translate1.p.rapidapi.com/language/translate/v2',
+     headers: {
+       'content-type': 'application/x-www-form-urlencoded',
+       'Accept-Encoding': 'application/gzip',
+       'X-RapidAPI-Key': '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
+       'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
+     },
+     data: encodeParamsTranslate
+   };
+   
+   useEffect(() => {
+    axios.request(optionsTranslate).then(function (response) {
+      console.log('translated', response.data);
+    }).catch(function (error) {
+      console.error(error);
+    });
+   }, [])
+   
+
   const handleEditable = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: boolean = e.target.checked;
     /**
-     * If you are looking at this and wondering: 
+     * If you are looking at this and wondering:
      * WTH is this ?
      * You are not alone "😜"
      */
 
     if (value === false) {
       //const setEditable: (value: React.SetStateAction<boolean>) => void
-        setEditable(true);
-
-        /**Nothing special here 
-         * just informing user of 
-         * current mode */
-
+      setEditable(true);
     } else if (value === true) {
-         setEditable(false);
-         handleOpenNotifyEdit();
+      setEditable(false);
+      handleOpenNotifyEdit();
     }
   };
 
@@ -562,9 +633,13 @@ const EditInvoice: NextPage = () => {
                 }}
                 labelPlacement="end"
                 control={
-                <Checkbox color="primary"  
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEditable(e)}/>
-              }
+                  <Checkbox
+                    color="primary"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleEditable(e)
+                    }
+                  />
+                }
               />
             }
           />
@@ -573,10 +648,10 @@ const EditInvoice: NextPage = () => {
               <SquareLoader style={{ margin: "auto auto auto auto" }} />
             ) : (
               <InvoiceMain
-                style={{ background: background}}
+                style={{ background: background }}
                 contentEditable={editable}
                 ref={componentRef}
-                customStyle={{color: fontColor, fontFamily: font}}
+                customStyle={{ color: fontColor, fontFamily: font }}
                 options={countryList}
                 pdfMode={editPdf}
                 cur={currency}
@@ -639,10 +714,9 @@ const EditInvoice: NextPage = () => {
                       title="font-Change"
                       onChange={(e) => setFont(e.target.value)}
                     >
-                      <option value="sans-serif">English</option>
-                      <option value="monospace">monospace</option>
-                      <option value="fantasy">fantasy</option>
-                      <option value="cursive">cursive</option>
+                      {languages.data?.languages.map((l) => {
+                        return <option value={l.language}>{l.language}</option>;
+                      })}
                     </select>
                   </div>
                 </Property>
@@ -686,6 +760,20 @@ const EditInvoice: NextPage = () => {
             <Typography>Content is now Editable</Typography>
           </Alert>
         </Snackbar>
+
+        <Modals
+        OpenModal={sModal}
+        handleCloseModal={handleCloseSettingsModal}
+        pd="1rem"
+        >
+          <SettingsComponent 
+          taxOnChangeHandler={
+            (e: React.ChangeEvent<HTMLInputElement>) => setTaxRate(Number(e.target.value))
+            }
+            currentTaxRate={taxRate}
+            /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+            />
+        </Modals>
 
         <Modals
           OpenModal={opensaved}

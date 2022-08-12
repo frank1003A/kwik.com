@@ -81,7 +81,7 @@ const InvoiceBar: FC<Props> = ({
             gap: '1rem'
           }}>
           <Typography id="cn">{invtitle}</Typography>
-          <span color="#fff">{status}</span>
+          <Status>{status}</Status>
           </div>
           <IconButton
           size="large"
@@ -147,7 +147,17 @@ const Row = styled.div`
     width: 100%;
     align-items: center;
 
-     span {
+    #chipFont{
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: .8rem;
+    color: #fff !important;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+  }
+
+     /**span {
         margin: 0;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 600;
@@ -155,7 +165,8 @@ const Row = styled.div`
     color: rgb(0 0 0 / 54%);
     line-height: 1.5;
     letter-spacing: 0.00938em;
-    } 
+    }  */
+
     #cn {
         margin: 0;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -200,6 +211,16 @@ const ButtonContainer = styled.div`
     color: #2124b1;
   }
 `;
+
+const Status = styled.div`
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: .8rem;
+    color: #fff !important;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+`
 
 /**router.push('http://localhost:3000/invoice/update' as 'sfsfsggf', {
             query: {invoice_id: invId?.toString()} */
