@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
     --bg: #000;
     --cd: #555;
   }
-` 
+` ;
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
