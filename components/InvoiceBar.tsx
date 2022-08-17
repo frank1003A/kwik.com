@@ -11,6 +11,7 @@ import Avatar from "react-avatar";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Create, Print } from "@mui/icons-material";
+import { motion } from "framer-motion"
 
 interface Props {
   name: string;
@@ -71,7 +72,7 @@ const InvoiceBar: FC<Props> = ({
   }
 
   return (
-    <div className={styles.invcard}>
+    <motion.div className={styles.invcard} layout>
       <div className={styles.top}>
         <Row>
           <div style={{
@@ -135,7 +136,7 @@ const InvoiceBar: FC<Props> = ({
         </Row>
       </div>
       {renderMenu}
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,4 +1,4 @@
-import { LabelImportant, WbSunny } from '@mui/icons-material';
+import { LabelImportant, WbCloudy, WbShade, WbSunny } from '@mui/icons-material';
 import { 
     Typography, 
     FormControlLabel, 
@@ -8,10 +8,13 @@ import {
     FormLabel, 
     StepLabel
 } from '@mui/material'
-import React, { useRef } from 'react'
+import { useSession } from 'next-auth/react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
+import useGetter from '../hooks/useGetter';
 import ButtonComponent from './Button';
 import { Invoice } from './Data/types';
 import { ControlledInput, Form, SwitchContainer } from './styled-component/Global'
+import { useTheme } from 'next-themes';
 
 interface Props {
     switchOnchangehandler?: () => void;
@@ -26,6 +29,11 @@ const Settings = ({
   currentTaxRate,
   handleDefaultLogo
 }: Props) => {
+
+  /**const theme = useTheme();
+  const colorMode = React.useContext(ColorModeContext); */
+
+  const { theme, setTheme } = useTheme()
 
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -47,9 +55,10 @@ const Settings = ({
     }
   }
 
-  /**const toggleModeIcon = (): JSX.Element => {
-    if ()
-  } */
+  const handleThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {checked} = e.target
+    checked === false ? setTheme("light") : setTheme("dark")
+  }
 
   return (
     <React.Fragment>
@@ -64,11 +73,16 @@ const Settings = ({
           }}
         >
           <Typography variant="body1" color="initial">
-            Settings
+            Settings 
             </Typography>
           <SwitchContainer>
-          <Switch onChange={switchOnchangehandler} />
-          <WbSunny />
+            <Switch 
+            checked={theme === "dark" ? true : false}
+            onChange={
+            (e: React.ChangeEvent<HTMLInputElement>) => handleThemeChange(e)
+            }
+            />
+            {theme! === 'dark' ? <WbCloudy /> : <WbSunny />}
           </SwitchContainer>
         </div>
         <Divider />

@@ -31,7 +31,13 @@ interface Props {
 
 const BarChart:FC<Props> = ({data, options}) => {
   return (
-    <Bar data={data} options={options} />
+    <Bar data={data} options={{
+      plugins: {
+        legend:{
+          display: false,
+        }
+      }
+    }} />
   )
 }
 

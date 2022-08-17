@@ -1,4 +1,4 @@
-import React, {LegacyRef, RefObject, SyntheticEvent} from 'react'
+import React, {LegacyRef, RefObject, SyntheticEvent, Dispatch, SetStateAction} from 'react'
 import { ColorChangeHandler } from "react-color";
 import {initialInvoice,initialInvoiceItems} from "../initialData"
 import {countryList} from "../countryList"
@@ -31,7 +31,8 @@ export interface CompanyProps {
     options: typeof countryList,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    setter:  Dispatch<SetStateAction<Invoice>>
   }
   
 export interface RecieverProps {
@@ -47,6 +48,7 @@ export interface InvoiceDescriptionProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
+    setter: Dispatch<SetStateAction<Invoice>>
     customStyle?: React.CSSProperties
   }
   

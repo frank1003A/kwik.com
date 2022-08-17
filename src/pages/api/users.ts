@@ -43,11 +43,13 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
    if (req.method === "PATCH") {
     try {
       const query = req.query.user_id 
+      console.log(query)
       const updatedUserData = req.body as user
       const client = await clientPromise;
       const db = client.db("Kwik");
-      const userData = await db.collection("Invoices").updateOne(
+      const userData = await db.collection("users").updateOne(
         {_id: new ObjectId(query.toString())}, {$set: updatedUserData})
+        console.log(userData)
       !userData ? res.status(404).json({'error': 'Error finding Id'}) : 
       res.status(200).json(userData);
     } catch (err: any) {
@@ -62,7 +64,7 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
       const query = req.query.user_id
       const client = await clientPromise;
       const db = client.db("Kwik");
-      let deleteUser = await db.collection("products").deleteOne({_id : new  ObjectId(query.toString())})
+      let deleteUser = await db.collection("users").deleteOne({_id : new  ObjectId(query.toString())})
       res.status(200).json(deleteUser);
     } catch (err: any) {
       res.status(400).json({ message: err.message });

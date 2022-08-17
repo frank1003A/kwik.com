@@ -3,12 +3,21 @@ import styled from 'styled-components'
 export const Container = styled.div`
   width: 100%;
   display: flex;
-  height: 100%;
-  background: #eee;
+  /**height: 100vh; */
+  background: --bg;
   align-items: flex-start;
   flex-direction: column;
 `;
 
+export const VhContainer = styled.div`
+  width: 100%;
+  display: flex;
+  height: 100vh; 
+  background: --bg;
+  align-items: flex-start;
+  flex-direction: column;
+`;
+//#CCCCCC light grey
   export const ControlledInput = styled.input<{customHeight?: string}>`
         margin: 0;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -68,10 +77,63 @@ export const UserBadge = styled.div`
     background: #eee;
     color: #2124b1;
     height: 40px;
+    padding: 0px 25px;
     width: 200px;
     display: flex;
+    text-transform: lowercase;
     border-radius: 50px;
     font-weight: 500;
-    justify-content: center;
     align-items: center;
+    justify-content: space-evenly;
+`;
+
+export const Center = styled.div`
+  margin: auto auto auto auto;
+`;
+
+export const Top = styled.div`
+  right: 0;
+  left: 250px;
+  display: flex;
+  padding: .5rem 3rem;
+  background: --bg;
+  border-bottom: 1px solid #2221;
+  align-items: center;
+  position: fixed;
+  z-index: 100;
+  justify-content: space-between;
+  div {
+    display: flex;
+    gap: 1rem;
+    select {
+      border: none;
+      border-radius: 4px;
+      padding: 0px 0.6rem;
+      box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+    }
+    input[type="date"]{
+      border: none;
+      border-radius: 4px;
+      width: 15px;
+      height: inherit;
+      padding: 0px 0.6rem;
+      box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+    }
+  }
+`;
+
+export const List = styled.div`
+    width: 100%;
+    display: flex;
+    height: max-content;
+    padding: 0px 15rem;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+    margin: 5rem 0px;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+  @media (max-width: 500px) {
+    padding: 0px !important;
+  }
 `;

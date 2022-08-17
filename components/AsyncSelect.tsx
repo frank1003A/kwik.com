@@ -32,13 +32,6 @@ const AsyncSelectComponent: FC<Props> = ({
     );
   };
 
- /** const labelFormatter = (i: userType): OptionTypeBase => {
-    return {
-        label: i.loginId + ' - ' + i.firstName + ' ' + i.lastName + ' - ' + i.email,
-        value: i.loginId,
-    }
-  } */
-
   const promiseOptions = (inputValue: string) =>
     new Promise<Invoice[]>(async (resolve) => {
       {

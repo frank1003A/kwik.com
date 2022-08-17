@@ -41,7 +41,7 @@ const dashboard: FC = () => {
       label: "Amount-gained",
       data: dataa.map((dta) => dta.sales),
       backgroundColor: ["#2124b1", "orange"],
-    }],
+    }]
   })
   return (
     <div className={styles['dashboardCont']}>
@@ -54,13 +54,6 @@ const dashboard: FC = () => {
             chart={
             <DougnutChart 
             data={data}
-            options={{
-              plugins: {
-                legend: {
-                  display: false //This will do the task
-               }
-              }
-           }}
             />
           }/>
           )

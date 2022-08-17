@@ -1,13 +1,3 @@
-#mainclass {
-  --primarycolor: #2124b1;
-  --textcolor: #555;
-  --secondarycolor: orange; 
-  --primary-box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  --priarygradient: linear-gradient(to right, #2124b1, #faae0a);
-  --maingradient: linear-gradient(to right, red, #faae0a);
-  --maincolor: #f53803;
-}
-
 .container {
   padding: 0 2rem;
 }
@@ -24,18 +14,28 @@
 
 .footer {
   display: flex;
-  flex: 1;
-  padding: 2rem 0;
+  padding: 1rem 0;
   bottom: 0;
+  width: 100%;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 }
 
 .footer a {
+  font-weight: 500;
+  color: #555;
+}
+
+.footer .footInfo {
+  width: max-content;
+  background: #eee;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+  border-radius: 20px;
+  padding: .2rem 1rem;
+  color:#2124b1;
+  gap: .5rem;
+  flex-direction: row;
 }
 
 .title a {
@@ -47,6 +47,7 @@
 .title a:focus,
 .title a:active {
   text-decoration: underline;
+  color: var(--primarycolor);
 }
 
 .title {
@@ -92,7 +93,7 @@
 
 .image__edit:hover, .image__remove:hover,
 .image__edit:focus, .image__remove:focus{
-  background-color: #2124B1;
+  background-color: var(--primarycolor);
 }
 
 .image__edit:hover, .image__edit:focus-within,
@@ -164,8 +165,8 @@
 .parentContainer {
   position: relative;
   display: flex;
-  flex-direction: row;
-  height: 100vh;
+  flex-direction: column;
+  height: 100%;
   align-items: center;
   margin-left: 250px;
   margin-top: 64px;
@@ -194,7 +195,7 @@
 }
 
 .btnCreate {
-  background: #2124b1;
+  background: var(--primarycolor);
   color: #fff ;
 }
 
@@ -219,7 +220,7 @@
   padding: 1rem;
   gap: 0.5rem;
   border-radius: 8px;
-  background: rgb(255, 255, 255);
+  background: var(--card);
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
@@ -308,7 +309,7 @@
 
 .dsboard {
   width: 100%;
-  background: #eee;
+  background: var(--primarybackground);
   height: 100vh;
 }
 
@@ -317,6 +318,7 @@
   display: flex;
   grid-gap: 2rem;
   gap: 2rem;
+  margin: 0 0 2rem 0;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
@@ -373,7 +375,7 @@
 
 .salesana {
   display: flex;
-  background: #fff;
+  background: var(--card);
   padding: 1rem;
   align-items: center;
   flex-direction: row;
@@ -420,12 +422,12 @@
   gap: .5rem;
   border-radius: 8px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  background: #fff;
+  background: var(--card);
 }
 
 .tablecont {
   border-radius: 8px;
-  background: #fff;
+  background: var(--card);
    padding: 2rem; 
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
@@ -448,7 +450,7 @@
 }
 
 .table td {
-  border-bottom: .1px dotted #2124B1;
+  border-bottom: .1px dotted var(--primarycolor);
 }
 
 .sidebar {
@@ -459,10 +461,10 @@
   width: 250px;
   /* padding: 1rem; */
   min-height: 100vh;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--sbedge);
   display: flex;
   overflow-y: auto;
-  background: #eee;
+  background: var(--primarybackground);
   z-index: 999;
   /* padding-top: 1rem; */
   transition: 0.5s;
@@ -482,7 +484,7 @@
   min-height: 100vh;
   display: flex;
   overflow-y: auto;
-  background: linear-gradient(to right, #2124b1, #faae0a);
+  background: linear-gradient(to right, var(--primarycolor), var(--secondarycolor));
   z-index: 999;
   padding-top: 1rem;
   transition: 0.5s;
@@ -512,19 +514,19 @@
 
 .sidebar .outercontainer:hover .smallcontainer,
 .sidebar .outercontainer:active .smallcontainer{
-  color: #2124B1;
-  background: #eee;
+  color: var(--primarycolor);
+  background: var(--primarybackground);
 }
 
 .sidebar .outercontainer:hover,
 .sidebar .outercontainer:hover{
   padding: 7px 20px;
-    color: #2124B1;
+    color: var(--primarycolor);
     font-weight: 500;
-    border-left: 3px solid #2124B1;
+    border-left: 3px solid var(--primarycolor);
     border-radius: 0 30px 30px 0;
     outline: none;
-    background: #fff;
+    background: var(--sbhover);
     cursor: pointer;
 }
 
@@ -535,18 +537,18 @@
   gap: 1rem;
   /* width: 230px; */
   padding: 7px 20px;
-  color: #2124B1;
+  color: var(--primarycolor);
   font-weight: 500;
-  border-left: 3px solid #2124B1;
+  border-left: 3px solid var(--primarycolor);
   border-radius: 0 30px 30px 0;
   outline: none;
-  background: #fff;
+  background: var(--sbhover);
   cursor: pointer;
 }
 
 .sidebar .outercontainerActive .smallcontainer{
-  color: #2124B1;
-  background: #eee;
+  color: var(--primarycolor);
+  background: var(--primarybackground);
 }
 
 .sidebar .outercontainer{
@@ -554,7 +556,7 @@
   flex-direction: row;
   font-weight: 500;
   padding: 7px 20px;
-  border-left: 3px solid #eee;
+  border-left: 3px solid var(--primarybackground);
   align-items: center;
   grid-gap: 1rem;
   grid-gap: 1rem;
@@ -570,7 +572,7 @@
 
 .sideabr .sd .sdcore > button {
   border-radius: 4px;
-  background-color: #2124b1;
+  background-color: var(--primarycolor);
 }
 
 .card h2 {
@@ -831,7 +833,7 @@
     border: 0px;
     font-weight: 700;
     box-shadow: 0px 0px 14px -7px #f09819;
-    background-image: linear-gradient(45deg, #2124B1 0%, #F09819  51%, #2124B1  100%);
+    background-image: linear-gradient(45deg, var(--primarycolor) 0%, #F09819  51%, var(--primarycolor)  100%);
     cursor: pointer;
     user-select: none;
     touch-action: manipulation;

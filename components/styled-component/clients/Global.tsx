@@ -2,9 +2,6 @@ import styled from "styled-components";
 
 export const FlexContainer = styled.div`
   width: 100%;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -47,7 +44,7 @@ export const Card = styled.div`
   padding: 1rem;
   //width: 250px;
   //height: 200px;
-  background: #fff;
+  background: --fg;
   box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
 `;
 
@@ -56,10 +53,11 @@ export const Top = styled.div`
   left: 250px;
   display: flex;
   padding: 0.5rem 3rem;
-  background: #eee;
+  background: --bg;
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
+  z-index: 100;
   justify-content: space-between;
   div {
     display: flex;

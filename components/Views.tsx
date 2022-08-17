@@ -63,9 +63,9 @@ const Views: FC = () => {
     datasets: [{
       label: "Amount-gained",
       data: views.map((dta) => dta.finalAmount),
-      backgroundColor: ["#2124b1"],
+      backgroundColor: ["#2124b1", "orange"],
       barThickness: 35,
-      borderRadius: 8,
+      borderRadius: 4,
       borderColor: 'none',
       categoryPercentage: 5
     }],
@@ -80,14 +80,7 @@ const Views: FC = () => {
   return (
     <div>
       <div className={styles.table}>
-        <BarChart data={data} 
-        options={{
-          plugins: {
-            legend: {
-              display: false //This will do the task
-           }
-          }
-        }}
+        <BarChart data={data}
         />
       </div>
     </div>

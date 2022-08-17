@@ -47,6 +47,7 @@ import { CirclePicker, CompactPicker } from "react-color";
 import { PhotoFilter } from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
 import SettingsComponent from '../../../components/InvoiceSettings'
+import { useSession } from "next-auth/react";
 
 /**Google Translate Data Response Type */
 interface languageResponse {
@@ -59,6 +60,14 @@ interface languageResponse {
 
 const EditInvoice: NextPage = () => {
   const { query } = useRouter();
+
+  const router = useRouter()
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace('/auth/login')
+    },
+  })
 
   const { data, isError, isLoading } = useGetter(
     `/api/invoice/?invoice_id=${query.invoice_id}`
@@ -85,7 +94,7 @@ const EditInvoice: NextPage = () => {
 
   const [background, setBackground] = useState<string>("#fff");
   const [fontColor, setFontColor] = useState<string>("#555");
-  const [font, setFont] = useState("");
+  const [font, setFont] = useState<string>("");
   const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
   const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
     data ? { ...data } : { ...initialInvoice }
@@ -663,6 +672,8 @@ const EditInvoice: NextPage = () => {
                 handleDetailInput={handleDetailInput}
                 handleItemInput={handleItemInput}
                 invoice={InvoiceRepo}
+                dateSet={setInvoiceRepo}
+                selClr={setInvoiceRepo}
               ></InvoiceMain>
             )}
             <PropertyEditor>

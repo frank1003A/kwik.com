@@ -36,8 +36,9 @@ import SettingComponent from './Settings'
 
 interface Props {
   id?: string;
+  switchOnChangeHandler?: () => void;
 }
-const Sidebar = ({ id }: Props) => {
+const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
   const router = useRouter();
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [settingsModal, setSettingsModal] = useState<boolean>(false);
@@ -123,10 +124,10 @@ const Sidebar = ({ id }: Props) => {
           </div>
         </Link>
 
-        <Link href={"/messages"}>
+        <Link href={"/profile"}>
           <div
             className={
-              router.pathname == "/messages"
+              router.pathname == "/profile"
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
@@ -134,7 +135,7 @@ const Sidebar = ({ id }: Props) => {
             <div className={styles.smallcontainer}>
               <Message />
             </div>
-            <p>Messages</p>
+            <p>Profile</p>
             <Chip
               label={"2"}
               sx={{
@@ -154,7 +155,7 @@ const Sidebar = ({ id }: Props) => {
       <div className={styles.upperContainer}>
         <Button
           className={styles.btnCreate}
-          innerText={"Settings"}
+          innerText={"Customize"}
           onClick={() => openSModal()}
           icon={<Settings />}
         />
@@ -171,7 +172,7 @@ const Sidebar = ({ id }: Props) => {
             <Image src={"/485.svg"} width={450} height={300} />
             <div className={styles["card"]}>
               <Link href="http://localhost:3000/invoice/create">
-                <Typography>Kwik Default Template</Typography>
+                <Typography>Create Invoice</Typography>
               </Link>
             </div>
           </div>
@@ -180,7 +181,7 @@ const Sidebar = ({ id }: Props) => {
 
       {/**Settings Modal */}
       <Modal OpenModal={settingsModal} handleCloseModal={closeSModal} pd="">
-        <SettingComponent/>
+        <SettingComponent switchOnchangehandler={switchOnChangeHandler}/>
       </Modal>
     </Box>
   );

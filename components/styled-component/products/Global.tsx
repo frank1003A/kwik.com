@@ -45,10 +45,11 @@ export const Top = styled.div`
   left: 250px;
   display: flex;
   padding: .5rem 3rem;
-  background: #eee;
+  background: --bg;
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
+  z-index: 100;
   justify-content: space-between;
   div {
     display: flex;

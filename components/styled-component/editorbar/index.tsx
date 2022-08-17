@@ -13,6 +13,9 @@ export const PropertyEditor = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   //gap: 1rem;
+  @media (max-width:500px) {
+    display: none;
+  }
 `;
 
 export const PropertiesContainer = styled.div`

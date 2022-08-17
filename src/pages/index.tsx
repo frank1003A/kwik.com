@@ -3,9 +3,51 @@ import Layout from "../../components/Layout";
 import Dashboard from "../../components/Dashboard";
 import CustomDnd from '../../components/KwikCreator/CustomDnd'
 import styles from '../../styles/Home.module.css'
-import { Container } from "../../components/styled-component/Global";
+import { Center, Container } from "../../components/styled-component/Global";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { ScaleLoader } from "react-spinners";
+import { Typography } from "@mui/material";
+import { motion } from "framer-motion"
+import Image from 'next/image'
 
 const Home: NextPage = () => {
+  const router = useRouter()
+
+  const { status, data } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace('/auth/login')
+    },
+  })
+
+  const dispLoader = ():JSX.Element => {
+    if (status === "loading") {
+      return (
+        <motion.div layout style={{
+          width: '100%',
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          columnGap: 10
+        }}>
+            <ScaleLoader color="blue" />
+            <Typography>Please wait...</Typography>
+            </motion.div>
+      )
+    }else {
+      return (
+        <Layout>
+        <Container>
+        <Dashboard />
+        </Container>
+        </Layout>
+      )
+    }
+  }
+  
   const dashbrd: React.CSSProperties = {
     display: "flex",
     background: "#eee",
@@ -16,11 +58,9 @@ const Home: NextPage = () => {
   };
 
   return (
-    <Layout>
-      <Container>
-      <Dashboard />
-      </Container>
-    </Layout>
+    <>
+    {dispLoader()}
+    </>
   );
 };
 

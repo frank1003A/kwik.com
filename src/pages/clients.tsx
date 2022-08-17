@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { NextPage } from "next";
-import { Container, ControlledInput } from "../../components/styled-component/Global";
+import { Container, ControlledInput, VhContainer } from "../../components/styled-component/Global";
 import Layout from "../../components/Layout";
 import {
   Card,
@@ -12,7 +12,7 @@ import {
 } from "../../components/styled-component/clients/Global";
 import Avatar from "react-avatar";
 import ButtonComponent from "../../components/Button";
-import { PersonAdd, Edit, Clear, Add } from "@mui/icons-material";
+import { PersonAdd, Edit, Clear, Add, PictureAsPdf, CreateNewFolder, BookOnline, Receipt } from "@mui/icons-material";
 import { Divider, IconButton, TextField, Typography } from "@mui/material";
 import useGetter from "../../hooks/useGetter";
 import clientClass from "../../model/clients";
@@ -31,11 +31,20 @@ import { useAppDispatch } from "./redux/hooks";
 import { useSelector } from "react-redux";
 import { updateClient } from "./redux/clientSlice";
 import { RootState } from "./redux/store";
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion"
 
 const clients: NextPage = () => {
   const { data, isError, isLoading } = useGetter("api/clients");
 
-  const router = useRouter();
+  const router = useRouter()
+  
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace('/auth/login')
+    },
+  })
 
   const [clients, setClients] = useState<clientClass[]>([]);
   const [singleClient, setSClient] = useState<clientClass>(
@@ -163,7 +172,7 @@ const clients: NextPage = () => {
       [
         clients.map((cli) => {
           return (
-            <Card>
+            <Card as={motion.div} layout>
               <Row>
                 <div
                   style={{
@@ -192,29 +201,23 @@ const clients: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
-                  <ButtonComponent
-                    icon={<Add />}
-                    onClick={() => createSingleClientInvoice(cli)}
-                    customStyle={{
-                      borderRadius: "30px",
-                      boxShadow: "0",
-                      background: "red",
-                    }}
-                  />
+                  <IconButton onClick={() => createSingleClientInvoice(cli)}>
+                    <Receipt style={{color: "orange"}}/>
+                  </IconButton>
                   <IconButton
                     onClick={() => {
                       handleUpdateModal();
                       updateField(cli);
                     }}
                   >
-                    <Edit />
+                    <Edit style={{color: "#2124b1"}} />
                   </IconButton>
                   <IconButton
                     onClick={() =>
                       deleteClientData(cli._id ? cli._id.toString() : "")
                     }
                   >
-                    <Clear />
+                    <Clear style={{color: "red"}} />
                   </IconButton>
                 </div>
               </Row>
@@ -227,7 +230,7 @@ const clients: NextPage = () => {
 
   return (
     <Layout>
-      <Container>
+      <VhContainer>
         {clients.length < 1 && data ? (
           <Center>
             <div
@@ -265,7 +268,7 @@ const clients: NextPage = () => {
             </FlexContainer>
           </React.Fragment>
         )}
-      </Container>
+      </VhContainer>
 
       {/**Update Modal */}
       <ModalComponent

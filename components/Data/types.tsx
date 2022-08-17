@@ -14,6 +14,10 @@ export interface InvoiceItems {
 
 export interface Invoice {
   _id?: ObjectId
+  /**
+   * Useful for relating invoice to user. Every invoice must have this property
+   */
+  owner?: string
   logo: string
   logoWidth: number
   title: string

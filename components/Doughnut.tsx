@@ -33,7 +33,13 @@ interface Props {
 
 const DougnutChart:FC<Props> = ({data, options}) => {
   return (
-    <Doughnut data={data} options={options} />
+    <Doughnut data={data} options={{
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }} />
   )
 }
 

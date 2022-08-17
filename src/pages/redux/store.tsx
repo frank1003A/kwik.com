@@ -5,11 +5,13 @@ import {
   } from 'react-redux';
 import clientReducer from './clientSlice'
 import productReducer from './productSlice'
+import userReducer from './currentUser'
 
 export const store = configureStore({ 
     reducer: {
         client : clientReducer,
-        product: productReducer
+        product: productReducer,
+        user: userReducer,
     }
 })
 

@@ -1,6 +1,13 @@
-import { Chip, Divider, Typography } from "@mui/material";
+import {
+  Chip,
+  Divider,
+  FormControl,
+  FormLabel,
+  StepLabel,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
-import React, { FC, SyntheticEvent } from "react";
+import React, { ChangeEventHandler, FC, SyntheticEvent } from "react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { ScaleLoader } from "react-spinners";
@@ -14,24 +21,47 @@ import Layout from "../../components/Layout";
 import Modal from "../../components/Modal";
 import useGetter from "../../hooks/useGetter";
 import { deleteRequest } from "../../lib/axios/axiosClient";
+import { sortDataByDate, convertDateFormat } from "../../utils/utils";
 
 import type { NextPage } from "next";
 import styles from "../../styles/Home.module.css";
 import Disclaimer from "../../components/Disclaimer";
 import Button from "../../components/Button";
-import { CreateRounded } from "@mui/icons-material";
+import { CreateRounded, Filter } from "@mui/icons-material";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { ControlledInput } from "../../components/styled-component/Global";
+import { FlexContainer, Row } from "../../components/styled-component/clients/Global";
+import { motion } from "framer-motion";
 
 interface Props {
   invoices: Invoice[];
 }
 
 const invoices: NextPage<Props> = () => {
+  const router = useRouter();
   const { data, isError, isLoading } = useGetter("/api/invoices");
 
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<Invoice[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [startDate, setstartDate] = useState<string>();
+  const [endDate, setendDate] = useState<string>();
+  const [sorted, setSorted] = useState<Invoice[]>([])
+  const [isFiltering, setIsFiltering]= useState<boolean>(false)
+
+  useEffect(() => {
+    /**const controller = new AbortController()
+    const signal = controller.signal */
+    const sortedData: Invoice[] = sortDataByDate(
+      invoices,
+      convertDateFormat(startDate!),
+      convertDateFormat(endDate!),
+      "invoiceDate"
+    );
+    setSorted(sortedData)
+  }, [startDate, endDate]);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
@@ -44,6 +74,92 @@ const invoices: NextPage<Props> = () => {
   useEffect(() => {
     setter();
   }, [data]);
+
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace("/auth/login");
+    },
+  });
+
+  const dispLoader = (): JSX.Element => {
+    if (status === "loading") {
+      return (
+        <Center>
+          <ScaleLoader color="blue" />
+        </Center>
+      );
+    } else {
+      return (
+        <Layout>
+          <Container>
+            <Top>
+              <Typography>Invoices</Typography>
+              <div>
+                <AsyncSelect
+                  Invoices={invoices}
+                  setter={setSearchValue}
+                  selectedValue={searchValue}
+                />
+                <select title="filter-type">
+                  <option value={0}>Invoice Type</option>
+                </select>
+                <select title="filter-category">
+                  <option value={0}>Category</option>
+                </select>
+                <Button
+                  className={styles.btnCreate}
+                  innerText={"Invoice"}
+                  onClick={() => openOModal()}
+                  icon={<CreateRounded />}
+                />
+              </div>
+            </Top>
+            <Main>
+              {isLoading ? (
+                <Center>
+                  <ScaleLoader color="blue" />
+                </Center>
+              ) : (
+                invoices.map((inv, idx) => {
+                  return (
+                    <InvoiceBar
+                      handleDelete={() => deleteInvoice(inv._id!?.toString())}
+                      amt={inv.total}
+                      clientname={inv.clientName}
+                      due={inv.invoiceDueDate}
+                      invtitle={inv.invoiceTitle}
+                      name={inv.title}
+                      invId={inv._id}
+                      status={dispStats(inv.status!)}
+                    />
+                  );
+                })
+              )}
+            </Main>
+          </Container>
+
+          {/**Create Invoice Modal */}
+          <Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
+            <div className={styles.optionContainer}>
+              <div className={styles.option}>
+                <Typography variant="body1" color="initial">
+                  New Invoice
+                </Typography>
+                <Divider />
+                <Image src={"/485.svg"} width={450} height={300} />
+                <div className={styles["card"]}>
+                  <Link href="http://localhost:3000/invoice/create">
+                    <Typography>Create Invoice</Typography>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        </Layout>
+      );
+    }
+  };
 
   const deleteInvoice = async (id: string) => {
     try {
@@ -60,7 +176,7 @@ const invoices: NextPage<Props> = () => {
     if (status === "draft") {
       return (
         <Chip
-        id="chipFont"
+          id="chipFont"
           label={status}
           sx={{ borderRadius: "4px" }}
           variant="filled"
@@ -71,7 +187,7 @@ const invoices: NextPage<Props> = () => {
     } else if (status === "pending") {
       return (
         <Chip
-        id="chipFont"
+          id="chipFont"
           label={status}
           sx={{ borderRadius: "4px" }}
           variant="filled"
@@ -83,16 +199,22 @@ const invoices: NextPage<Props> = () => {
     if (status === "complete") {
       return (
         <Chip
-        id="chipFont"
-        label={status}
-        sx={{ borderRadius: "4px", color: '#fff'}}
-        variant="filled"
-        color="success"
-        size="medium"
-      />
+          id="chipFont"
+          label={status}
+          sx={{ borderRadius: "4px", color: "#fff" }}
+          variant="filled"
+          color="success"
+          size="medium"
+        />
       );
     }
   };
+
+  const handleCategoryFilter = (e:React.ChangeEvent<HTMLSelectElement> ) => {
+    const value = e.target.value
+    const  fValue = invoices.filter(inv => inv.status === value)
+    setSorted(fValue)
+  }
 
   return (
     <Layout>
@@ -105,12 +227,20 @@ const invoices: NextPage<Props> = () => {
               setter={setSearchValue}
               selectedValue={searchValue}
             />
-            <select title="filter-type">
-              <option value={0}>Invoice Type</option>
+            <select title="filter-type"  
+            onChange={
+              (e: React.ChangeEvent<HTMLSelectElement>) => handleCategoryFilter(e)}>
+              <option value={"none"}>Status</option>
+              <option value={"draft"}>Draft</option>
+              <option value={"pending"}>Pending</option>
+              <option value={"complete"}>Complete</option>
             </select>
-            <select title="filter-category">
-              <option value={0}>Category</option>
-            </select>
+            <Button
+              className={styles.btnCreate}
+              innerText={"Filter"}
+              onClick={() => setIsFiltering(!isFiltering)}
+              icon={<Filter />}
+            />
             <Button
               className={styles.btnCreate}
               innerText={"Invoice"}
@@ -119,12 +249,64 @@ const invoices: NextPage<Props> = () => {
             />
           </div>
         </Top>
-        <Main>
+        {isFiltering ? (<motion.div
+        layout
+          style={{
+            display: "flex",
+            marginTop: "3.4rem",
+            padding: ".8rem 0px",
+            width: "100%",
+            transition: ".2s",
+            background: "#fff",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <FlexContainer>
+            <FormLabel>Start Date</FormLabel>
+            <ControlledInput
+              type="date"
+              name="start"
+              id=""
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setstartDate(e.target.value)
+              }
+            />
+          </FlexContainer>
+          <FlexContainer>
+            <FormLabel>End Date</FormLabel>
+            <ControlledInput
+              type="date"
+              name=""
+              id=""
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setendDate(e.target.value)
+              }
+            />
+          </FlexContainer>
+        </motion.div>) : null}
+        <Main as={motion.div} layout>
           {isLoading ? (
             <Center>
               <ScaleLoader color="blue" />
             </Center>
           ) : (
+            sorted.length > 0 ? (
+              sorted.map((inv, idx) => {
+                return (
+                  <InvoiceBar
+                    handleDelete={() => deleteInvoice(inv._id!?.toString())}
+                    amt={inv.total}
+                    clientname={inv.clientName}
+                    due={inv.invoiceDueDate}
+                    invtitle={inv.invoiceTitle}
+                    name={inv.title}
+                    invId={inv._id}
+                    status={dispStats(inv.status!)}
+                  />
+                );
+              })
+            )
+            :
             invoices.map((inv, idx) => {
               return (
                 <InvoiceBar
@@ -177,12 +359,12 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   height: 100%;
-  gap: 2rem;
-  background: #eee;
+  //gap: 2rem;
+  background: --bg;
   align-items: flex-start;
   flex-direction: column;
 
-  #chipFont{
+  #chipFont {
     margin: 0;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
@@ -192,15 +374,16 @@ const Container = styled.div`
     letter-spacing: 0.00938em;
   }
 `;
-const Top = styled.div`
+const Top = styled.section`
   right: 0;
   left: 250px;
   display: flex;
   padding: 0.5rem 3rem;
-  background: #eee;
+  background: --bg;
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
+  z-index: 100;
   justify-content: space-between;
 
   div {
@@ -227,12 +410,13 @@ const Top = styled.div`
     padding: 0px;
   }
 `;
-const Main = styled.div`
+const Main = styled.section`
   width: 100%;
   display: flex;
-  height: 100%;
-  background: #eee;
-  padding-top: 5rem;
+  height: 100vh;
+  background: --bg;
+  //padding-top: 5rem;
+  padding: 4.5rem 0;
   align-items: flex-start;
   justify-content: space-evenly;
   flex-wrap: wrap;
@@ -260,14 +444,14 @@ const Center = styled.div`
 `;
 
 const Status = styled.div`
-    margin: 0;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    font-size: .8rem;
-    color: #fff !important;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-`
+  margin: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #fff !important;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+`;
 
 /**invoices.map((inv, idx) => {
               return (

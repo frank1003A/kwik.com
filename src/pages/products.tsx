@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from "react";
 import { NextPage } from "next";
-import { Container, ControlledInput } from "../../components/styled-component/Global";
+import { Container, ControlledInput,VhContainer } from "../../components/styled-component/Global";
 import Layout from "../../components/Layout";
 import {
   Card,
@@ -30,6 +30,7 @@ import {
   Clear,
   Edit,
   PrintDisabled,
+  Receipt,
   TryRounded,
 } from "@mui/icons-material";
 import useGetter from "../../hooks/useGetter";
@@ -55,10 +56,19 @@ import { useAppDispatch } from "./redux/hooks";
 import { updateProducts, updateProductSelected } from "./redux/productSlice";
 import { RootState } from "./redux/store";
 import { Transition } from "react-transition-group";
+import { useSession } from "next-auth/react";
 
 const products: NextPage = () => {
   /**Get request with swr */
   const { data, isError, isLoading } = useGetter("api/products");
+
+  const router = useRouter()
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace('/auth/login')
+    },
+  })
 
   /**states */
   const [products, setProducts] = useState<productsClass[]>([]);
@@ -252,12 +262,11 @@ const products: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
+                  <IconButton>
                   <Tooltip title="Select Product">
-                  <ButtonComponent
-                icon={<Add/>}
-                customStyle={{borderRadius: '30px', boxShadow: "0", background: 'red'}}
-                />
+                  <Receipt style={{color: "orange"}}/>
                   </Tooltip>
+                  </IconButton>
 
                   <IconButton
                     onClick={
@@ -303,7 +312,7 @@ const transitionStyles = {
 
   return (
     <Layout>
-      <Container>
+      <VhContainer>
         {data && products.length < 1 ? (
           <Center>
             <div
@@ -346,7 +355,7 @@ const transitionStyles = {
             </FlexContainer>
           </React.Fragment>
         )}
-      </Container>
+      </VhContainer>
       <ModalComponent
         OpenModal={openModal}
         handleCloseModal={handleCloseModal}

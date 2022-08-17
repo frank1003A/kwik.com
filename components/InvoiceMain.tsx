@@ -1,4 +1,4 @@
-import React, { FC, LegacyRef, SyntheticEvent, useState } from "react";
+import React, { FC, LegacyRef, SyntheticEvent, useState, Dispatch, SetStateAction} from "react";
 import styles from "../styles/Invoice.module.css";
 import { Typography } from "@mui/material";
 import { Divider } from "@mui/material";
@@ -48,7 +48,9 @@ interface Props {
   contentEditable?: boolean,
   id?:string,
   clientInputRef?:LegacyRef<HTMLDivElement>,
-  customStyle?: React.CSSProperties
+  customStyle?: React.CSSProperties,
+  dateSet: Dispatch<SetStateAction<Invoice>>
+  selClr: Dispatch<SetStateAction<Invoice>>
 }
 
 const invoiceMain = React.forwardRef(
@@ -69,7 +71,9 @@ const invoiceMain = React.forwardRef(
       contentEditable,
       id,
       clientInputRef,
-      customStyle
+      customStyle,
+      dateSet, 
+      selClr
     }: Props,
     ref: React.LegacyRef<HTMLDivElement>
   ) => {
@@ -110,6 +114,7 @@ const invoiceMain = React.forwardRef(
               invoice={invoice}
               handleDetailInput={handleDetailInput}
               options={options}
+              setter={selClr}
               contentEditable={contentEditable}
               customStyle={customStyle}
             />
@@ -126,6 +131,7 @@ const invoiceMain = React.forwardRef(
             <InvoiceDescription
               handleDetailInput={handleDetailInput}
               invoice={invoice}
+              setter={dateSet}
               contentEditable={contentEditable}
               customStyle={customStyle}
             />

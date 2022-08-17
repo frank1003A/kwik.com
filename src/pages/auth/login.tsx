@@ -26,7 +26,7 @@ const login: NextPage = () => {
       password: userInfo.password,
       redirect: false,
     })
-    if (res?.ok) router.push("/")
+    if (res?.ok) router.replace("/")
   }
   return (
     <div className={styles["login-container"]}>
@@ -49,7 +49,7 @@ const login: NextPage = () => {
             color={"#666"}
             fontSize={"12px"}
           >
-            see your growth and get consultig support!
+            see your growth and get consulting support!
           </Typography>
           <ButtonComponent
             innerText="Sign in with Google"

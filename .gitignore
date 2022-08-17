@@ -33,3 +33,16 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+#some css files
+/styles/Kwikeditor.module.css
+/styles/Pemji.module.css
+/styles/ResizePanel.module.css
+/styles/Slider.module.css
+
+#compoents
+/components/Kwik_Creator
+/components/KwikCreator
+
+#page files
+/src/pages/KwikCreator.tsx

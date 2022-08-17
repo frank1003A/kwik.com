@@ -28,7 +28,7 @@ export default function TemporaryDrawer({anchor, open}:Props) {
   });
 
   const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
+    (anchor: Anchor, open: Props["open"]) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
         event.type === 'keydown' &&

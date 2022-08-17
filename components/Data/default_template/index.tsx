@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, Dispatch, SetStateAction } from "react";
 import EditableImageFile from "../../EditableImageFile";
 import styles from "../../../styles/Invoice.module.css";
 import EditableSelect from "../../EditableSelect";
@@ -33,6 +33,7 @@ import {
   TotalContainerProps,
   TitleContainerProps,
 } from "./types";
+import { motion } from 'framer-motion'
 
 /**Default Template Invoice Logo Container */
 export const LogoContainer: FC<LogoProps> = ({
@@ -93,7 +94,8 @@ export const CompanySection: FC<CompanyProps> = ({
   options,
   invoice,
   contentEditable,
-  customStyle
+  customStyle,
+  setter
 }) => {
   return (
     <div className={styles.sectionTwo} id="dfcompanydetail">
@@ -125,6 +127,7 @@ export const CompanySection: FC<CompanyProps> = ({
       {/**Compoenent */}
       <EditableSelect
         options={options}
+        setter={setter}
         invoice={invoice}
         onSelectChange={(e) => handleDetailInput(e, "companyCountry")}
         customStyle={customStyle}
@@ -201,7 +204,8 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
   handleDetailInput,
   invoice,
   contentEditable,
-  customStyle
+  customStyle,
+  setter
 }) => {
   return (
     <div className={styles.invDetails} id="dfinvoicedetail">
@@ -250,6 +254,7 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
           selectedDate={invoice.invoiceDate}
           dateName={"invoiceDate"}
           invoice={invoice}
+          setter={setter}
           handleDateInput={(e) => handleDetailInput(e, "invoiceDate")}
           customStyle={customStyle}
         />
@@ -266,6 +271,7 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
         <EditableDate
           selectedDate={invoice.invoiceDueDate}
           invoice={invoice}
+          setter={setter}
           dateName={"invoiceDueDate"}
           handleDateInput={(e) => handleDetailInput(e, "invoiceDueDate")}
           customStyle={customStyle}
@@ -330,8 +336,7 @@ export const InvoiceTable: FC<TableProps> = ({
             return (
               <TableRow
                 key={inv._id?.toString()}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
+                sx={{"&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
                 <TableCell align="left">

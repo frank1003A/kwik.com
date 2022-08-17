@@ -33,25 +33,32 @@ import { CompactPicker } from "react-color";
 import { PropertyEditor, PropertiesContainer, Property, Header } from "../../../components/styled-component/editorbar";
 import user from "../../../model/user";
 import SettingsComponent from '../../../components/InvoiceSettings'
-import { ThemeSelectedContext, ContextObj } from "../../../helper/context/ThemeContext";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 
 interface Props {
   invoice: Invoice;
 }
 
-/** settings */ 
-
-interface Settings {
-    current_tax_rate?: number,
-    theme?: {
-      dark:{},
-      light:{},
-    }, // dark or ligth mode
-    logo?: string
+/**Google Translate Data Response Type */
+interface languageResponse {
+  data?: {
+    languages: {
+      language: string
+    }[]
+  }
 }
 
 const createInvoice: NextPage<Props> = () => {
+
+  const router = useRouter()
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace('/auth/login')
+    },
+  })
 
   const [editPdf, seteditPdf] = useState<boolean>(false);
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
@@ -66,29 +73,20 @@ const createInvoice: NextPage<Props> = () => {
   });
   const [editable, setEditable] = useState<boolean>(true);
   const [background, setBackground] = useState<string>("#fff");
-  const [font, setFont] = useState("");
+  const [font, setFont] = useState<string>("");
   const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
   const [passed, setPassed] = useState<boolean>(false);
   const [passedClient, setPassedClient] = useState<boolean>(false);
   const [genNo, setGenNo] = useState<boolean>(false);
   const [override, setOverride] = useState<boolean>(false);
-  const [settings, setSetting] = useState<Settings>()
   const [sModal, setSModal] = useState<boolean>(false)
+  const [languages, setLanguages] = useState<languageResponse>({});
+  const [fontColor, setFontColor] = useState<string>("#555");
 
   const SelectedProducts = useSelector((state: RootState) => state.product)
   const SelectedClient = useSelector((state: RootState) => state.client)
   const dispatch =  useAppDispatch()
-
-  const darkTheme: React.CSSProperties = {
-    background: "black",
-  }
-
-  const ligthTheme: React.CSSProperties = {
-    background: "#eee",
-  }
-
-  const {theme, setTheme } = useContext<ContextObj>(ThemeSelectedContext)
-
+  
   /**generate unique number for invoice */
   const generateInvoiceNo = (): string => {
     const newId = `invoice#${nanoid(5)}`;
@@ -111,6 +109,19 @@ const createInvoice: NextPage<Props> = () => {
     assignInvoiceNo();
   }, [genNo]);
 
+  const currentloggedIn = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    const resInv: Invoice = { ...InvoiceRepo };
+      resInv.companyName = currentloggedIn.user.buisness_name!
+      resInv.companyAddress = currentloggedIn.user.buisness_address!
+      resInv.companyAddress2 = currentloggedIn.user.buisness_address2!
+      resInv.companyCountry = currentloggedIn.user.country!
+      resInv.logo = currentloggedIn.user.buisness_logo!
+      resInv.owner = currentloggedIn.user._id?.toString()
+      setInvoiceRepo(resInv);
+  }, [])
+  
   /** 
    * we need to pass the products selected from products page
    *  to itemArr for our invoice to display.
@@ -168,7 +179,6 @@ const createInvoice: NextPage<Props> = () => {
     /**remove products data to invoice - if any */
     clearProductData();
   },[passed]);
-
 
   /**
    * I need to handle the editability of 
@@ -383,6 +393,8 @@ const createInvoice: NextPage<Props> = () => {
   const handleTxRateChange = () => {
     const inv: Invoice = {...InvoiceRepo}
     getTxRate(inv)
+    getSubTotal(inv)
+    getTotal(inv)
     setInvoiceRepo(inv)
   }
 
@@ -446,7 +458,8 @@ const createInvoice: NextPage<Props> = () => {
           />
           <div className={styles.editorFlex}>
             <InvoiceMain
-              style={{ background: background, fontFamily: font }}
+              style={{ background: background }}
+              customStyle={{ color: fontColor, fontFamily: font }}
               ref={componentRef}
               options={countryList}
               pdfMode={editPdf}
@@ -459,6 +472,8 @@ const createInvoice: NextPage<Props> = () => {
               handleDetailInput={handleDetailInput}
               handleItemInput={handleItemInput}
               invoice={InvoiceRepo}
+              dateSet={setInvoiceRepo}
+              selClr={setInvoiceRepo}
             />
             <PropertyEditor>
               <Header>
@@ -493,19 +508,26 @@ const createInvoice: NextPage<Props> = () => {
                 </Property>
                 <Property>
                   <Typography variant="overline" color="#555">
+                    Font Color
+                  </Typography>
+                  <CompactPicker
+                    onChange={(color) => setFontColor(color.hex)}
+                  />
+                </Property>
+                <Property>
+                  <Typography variant="overline" color="#555">
                     Language
                   </Typography>
-                  <div style={{width: '230px', padding: '0px 2px'}}>
-                  <select
-                    name="font"
-                    title="font-Change"
-                    onChange={(e) => setFont(e.target.value)}
-                  >
-                    <option value="sans-serif">English</option>
-                    <option value="monospace">monospace</option>
-                    <option value="fantasy">fantasy</option>
-                    <option value="cursive">cursive</option>
-                  </select>
+                  <div style={{ width: "230px", padding: "0px 2px" }}>
+                    <select
+                      name="font"
+                      title="font-Change"
+                      onChange={(e) => setFont(e.target.value)}
+                    >
+                      {languages.data?.languages.map((l) => {
+                        return <option value={l.language}>{l.language}</option>;
+                      })}
+                    </select>
                   </div>
                 </Property>
                 <Property>
