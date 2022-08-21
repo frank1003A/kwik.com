@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId  } from 'mongodb'
-import clientPromise from '../../../lib/Mongodb'
-import user from '../../../model/user';
+import clientPromise from '../../../../lib/Mongodb'
+import user from '../../../../model/user';
 import bcrypt from 'bcrypt'
 
 export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {

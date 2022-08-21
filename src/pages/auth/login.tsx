@@ -10,6 +10,7 @@ import PasswordEmojifier from "../../../components/PasswordEmojifier";
 import { useRouter } from "next/dist/client/router";
 import type { NextPage } from "next";
 import { signIn } from "next-auth/react"
+import { motion } from "framer-motion";
 
 const login: NextPage = () => {
 
@@ -19,6 +20,7 @@ const login: NextPage = () => {
     email: "",
     password: ""
   })
+  const [error, setError] = useState<string>("")
 
   const handleSubmit = async () => {
     const res = await signIn("credentials", {
@@ -27,6 +29,7 @@ const login: NextPage = () => {
       redirect: false,
     })
     if (res?.ok) router.replace("/")
+    if (res?.error) setError(res.error)
   }
   return (
     <div className={styles["login-container"]}>
@@ -37,19 +40,8 @@ const login: NextPage = () => {
       </Head>
       <section id={styles.formandinput}>
         <div className={styles["form"]}>
-          <div className={styles["logocont"]}>
-            <Image src={"/kwik_favicon.png"} width={30} height={30} />
-          </div>
           <Typography variant="h5" fontWeight={"bold"}>
             Login
-          </Typography>
-          <Typography
-            variant="h6"
-            fontWeight={"bold"}
-            color={"#666"}
-            fontSize={"12px"}
-          >
-            see your growth and get consulting support!
           </Typography>
           <ButtonComponent
             innerText="Sign in with Google"
@@ -81,6 +73,11 @@ const login: NextPage = () => {
             onChange={({target}) => setUserInfo({...userInfo, password: target.value})}
              />
           </div>
+          {error ? (
+              <motion.span animate={{y: 5}} layout>
+                <p style={{color: 'red'}}>*{error}</p>
+              </motion.span>
+            ): null}
           <div className={styles["frm"]}>
             <div className={styles["chckbx"]}>
               <input type="checkbox" name="rm" id={styles["rm"]} />
@@ -102,7 +99,7 @@ const login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <Image src={'/sideimg.jpg'} width={1000} height={1000} />
+        <Image src={'/templateview.svg'} width={1000} height={1000} />
       </section>
     </div>
   );
@@ -110,4 +107,9 @@ const login: NextPage = () => {
 
 export default login;
 
+
+/**
+          <div className={styles["logocont"]}>
+            <Image src={"/kwik_favicon.png"} width={30} height={30} />
+          </div> */
 //<input type="password" placeholder="min. 8 characters" />

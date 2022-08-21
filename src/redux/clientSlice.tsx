@@ -1,6 +1,6 @@
 import { createSlice, Draft, PayloadAction, current } from '@reduxjs/toolkit'
-import { initialClientData } from '../../../components/Data/initialData'
-import clients from '../../../model/clients'
+import { initialClientData } from '../../components/Data/initialData'
+import clients from '../../model/clients'
 import type { RootState } from './store'
 
 type ClientState = {

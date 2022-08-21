@@ -19,20 +19,17 @@ export const VhContainer = styled.div`
 `;
 //#CCCCCC light grey
   export const ControlledInput = styled.input<{customHeight?: string}>`
-        margin: 0;
+    margin: 0;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
     font-size: .9rem;
-    color: #555;
+    color: var(--fg);
     line-height: 1.5;
-    -webkit-letter-spacing: 0.00938em;
-    -moz-letter-spacing: 0.00938em;
-    -ms-letter-spacing: 0.00938em;
     letter-spacing: 0.00938em;
     border: transparent;
     width: 100%;
     height: ${(props) => !props.customHeight ? 40 :  props.customHeight}px;
-    background: #eee;
+    background: var(--txt);
     border-radius: 4px;
     padding: 1rem;
     border: 1px solid;
@@ -68,14 +65,14 @@ export const SwitchContainer = styled.div`
     gap: .1rem;
     padding: 0px 5px;
     color: #fff;
-    background: #2124b1;
+    background: var(--sw);
     border-radius: 50px;
     align-items: center;
 `;
 
 export const UserBadge = styled.div`
     background: #eee;
-    color: #2124b1;
+    color: var(--sw);
     height: 40px;
     padding: 0px 25px;
     width: 200px;
@@ -96,7 +93,7 @@ export const Top = styled.div`
   left: 250px;
   display: flex;
   padding: .5rem 3rem;
-  background: --bg;
+  background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
@@ -126,13 +123,18 @@ export const List = styled.div`
     width: 100%;
     display: flex;
     height: max-content;
-    padding: 0px 15rem;
+    padding: 5rem 15rem;
     flex-direction: column;
+    background: var(--bg);
     gap: 1rem;
     padding-bottom: 2rem;
-    margin: 5rem 0px;
     flex-wrap: nowrap;
     justify-content: space-evenly;
+    
+    span {
+      color: var(--fg)
+    }
+
   @media (max-width: 500px) {
     padding: 0px !important;
   }

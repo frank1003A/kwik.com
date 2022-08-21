@@ -7,7 +7,7 @@ import type { AppProps } from "next/app";
 //import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { store } from "./redux/store";
+import { store } from "../redux/store";
 import { Provider } from "react-redux";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
@@ -19,12 +19,22 @@ const GlobalStyle = createGlobalStyle`
     --fg: #555;
     --bg: #eee;
     --cd: #fff;
+    --sw: #2124b1;
+    --txt: rgba(0, 17, 255, 0.164);
+    --prp: #fff;
+    --card-box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
   }
 
   [data-theme="dark"] {
     --fg: #fff;
-    --bg: #000;
+    --bg: #27272f;
     --cd: #555;
+    --sw: orange;
+    --txt: grey;
+    --prp: #27272f;
+    --card-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 
+    0px 4px 5px 0px rgb(0 0 0 / 14%), 
+    0px 1px 10px 0px rgb(0 0 0 / 12%);
   }
 ` ;
 

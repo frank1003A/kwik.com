@@ -27,19 +27,24 @@ import { initialClientData } from "../../components/Data/initialData";
 import AlertDialogSlide from "../../components/AlertDialog";
 import { useRouter } from "next/router";
 import useLocalStorage from "../../hooks/localStorage";
-import { useAppDispatch } from "./redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import { useSelector } from "react-redux";
-import { updateClient } from "./redux/clientSlice";
-import { RootState } from "./redux/store";
+import { updateClient } from "../redux/clientSlice";
+import { RootState } from "../redux/store";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes";
 
 const clients: NextPage = () => {
-  const { data, isError, isLoading } = useGetter("api/clients");
+  const { data: session, status } = useSession()
+  const { data, isError, isLoading } = useGetter(
+    `/api/user/client/clients/?user_id=${session?.user?.id}`
+    );
 
   const router = useRouter()
+  const {theme} = useTheme()
   
-  const { status } = useSession({
+  const { } = useSession({
     required: true,
     onUnauthenticated() {
       router.replace('/auth/login')
@@ -124,7 +129,8 @@ const clients: NextPage = () => {
 
   const postNewClient = async (): Promise<void> => {
     try {
-      const newClient = await postRequest("api/clients", singleClient);
+      const newClient = await postRequest(
+        `api/user/client/clients/?user_id=${session?.user?.id}`, singleClient);
       if (newClient.data) alert("new Client added");
     } catch (error: any) {
       console.log(error.message);
@@ -135,7 +141,7 @@ const clients: NextPage = () => {
     handleOpenDialog(); // open delete dialog
     if (dialogResponse === "Yes") {
       try {
-        const clientData = await deleteRequest(`api/clients/?client_id=${id}`);
+        const clientData = await deleteRequest(`api/user/client/clients/?client_id=${id}`);
         if (clientData.data)
           alert(`client <${id}> has been removed from database`);
       } catch (error: any) {
@@ -154,7 +160,7 @@ const clients: NextPage = () => {
     const { _id, ...ClientUpdate } = singleClient; // REMOVE ID FIELD
     try {
       const UpdateClient = await patchRequest(
-        `api/clients/?client_id=${id}`,
+        `api/user/client/clients/?client_id=${id}`,
         ClientUpdate
       );
       if (UpdateClient.data) alert(`updated client ${id}`);
@@ -184,7 +190,7 @@ const clients: NextPage = () => {
                 >
                   <Avatar
                     name={cli.fullname}
-                    color="#2124B1"
+                    color={theme === "dark" ?  "orange" : "#2124B1"}
                     round="4px"
                     size="40px"
                   />
@@ -258,7 +264,6 @@ const clients: NextPage = () => {
             <Top>
               <Typography>Clients</Typography>
               <ButtonComponent
-                innerText="New Client"
                 icon={<PersonAdd />}
                 onClick={handleOpenModal}
               />

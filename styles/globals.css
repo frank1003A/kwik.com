@@ -17,6 +17,11 @@ html,
   --maingradient: linear-gradient(to right, red, #faae0a);
   --maincolor: #f53803;
   --card: #fff;
+  --card-box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
+  --edb: whitesmoke;
+  --sm: #555;
+  --invoicebg: #eee;
+  --loginfpg: #fff;
 }
 
 body {
@@ -30,42 +35,22 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+
 [data-theme='dark'] {
-  --primarybackground: black;
+  --primarybackground: #27272f;
   --textcolor: white;
   --primarycolor: orange;
   --sbhover: #555;
-  --sbedge: black;
-  --card: orange;
+  --sbedge: #27272f;
+  --card: #555;
+  --whitish: #27272f;
+  --edb: #27272f;
+  --sm: #27272f;
+  --card-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 
+  0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+  --invoicebg: #27272f;
+  --loginfpg: #27272f;
 }
-
-/*
-[data-theme='light'] {
-  --background-color: #fff;
-  --text-color: #121416d8;
-  --link-color: #543fd7;
-}
-
-[data-theme='dark'] {
-  --background-color: #212a2e;
-  --text-color: #F7F8F8;
-  --link-color: #828fff;
-}
-*/
-
-/*
-body div {
-  background: black;
-}
-
-body span {
-  color: white;
-}
-
-body button {
-  background: yellow;
-}
-*/
 
 a {
   color: var(--link-color);
@@ -76,9 +61,3 @@ a:hover {
   text-decoration: underline;
   filter: brightness(80%);
 }
-
-/*/* 2 
-[data-theme="dark"] {
-  color: #eee;
-  background: #333;
-}*/

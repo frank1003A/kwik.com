@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId  } from 'mongodb'
-import clientPromise from '../../../lib/Mongodb'
-import { Invoice } from '../../../components/Data/types'
+import clientPromise from '../../../../lib/Mongodb'
+import { Invoice } from '../../../../components/Data/types'
 
 export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
    

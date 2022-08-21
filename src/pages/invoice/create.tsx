@@ -25,16 +25,19 @@ import { resolve } from "path";
 import useLocalStorage from "../../../hooks/localStorage";
 import clients from "../../../model/clients";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { useAppDispatch } from "../redux/hooks";
-import { clearProducts } from "../redux/productSlice";
+import { RootState } from "../../redux/store";
+import { useAppDispatch } from "../../redux/hooks";
+import { clearProducts } from "../../redux/productSlice";
 import { PhotoFilter } from "@mui/icons-material";
 import { CompactPicker } from "react-color";
 import { PropertyEditor, PropertiesContainer, Property, Header } from "../../../components/styled-component/editorbar";
-import user from "../../../model/user";
 import SettingsComponent from '../../../components/InvoiceSettings'
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import { ScaleLoader, SquareLoader } from "react-spinners";
+import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 
 
 interface Props {
@@ -51,14 +54,17 @@ interface languageResponse {
 }
 
 const createInvoice: NextPage<Props> = () => {
-
+  
   const router = useRouter()
-  const { status } = useSession({
+  const {  } = useSession({
     required: true,
     onUnauthenticated() {
       router.replace('/auth/login')
     },
   })
+
+  const {theme} = useTheme()
+  const { user, setCurrentUser, isLoading, status } = useCurrentUser()
 
   const [editPdf, seteditPdf] = useState<boolean>(false);
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
@@ -106,21 +112,29 @@ const createInvoice: NextPage<Props> = () => {
 
   useEffect(() => {
     /**Assign uniqiue number to Invoice once page is loaded */
-    assignInvoiceNo();
+      setInvoiceRepo({...InvoiceRepo, invoiceTitle: generateInvoiceNo()})
   }, [genNo]);
 
-  const currentloggedIn = useSelector((state: RootState) => state.user)
-
   useEffect(() => {
-    const resInv: Invoice = { ...InvoiceRepo };
-      resInv.companyName = currentloggedIn.user.buisness_name!
-      resInv.companyAddress = currentloggedIn.user.buisness_address!
-      resInv.companyAddress2 = currentloggedIn.user.buisness_address2!
-      resInv.companyCountry = currentloggedIn.user.country!
-      resInv.logo = currentloggedIn.user.buisness_logo!
-      resInv.owner = currentloggedIn.user._id?.toString()
-      setInvoiceRepo(resInv);
-  }, [])
+    if (user !== undefined && status === "authenticated") {
+      setInvoiceRepo({
+        ...InvoiceRepo, 
+        companyName: user.buisness_name!,
+        companyAddress: user.buisness_address!,
+        companyAddress2: user.buisness_address2!,
+        companyCountry: user.country!,
+      })
+    }
+  }, [user, status])
+
+  /** const resInv: Invoice = { ...InvoiceRepo };
+      resInv.companyName = user.buisness_name!
+      resInv.companyAddress = user.buisness_address!
+      resInv.companyAddress2 = user.buisness_address2!
+      resInv.companyCountry = user.country!
+      resInv.logo = user.buisness_logo!
+      resInv.owner = user._id?.toString()
+      setInvoiceRepo(resInv); */
   
   /** 
    * we need to pass the products selected from products page
@@ -286,7 +300,7 @@ const createInvoice: NextPage<Props> = () => {
     const { value } = e.currentTarget;
 
     const newInvoice: Invoice = { ...InvoiceRepo };
-    if (name !== "invoiceitems" && name !== "_id" && name !== "status") {
+    if (name !== "invoiceitems" && name !== "_id" && name !== "status" && name !== "owner") {
       if (
         name !== "logoWidth" &&
         name !== "tax" &&
@@ -417,180 +431,201 @@ const createInvoice: NextPage<Props> = () => {
 
   const handleInvoicePost = async (): Promise<void> => {
     try {
-      const InvoicePost = await postRequest("api/invoices", InvoiceRepo);
+      const InvoicePost = await postRequest(
+        `http://localhost:3000/api/user/invoice/invoices/?user_id`
+        , InvoiceRepo);
       console.log(InvoicePost);
       alert("saved");
     } catch (error: any) {
       console.log(error.message);
     }
   };
-
+//|| !InvoiceRepo.invoiceTitle
   return (
-    <Layout>
-      <Container>
-        <div className={styles.fileAndEditor}>
-          {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
-          <Editorbar
-           editController={
-            <FormControlLabel
-                label={`Override`}
-                sx={{
-                  margin: "0",
-                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                  fontWeight: "500",
-                  textTransform: "capitalize",
-                  color: "#555",
-                  fontSize: "0.875rem",
-                  lineHeight: "1.5",
-                  letterSpacing: "0.00938em",
-                }}
-                labelPlacement="end"
-                control={
-                <Checkbox color="primary"  
-                onChange={() => setOverride(true)}/>
-              }
-              />     
-           }
-            saveText="SAVE"
-            handlePrint={() => handlePrint()}
-            handleSave={() => handleInvoicePost()}
-            handleVat={() => handleShowSettingsModal()}
-          />
-          <div className={styles.editorFlex}>
-            <InvoiceMain
-              style={{ background: background }}
-              customStyle={{ color: fontColor, fontFamily: font }}
-              ref={componentRef}
-              options={countryList}
-              pdfMode={editPdf}
-              cur={currency}
-              itemArr={InvoiceRepo.invoiceitems}
-              addTC={addTC}
-              tR={taxRate}
-              removeItem={removeItem}
-              handleChange={handleImageChange}
-              handleDetailInput={handleDetailInput}
-              handleItemInput={handleItemInput}
-              invoice={InvoiceRepo}
-              dateSet={setInvoiceRepo}
-              selClr={setInvoiceRepo}
+    <>
+    {
+      isLoading || status ===  "loading" || status === "unauthenticated" ? (
+        <motion.div layout style={{
+          width: '100%',
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 20
+        }}>
+            <SquareLoader color={theme !== "dark" ? "blue" : "orange"}/>
+            <Typography>Please wait while we get things set up for you...</Typography>
+            </motion.div>
+      ) : (
+        <Layout>
+        <Container>
+          <div className={styles.fileAndEditor}>
+            {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
+            <Editorbar
+             editController={
+              <FormControlLabel
+                  label={`Override`}
+                  sx={{
+                    margin: "0",
+                    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                    fontWeight: "500",
+                    textTransform: "capitalize",
+                    color: "#555",
+                    fontSize: "0.875rem",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.00938em",
+                  }}
+                  labelPlacement="end"
+                  control={
+                  <Checkbox color="primary"  
+                  onChange={() => setOverride(true)}/>
+                }
+                />     
+             }
+              saveText="SAVE"
+              handlePrint={() => handlePrint()}
+              handleSave={() => handleInvoicePost()}
+              handleVat={() => handleShowSettingsModal()}
             />
-            <PropertyEditor>
-              <Header>
-                <PhotoFilter />
-                <Typography variant="subtitle1" color="#555">
-                  Page Design
-                </Typography>
-              </Header>
-              <PropertiesContainer>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Font Family
+            <div className={styles.editorFlex}>
+              <InvoiceMain
+                style={{ background: background }}
+                customStyle={{ color: fontColor, fontFamily: font }}
+                ref={componentRef}
+                options={countryList}
+                pdfMode={editPdf}
+                cur={currency}
+                itemArr={InvoiceRepo.invoiceitems}
+                addTC={addTC}
+                tR={taxRate}
+                removeItem={removeItem}
+                handleChange={handleImageChange}
+                handleDetailInput={handleDetailInput}
+                handleItemInput={handleItemInput}
+                invoice={InvoiceRepo}
+                dateSet={setInvoiceRepo}
+                selClr={setInvoiceRepo}
+              />
+              <PropertyEditor>
+                <Header>
+                  <PhotoFilter />
+                  <Typography variant="subtitle1" color="#555">
+                    Page Design
                   </Typography>
-                  <select
-                    name="font"
-                    title="font-Change"
-                    onChange={(e) => setFont(e.target.value)}
-                  >
-                    <option value="sans-serif">sans-serif</option>
-                    <option value="monospace">monospace</option>
-                    <option value="fantasy">fantasy</option>
-                    <option value="cursive">cursive</option>
-                  </select>
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Background Color
-                  </Typography>
-                  <CompactPicker
-                    onChange={(color) => setBackground(color.hex)}
-                  />
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Font Color
-                  </Typography>
-                  <CompactPicker
-                    onChange={(color) => setFontColor(color.hex)}
-                  />
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Language
-                  </Typography>
-                  <div style={{ width: "230px", padding: "0px 2px" }}>
+                </Header>
+                <PropertiesContainer>
+                  <Property>
+                    <Typography variant="overline" color="#555">
+                      Font Family
+                    </Typography>
                     <select
                       name="font"
                       title="font-Change"
                       onChange={(e) => setFont(e.target.value)}
                     >
-                      {languages.data?.languages.map((l) => {
-                        return <option value={l.language}>{l.language}</option>;
-                      })}
+                      <option value="sans-serif">sans-serif</option>
+                      <option value="monospace">monospace</option>
+                      <option value="fantasy">fantasy</option>
+                      <option value="cursive">cursive</option>
                     </select>
-                  </div>
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Composer
-                  </Typography>
-                </Property>
-              </PropertiesContainer>
-            </PropertyEditor>
+                  </Property>
+                  <Property>
+                    <Typography variant="overline" color="#555">
+                      Background Color
+                    </Typography>
+                    <CompactPicker
+                      onChange={(color) => setBackground(color.hex)}
+                    />
+                  </Property>
+                  <Property>
+                    <Typography variant="overline" color="#555">
+                      Font Color
+                    </Typography>
+                    <CompactPicker
+                      onChange={(color) => setFontColor(color.hex)}
+                    />
+                  </Property>
+                  <Property>
+                    <Typography variant="overline" color="#555">
+                      Language
+                    </Typography>
+                    <div style={{ width: "230px", padding: "0px 2px" }}>
+                      <select
+                        name="font"
+                        title="font-Change"
+                        onChange={(e) => setFont(e.target.value)}
+                      >
+                        {languages.data?.languages.map((l) => {
+                          return <option value={l.language}>{l.language}</option>;
+                        })}
+                      </select>
+                    </div>
+                  </Property>
+                  <Property>
+                    <Typography variant="overline" color="#555">
+                      Composer
+                    </Typography>
+                  </Property>
+                </PropertiesContainer>
+              </PropertyEditor>
+            </div>
           </div>
-        </div>
-
-        <Snackbar
-          open={opensuccess}
-          autoHideDuration={4000}
-          onClose={handlesucClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert
+  
+          <Snackbar
+            open={opensuccess}
+            autoHideDuration={4000}
             onClose={handlesucClose}
-            severity="success"
-            sx={{ width: "100%" }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           >
-            <Typography>Invoice Saved</Typography>
-          </Alert>
-        </Snackbar>
-
-        <Modals
-          OpenModal={opensaved}
-          handleCloseModal={handleOpenSaveInfoClose}
+            <Alert
+              onClose={handlesucClose}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              <Typography>Invoice Saved</Typography>
+            </Alert>
+          </Snackbar>
+  
+          <Modals
+            OpenModal={opensaved}
+            handleCloseModal={handleOpenSaveInfoClose}
+            pd="1rem"
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                justifyContent: "center",
+                flexDirection: "column",
+                marginBottom: "1rem",
+              }}
+            >
+              <Image src="/print2.svg" height={300} width={300} />
+              Invoice Saved
+            </div>
+            <ButtonComponent innerText={"Continue"} />
+          </Modals>
+  
+          <Modals
+          OpenModal={sModal}
+          handleCloseModal={handleCloseSettingsModal}
           pd="1rem"
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              justifyContent: "center",
-              flexDirection: "column",
-              marginBottom: "1rem",
-            }}
           >
-            <Image src="/print2.svg" height={300} width={300} />
-            Invoice Saved
-          </div>
-          <ButtonComponent innerText={"Continue"} />
-        </Modals>
-
-        <Modals
-        OpenModal={sModal}
-        handleCloseModal={handleCloseSettingsModal}
-        pd="1rem"
-        >
-          <SettingsComponent 
-          taxOnChangeHandler={
-            (e: React.ChangeEvent<HTMLInputElement>) => setTaxRate(Number(e.target.value))
-            }
-            currentTaxRate={taxRate}
-            /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
-            />
-        </Modals>
-      </Container>
-    </Layout>
+            <SettingsComponent 
+            taxOnChangeHandler={
+              (e: React.ChangeEvent<HTMLInputElement>) => setTaxRate(Number(e.target.value))
+              }
+              currentTaxRate={taxRate}
+              /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+              />
+          </Modals>
+        </Container>
+      </Layout>
+      )
+    }
+    </>
   );
 };
 

@@ -13,5 +13,6 @@ export default class clients {
         public buisness?: string,
         public phone?: string,
         public countryCode?: string,
+        public owner?: string,
     ){}
 }

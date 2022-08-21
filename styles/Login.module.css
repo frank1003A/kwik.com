@@ -12,7 +12,7 @@
 
 section#imgandtext {
     width: 50%;
-    background: #01023b;
+    background: var(--primarybackground);
     padding: 0px;
     display: flex;
     align-items: center;
@@ -21,10 +21,10 @@ section#imgandtext {
     padding: 10px;
 }
 section#formandinput {
-    background: white;
+    background: var(--loginfpg);
     width: 50%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     flex-direction: column;
     align-items: center;
 }
@@ -167,14 +167,18 @@ section#formandinputsignup {
     border-radius: 50px;
     width: 100%;
     font-family: Roboto, sans-serif;
-    font-size: .8990rem;
-    font-weight: 400;
+    font-weight: 600;
     border: 1px solid #eee;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: .9rem;
+    color: var(--fg);
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
 }
 
 #formandinput .form .form-control input[type="text"]:focus-visible {
     outline: none;
-    border-color: #2124B1 ;
+    border-color: var(--primarycolor) ;
 }
 
 #formandinputsignup .form .form-control input[type="text"] {
@@ -184,25 +188,33 @@ section#formandinputsignup {
     width: 100%;
     border: 1px solid #eee;
     font-family: Roboto, sans-serif;
-    font-size: .8990rem;
-    font-weight: 400;
+    font-weight: 600;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: .9rem;
+    color: var(--fg);
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
 }
 
 #formandinputsignup .form .form-control input[type="text"]:focus-visible{
     outline: none;
-    border-color: #2124B1 ;
+    border-color: var(--primarycolor) ;
 }
 
 #formandinput .form .form-control input[type="text"]:focus-visible, 
 #formandinput .form .form-control input[type="text"]:focus,
 #formandinput .form .form-control input[type="text"]:focus-within {
-    border-color: #2124B1 !important;
+    border: 1px solid var(--primarycolor) !important;
+     background: rgba(0, 17, 255, 0.164);
+     transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 #formandinputsignup .form .form-control input[type="text"]:focus-visible, 
 #formandinputsignup .form .form-control input[type="text"]:focus,
 #formandinputsignup .form .form-control input[type="text"]:focus-within {
-    border-color: #2124B1 !important;
+    border: 1px solid var(--primarycolor) !important;
+    background: rgba(0, 17, 255, 0.164);
+    transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 #formandinput .form .form-control input[type="password"] {
@@ -212,13 +224,25 @@ section#formandinputsignup {
     width: 100%;
     border: 1px solid #eee;
     font-family: Roboto, sans-serif;
-    font-size: .8990rem;
-    font-weight: 400;
+    font-weight: 600;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: .9rem;
+    color: var(--fg);
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
 }
 
 #formandinput .form .form-control input[type="password"]:focus-visible {
     outline: none;
-    border-color: #2124B1 ;
+    border-color: var(--primarycolor) ;
+}
+
+#formandinput .form .form-control input[type="password"]:focus-visible, 
+#formandinput .form .form-control input[type="password"]:focus,
+#formandinput .form .form-control input[type="password"]:focus-within {
+    border: 1px solid var(--primarycolor) !important;
+    background: rgba(0, 17, 255, 0.164);
+    transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 #formandinputsignup .form .form-control input[type="password"] {
@@ -228,13 +252,17 @@ section#formandinputsignup {
     width: 100%;
     border: 1px solid #eee;
     font-family: Roboto, sans-serif;
-    font-size: .8990rem;
-    font-weight: 400;
+    font-weight: 600;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: .9rem;
+    color: var(--fg);
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
 }
 
 #formandinputsignup .form .form-control input[type="password"]:focus-visible {
     outline: none;
-    border-color: #2124B1 ;
+    border-color: var(--primarycolor) ;
 }
 
 #formandinput .form  .loginbtn{
@@ -243,7 +271,7 @@ section#formandinputsignup {
     border-radius: 50px !important;
     box-shadow: var(--box-shadow);
     border: 1px solid #eee !important;
-    background-color: #2124B1 !important;
+    background-color: var(--primarycolor) !important;
 }
 
 #formandinputsignup .form  .loginbtn{
@@ -252,7 +280,7 @@ section#formandinputsignup {
     border-radius: 50px !important;
     box-shadow: var(--box-shadow);
     border: 1px solid #eee !important;
-    background-color: #2124B1 !important;
+    background-color: var(--primarycolor) !important;
 }
 
 #formandinput .form .googlebtn {

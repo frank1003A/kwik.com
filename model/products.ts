@@ -6,6 +6,7 @@ export default class products {
         public description? : string,
         public type?: string,
         public rate?: string,
-        public qty?: number
+        public qty?: number,
+        public owner?: string,
     ){}
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Component, FC, useState } from "react";
+import React, { Component, FC, useEffect, useState } from "react";
 import { ActionMeta, SingleValue } from "react-select";
 
 import AsyncSelect from "react-select/async";
@@ -26,28 +26,27 @@ const AsyncSelectComponent: FC<Props> = ({
     setSelectedOption(selected)
   };
 
-  const resfilterInvoice = (newValue: string) => {
-    return Invoices.filter((i) =>
-      i.clientName.toLowerCase().includes(newValue.toLowerCase())
-    );
+  const resfilterInvoice = (newValue: string, data: Invoice[]) => {
+    const retData = data.filter((i) => 
+    i.clientName.toLowerCase().includes(newValue.toLowerCase())
+  )
+    //const res = retData.map(i => {return i.clientName})
+    return retData
   };
 
   const promiseOptions = (inputValue: string) =>
-    new Promise<Invoice[]>(async (resolve) => {
+    new Promise<Array<Invoice>>(async (resolve) => {
       {
-        const invoices = await getRequest( "api/invoices");
-        let data: Invoice[] =  await JSON.parse(JSON.stringify(invoices));
+        const invoices: Array<Invoice> = await getRequest( "api/invoices");
         setTimeout(() => {
-          resolve(resfilterInvoice(inputValue));
+          resolve(resfilterInvoice(inputValue, invoices));
         }, 2000);
-        return data.filter(i => i.clientName)
       }
     });
 
   return (
     <AsyncSelect
       cacheOptions
-      defaultOptions
       loadOptions={promiseOptions}
     />
   );

@@ -44,8 +44,8 @@ export const Card = styled.div`
   padding: 1rem;
   //width: 250px;
   //height: 200px;
-  background: --fg;
-  box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
+  background: var(--cd);
+  box-shadow: var(--card-box-shadow)
 `;
 
 export const Top = styled.div`
@@ -53,7 +53,7 @@ export const Top = styled.div`
   left: 250px;
   display: flex;
   padding: 0.5rem 3rem;
-  background: --bg;
+  background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
@@ -94,7 +94,7 @@ export const Row = styled.div`
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     font-size: 0.9rem;
-    color: #555;
+    color: var(--fg);
     line-height: 1.5;
     letter-spacing: 0.00938em;
 

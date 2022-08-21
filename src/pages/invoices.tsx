@@ -41,7 +41,8 @@ interface Props {
 
 const invoices: NextPage<Props> = () => {
   const router = useRouter();
-  const { data, isError, isLoading } = useGetter("/api/invoices");
+  const { data: session, status } = useSession()
+  const { data, isError, isLoading } = useGetter(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
 
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<Invoice[]>([]);
@@ -75,7 +76,7 @@ const invoices: NextPage<Props> = () => {
     setter();
   }, [data]);
 
-  const { status } = useSession({
+  const { } = useSession({
     required: true,
     onUnauthenticated() {
       router.replace("/auth/login");
@@ -109,7 +110,6 @@ const invoices: NextPage<Props> = () => {
                 </select>
                 <Button
                   className={styles.btnCreate}
-                  innerText={"Invoice"}
                   onClick={() => openOModal()}
                   icon={<CreateRounded />}
                 />
@@ -237,13 +237,11 @@ const invoices: NextPage<Props> = () => {
             </select>
             <Button
               className={styles.btnCreate}
-              innerText={"Filter"}
               onClick={() => setIsFiltering(!isFiltering)}
               icon={<Filter />}
             />
             <Button
               className={styles.btnCreate}
-              innerText={"Invoice"}
               onClick={() => openOModal()}
               icon={<CreateRounded />}
             />
@@ -360,7 +358,7 @@ const Container = styled.div`
   display: flex;
   height: 100%;
   //gap: 2rem;
-  background: --bg;
+  background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
 
@@ -379,7 +377,7 @@ const Top = styled.section`
   left: 250px;
   display: flex;
   padding: 0.5rem 3rem;
-  background: --bg;
+  background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
@@ -414,11 +412,12 @@ const Main = styled.section`
   width: 100%;
   display: flex;
   height: 100vh;
-  background: --bg;
+  background: var(--bg);
   //padding-top: 5rem;
-  padding: 4.5rem 0;
+  padding: 4.5rem 2rem;
+  gap: 2rem;
   align-items: flex-start;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   flex-wrap: wrap;
 
   span {
@@ -426,7 +425,7 @@ const Main = styled.section`
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     font-size: 1rem;
-    color: #555;
+    color: var(--fg);
     line-height: 1.5;
     letter-spacing: 0.00938em;
   }

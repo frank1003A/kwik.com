@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId  } from 'mongodb'
-import clientPromise from '../../../lib/Mongodb'
-import  UserClass from '../../../model/user'
+import clientPromise from '../../../../lib/Mongodb'
+import  UserClass from '../../../../model/user'
 
 export default async function (req: NextApiRequest,res: NextApiResponse) {
   if (req.method === "GET") {

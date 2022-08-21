@@ -6,10 +6,11 @@ import styles from '../../styles/Home.module.css'
 import { Center, Container } from "../../components/styled-component/Global";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ScaleLoader } from "react-spinners";
+import { SquareLoader } from "react-spinners";
 import { Typography } from "@mui/material";
 import { motion } from "framer-motion"
 import Image from 'next/image'
+import { useTheme } from "next-themes";
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -20,6 +21,8 @@ const Home: NextPage = () => {
       router.replace('/auth/login')
     },
   })
+
+  const {theme} = useTheme()
 
   const dispLoader = ():JSX.Element => {
     if (status === "loading") {
@@ -33,7 +36,7 @@ const Home: NextPage = () => {
           alignItems: 'center',
           columnGap: 10
         }}>
-            <ScaleLoader color="blue" />
+            <SquareLoader color={theme === "dark" ? "orange" : "blue"} />
             <Typography>Please wait...</Typography>
             </motion.div>
       )

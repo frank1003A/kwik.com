@@ -8,8 +8,8 @@ export const PropertyEditor = styled.div`
   display: flex;
   top: 4rem;
   height: 100vh;
-  background: #fff;
-  border-left: 1px solid #ddd;
+  background: var(--prb);
+  border-left: 1px solid var(--prb);
   flex-direction: column;
   justify-content: flex-start;
   //gap: 1rem;
@@ -22,6 +22,27 @@ export const PropertiesContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: #eee;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: var(--primarycolor);
+    border-radius: 6px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--primarycolor);
+  }
+
 `;
 
 export const Header = styled.section`
@@ -34,22 +55,22 @@ export const Header = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
-  padding: 1rem 0px 1rem 0px;
-  border-bottom: 1px solid #eee;
+  color: var(--fg);
+  padding: .75rem 0px;
+  //border-bottom: 1px solid #eee;
   letter-spacing: 0.00938em;
 `
 
 export const Property = styled.div`
   width: 100%;
  // height: 30px;
-  background: #fff;
+  background: var(--prp);
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: .5rem;
   justify-content: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--prp);
   padding: 1rem 0px 1rem 0px;
 
   span {
@@ -69,7 +90,7 @@ export const Property = styled.div`
     border-radius: 4px;
     width: 200px;
     padding: .5rem;
-    color: rgba(0,0,0,0.6);
+    color: #eee;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
     font-size: 1rem;

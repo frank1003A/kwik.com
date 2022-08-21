@@ -9,7 +9,14 @@
     background-color: var(--secondarycolor);
 }
 
+.muiButtonBackground {
+    background: none;
+    color: #555;
+    box-shadow: none !important;
+    gap: .5rem;
+}
+
 .muiButtonBackground:hover{
-    background-color: transparent;
     color: var(--primarycolor);
+    background: none;
 }

@@ -11,11 +11,9 @@ import { Center, Container, ControlledInput, List, Top, UserBadge  } from '../..
 import useGetter from '../../hooks/useGetter'
 import { patchRequest, postRequest } from '../../lib/axios/axiosClient'
 import user from '../../model/user'
-import { updateUser } from './redux/currentUser'
-import { useAppDispatch } from './redux/hooks'
-import { RootState } from './redux/store'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import useCurrentUser from '../../hooks/useCurrentUser'
 
 const settings = () => {
 
@@ -28,18 +26,10 @@ const settings = () => {
     },
   })
 
-  const fileInput = useRef<HTMLInputElement>(null)
-  const [currentUser, setCurrentUser] = useState<user>({})
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const currentloggedIn = useSelector((state: RootState) => state.user)
-  const dispatch =  useAppDispatch()
+  const { user, setCurrentUser, isLoading, status } = useCurrentUser()
 
-  useEffect(() => {
-    dispatch(updateUser({
-      user: currentUser
-    }))
-  }, [currentUser])
-  
+  const fileInput = useRef<HTMLInputElement>(null)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   const handleChangeImage = () => {
     if (fileInput?.current?.files) {
       const files = fileInput.current.files
@@ -57,18 +47,6 @@ const settings = () => {
       }
     }
   }
-  
-  const { data: session, status } = useSession()
-  const { data, isLoading, isError } = useGetter(`/api/user/?user_id=${session?.user?.id}`)
-
-  const setter = () => {
-    if (data !== undefined) setCurrentUser(data);
-    if (isError) console.log(isError);
-  };
-
-  useEffect(() => {
-    setter();
-  }, [data]);
 
   const handleUserDataUpdate = (
     e: Event | React.SyntheticEvent<any, Event>,
@@ -76,7 +54,7 @@ const settings = () => {
   ) => {
     const {value} = e.currentTarget
 
-    const userData = {...currentUser}
+    const userData = {...user}
     if (name) {
       userData[name] = value
     }
@@ -87,7 +65,7 @@ const settings = () => {
     name: keyof user,
     value: string | number | number[]
   ) => {
-    const userData = {...currentUser}
+    const userData = {...user}
     if (name === "buisness_logo" && typeof value === "string") {
       userData[name] = value
     }
@@ -96,8 +74,8 @@ const settings = () => {
   
   const updateUserData = async (): Promise<void> => {
     try {
-      const{ _id, ...usersData } = currentUser
-      const userData =  await patchRequest(`api/users/?user_id=${currentUser._id}`, usersData)
+      const{ _id, ...usersData } = user
+      const userData =  await patchRequest(`api/users/?user_id=${user._id}`, usersData)
       if (userData.data) console.log(userData.data)
       alert("Update Successfull")
     } catch (error: any) {
@@ -119,7 +97,7 @@ const settings = () => {
     ) : (
       <>
       <Top>
-        <UserBadge style={{background: 'white'}}>{currentUser.email}</UserBadge>
+        <UserBadge style={{background: 'white'}}>{user.email}</UserBadge>
           <ButtonComponent innerText='Save' onClick={() => updateUserData()} 
           btnDisabled={handleButtonDisp()}/>
         </Top>
@@ -133,28 +111,28 @@ const settings = () => {
           <FormControl>
              <FormLabel>Username</FormLabel>
              <ControlledInput 
-             value={currentUser.username}
+             value={user.username}
              onChange={(e) => handleUserDataUpdate(e, "username")}
              type={"text"}/>
           </FormControl>
           <FormControl>
              <FormLabel>Fullname</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.fullname}
+             value={user.fullname}
              onChange={(e) => handleUserDataUpdate(e, "fullname")}
              />
           </FormControl>
           <FormControl>
              <FormLabel>email</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.email}
+             value={user.email}
              onChange={(e) => handleUserDataUpdate(e, "email")}
              />
           </FormControl>
           <FormControl>
              <FormLabel>Phone Number</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.phone_number}
+             value={user.phone_number}
              onChange={(e) => handleUserDataUpdate(e, "phone_number")}
              />
           </FormControl>
@@ -169,7 +147,7 @@ const settings = () => {
           <FormControl>
              <FormLabel>Buisness Name</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.buisness_name}
+             value={user.buisness_name}
              onChange={(e) => handleUserDataUpdate(e, "buisness_name")}
              />
           </FormControl>
@@ -184,21 +162,21 @@ const settings = () => {
           <FormControl>
              <FormLabel>Buisness Address</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.buisness_address}
+             value={user.buisness_address}
              onChange={(e) => handleUserDataUpdate(e, "buisness_address")}
              />
           </FormControl>
           <FormControl>
              <FormLabel>Buisness Address2</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.buisness_address2}
+             value={user.buisness_address2}
              onChange={(e) => handleUserDataUpdate(e, "buisness_address2")}
              />
           </FormControl>
           <FormControl>
              <FormLabel>Buisness Country</FormLabel>
              <ControlledInput type={"text"}
-             value={currentUser.country}
+             value={user.country}
              onChange={(e) => handleUserDataUpdate(e, "country")}
              />
           </FormControl>
@@ -208,7 +186,7 @@ const settings = () => {
   }
 
   return (
-    <Layout fname={currentUser.fullname}>
+    <Layout fname={user.fullname}>
       <Container style={{background: '#fff'}}>
         {renderClientSettings()}
       </Container>

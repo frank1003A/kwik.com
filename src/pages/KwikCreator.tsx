@@ -53,8 +53,6 @@ import RxDiv from "../../components/RxDiv";
 import { reorder } from "../../components/KwikCreator/Helper";
 import {nanoid} from 'nanoid';
 import Droppable from "../../components/KwikCreator/Droppable";
-import { Draggable, DraggableProvided, DraggableStateSnapshot, DraggableRubric } from "react-beautiful-dnd";
-
 
 const kwik_creator: NextPage = () => {
   const [components, setComponents] = useState<DropComponents[]>([]);
@@ -367,7 +365,7 @@ const kwik_creator: NextPage = () => {
     </>,
   ];
 
-  const renderTextfieldProp = (dropid: number) => {
+  const renderTextfieldProp = (dropid: number  ) => {
     return (
       <>
         <div className={stx["header"]}>
@@ -503,7 +501,7 @@ const kwik_creator: NextPage = () => {
             <Image src={"/kwik_favicon.png"} width={30} height={30} />
           ) : (
             components?.map((cmp) => {
-              if (cmp.root_id === 6 && cmp.drop_id === currentEdit)
+              if (cmp.root_id === 6 /**&& cmp.drop_id === currentEdit */)
                 return (
                   <Fragment key={cmp.drop_id}>
                     {renderTextfieldProp(cmp.drop_id)}

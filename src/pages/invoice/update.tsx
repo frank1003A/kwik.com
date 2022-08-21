@@ -517,8 +517,7 @@ const EditInvoice: NextPage = () => {
     }
   };
 
-  /**
-   * /**get all google translate anguages  
+  /**get all google translate anguages */ 
   const options: AxiosRequestConfig = {
     method: "GET",
     url: "https://google-translate1.p.rapidapi.com/language/translate/v2/languages",
@@ -567,16 +566,32 @@ const EditInvoice: NextPage = () => {
         console.error(error);
       });
   }, []);
-   */
+
 
   /**
    * Translate current language 
    */
 
    const encodeParamsTranslate = new URLSearchParams();
-   encodeParamsTranslate.append("q", "Hello, world!");
-   encodeParamsTranslate.append("target", "es");
+
+  const translateLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+    /**translate and assign to variables */
+   const noteslabel = encodeParamsTranslate.append("q", `${InvoiceRepo.notesLabel}`)
+   //encodeParamsTranslate.append("q",  `${InvoiceRepo.notes}`);
+   encodeParamsTranslate.append("target", e.target.value);
    encodeParamsTranslate.append("source", "en");
+   
+   /**
+    * /**Assign traslation to invoice 
+   let inv: Invoice = {...InvoiceRepo}
+   if (noteslabel !== undefined) inv.notes = noteslabel
+
+   /** 
+   if (typeof noteslabel === "string")
+   setInvoiceRepo({...InvoiceRepo, notesLabel: noteslabel})
+    */
+  }
    
    const optionsTranslate: AxiosRequestConfig = {
      method: 'POST',
@@ -596,7 +611,7 @@ const EditInvoice: NextPage = () => {
     }).catch(function (error) {
       console.error(error);
     });
-   }, [])
+   }, [languages])
    
 
   const handleEditable = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -723,7 +738,7 @@ const EditInvoice: NextPage = () => {
                     <select
                       name="font"
                       title="font-Change"
-                      onChange={(e) => setFont(e.target.value)}
+                      onChange={(e) => translateLanguage(e)}
                     >
                       {languages.data?.languages.map((l) => {
                         return <option value={l.language}>{l.language}</option>;

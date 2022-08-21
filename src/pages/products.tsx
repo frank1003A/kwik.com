@@ -52,18 +52,24 @@ import Link from "next/link";
 import styles from "../../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "./redux/hooks";
-import { updateProducts, updateProductSelected } from "./redux/productSlice";
-import { RootState } from "./redux/store";
+import { useAppDispatch } from "../redux/hooks";
+import { updateProducts, updateProductSelected } from "../redux/productSlice";
+import { RootState } from "../redux/store";
 import { Transition } from "react-transition-group";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 const products: NextPage = () => {
+  const { data: session, status } = useSession()
   /**Get request with swr */
-  const { data, isError, isLoading } = useGetter("api/products");
+  const { data, isError, isLoading } = useGetter(
+    `/api/user/product/products/?user_id=${session?.user?.id}`
+  );
 
   const router = useRouter()
-  const { status } = useSession({
+  const {theme} = useTheme()
+
+  const { } = useSession({
     required: true,
     onUnauthenticated() {
       router.replace('/auth/login')
@@ -177,7 +183,9 @@ const products: NextPage = () => {
 
   const postNewProduct = async (): Promise<void> => {
     try {
-      const newProduct = await postRequest("api/products", singleProduct);
+      const newProduct = await postRequest(
+        `api/user/product/products/?user_id=${session?.user?.id}`
+        , singleProduct);
       if (newProduct.data) alert("new Product Added");
     } catch (error: any) {
       console.log(error.message);
@@ -189,7 +197,7 @@ const products: NextPage = () => {
     if (dialogResponse === true) {
       try {
         const productData = await deleteRequest(
-          `api/products/?product_id=${id}`
+          `api/user/product/products/?product_id=${id}`
         );
         if (productData.data)
           alert(`product <${id}> has been removed from database`);
@@ -205,7 +213,7 @@ const products: NextPage = () => {
     const { _id, ...ProUpdate } = singleProduct; // REMOVE ID FIELD
     try {
       const UpdatedProduct = await patchRequest(
-        `api/products/?product_id=${id}`,
+        `api/user/product/products/?product_id=${id}`,
         ProUpdate
       );
       if (UpdatedProduct.data) alert(`updated Product ${id}`);
@@ -249,11 +257,11 @@ const products: NextPage = () => {
                       }
                     />
                   </Tooltip>
-                  <Typography color="#555">{cli.description}</Typography>
+                  <Typography >{cli.description}</Typography>
                 </div>
-                <Typography color="#555">{cli.rate}</Typography>
-                <Typography color="#555">{cli.type}</Typography>
-                <Typography color="#555">{cli.qty}</Typography>
+                <Typography>{cli.rate}</Typography>
+                <Typography >{cli.type}</Typography>
+                <Typography>{cli.qty}</Typography>
                 <div
                   style={{
                     display: "flex",
@@ -496,7 +504,7 @@ const transitionStyles = {
                   >
                     <Avatar
                       name={pr.description}
-                      color="#2124B1"
+                      color={theme === "dark" ?  "orange" : "#2124B1"}
                       round="8px"
                       size="40px"
                     />

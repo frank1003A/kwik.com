@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, Box, Typography } from '@mui/material'
+import { useTheme } from 'next-themes';
 
 interface Props{
     children: JSX.Element[] | JSX.Element,
@@ -9,13 +10,14 @@ interface Props{
 }
 
 const ModalComponent = ({children, OpenModal, handleCloseModal, pd}:Props) => {
+  const {theme} = useTheme()
     /**modal */
   const style: React.CSSProperties = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    background: "white",
+    background: (theme === "dark" ? "#202124" : "white"),
     boxShadow: "24px",
     maxWidth: "400px",
     width: "350px",

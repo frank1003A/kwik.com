@@ -19,9 +19,9 @@ import Creator_Panel from "./Creator_Panel";
 import Item from "../KwikCreator/Item"; 
 /**import Item from "../CreatorDnd/item";  */
 import component_data from "../Data/Kwik_Creator/components"
-import { DragDropContext, Draggable, Droppable, DraggableProvided, DraggableRubric, DraggableStateSnapshot, DroppableProvided } from "react-beautiful-dnd";
 import item from "../KwikCreator/Item";
 import { Components } from "../Data/Kwik_Creator/types";
+import {motion} from "framer-motion"
 
 const Editorbar:FC = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -182,11 +182,11 @@ const Editorbar:FC = () => {
         </div>
       </div>
       {/** */}
-      <div className={styles["kwikCreatorpanel"]} ref={cmp}>
+      <motion.div className={styles["kwikCreatorpanel"]} ref={cmp}>
         <div className={styles["editorCompOuter"]}>
           {handleCreatorPanel()}
         </div>
-      </div>
+      </motion.div>
     </Box>
   );
 }

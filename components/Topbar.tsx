@@ -20,6 +20,8 @@ import Avatar from 'react-avatar';
 import { UserBadge } from './styled-component/Global';
 import { CheckCircleSharp } from '@mui/icons-material';
 import LeftAnchor from './LeftAnchor';
+import { useTheme } from 'next-themes';
+import useCurrentUser from '../hooks/useCurrentUser';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -69,10 +71,13 @@ interface Props {
 }
 
 export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}: Props) {
+  const { user } = useCurrentUser()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = React.useState<boolean>(false)
+
+  const { theme } = useTheme()
 
   const handleOpenDrawer = ( ) => {
     setOpenDrawer(!openDrawer)
@@ -145,8 +150,8 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
           color="inherit"
         >
           <Avatar 
-          name="Frank Ezene"
-          color="#2124B1"
+          name={user.fullname}
+          color={theme === "dark" ?  "orange" : "#2124B1"}
           round="50%"
           size="40px"
           />
@@ -161,10 +166,10 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
       <AppBar
         sx={{
           position: "fixed",
-          background: !bg ? "#fff" : bg,
-          color: "#2124B1",
+          background: theme === "dark" ? "#27272f" : "white",
+          color: theme === "dark" ? "#fff" : "#2124B1",
           boxShadow: 0,
-        }}
+        }}  
       >
         <Toolbar>
           <IconButton
@@ -214,8 +219,8 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
               color="inherit"
             >
               <Avatar
-                name={name ? name : "Frank Ezene "}
-                color="#2124B1"
+                name= {user.fullname}
+                color={theme === "dark" ?  "orange" : "#2124B1"}
                 round="50%"
                 size="40px"
               />

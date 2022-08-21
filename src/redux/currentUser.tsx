@@ -1,6 +1,6 @@
 import { createSlice, Draft, PayloadAction, current } from '@reduxjs/toolkit'
-import { initialUserData } from '../../../components/Data/initialData'
-import user from '../../../model/user'
+import { initialUserData } from '../../components/Data/initialData'
+import user from '../../model/user'
 import type { RootState } from './store'
 
 type userState = {
