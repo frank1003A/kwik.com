@@ -1,38 +1,21 @@
-import React, { useState, FC } from "react";
-import styles from "../styles/Home.module.css";
 import {
-  Dashboard,
-  PanoramaPhotosphereRounded,
-  FilePresent,
-  Handshake,
-  FileOpen,
   CreateRounded,
-  AddCircle,
+  Dashboard,
+  FilePresent,
   Message,
-  Settings,
   People,
+  Settings,
 } from "@mui/icons-material";
+import { Box, Chip, Divider, Typography } from "@mui/material";
 import Link from "next/link";
-import Button from "./Button";
 import { useRouter } from "next/router";
-import { Badge, Box, Chip, Divider } from "@mui/material";
+import React, { FC, useState } from "react";
+
+import styles from "../styles/Home.module.css";
+import Create from "./asset/Create";
+import Button from "./Button";
 import Modal from "./Modal";
-import Image from "next/image";
-import {
-  Typography,
-  Tooltip,
-  FormControlLabel,
-  Checkbox,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  TextField,
-  Switch,
-} from "@mui/material";
-import SpeedDial from "./SpeedDial";
-import { Property } from "./styled-component/editorbar";
-import { ControlledInput } from "./styled-component/Global";
-import SettingComponent from './Settings'
+import SettingComponent from "./Settings";
 
 interface Props {
   id?: string;
@@ -116,6 +99,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
+            onClick={() => router.push("/products")}
           >
             <div className={styles.smallcontainer}>
               <FilePresent />
@@ -169,7 +153,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               New Invoice
             </Typography>
             <Divider />
-            <Image src={"/485.svg"} width={450} height={300} />
+            <Create />
             <div className={styles["card"]}>
               <Link href="http://localhost:3000/invoice/create">
                 <Typography>Create Invoice</Typography>
@@ -181,7 +165,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
 
       {/**Settings Modal */}
       <Modal OpenModal={settingsModal} handleCloseModal={closeSModal} pd="">
-        <SettingComponent switchOnchangehandler={switchOnChangeHandler}/>
+        <SettingComponent switchOnchangehandler={switchOnChangeHandler} />
       </Modal>
     </Box>
   );

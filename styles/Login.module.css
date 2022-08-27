@@ -30,7 +30,7 @@ section#formandinput {
 }
 
 section#formandinputsignup {
-    background: white;
+    background: var(--loginfpg);
     width: 50%;
     display: flex;
     justify-content: center;
@@ -163,12 +163,12 @@ section#formandinputsignup {
 
 #formandinput .form .form-control input[type="text"] {
     padding: 15px;
-    background: #eee;
+    background: var(--textbox);
     border-radius: 50px;
     width: 100%;
     font-family: Roboto, sans-serif;
-    font-weight: 600;
-    border: 1px solid #eee;
+    font-weight: 400;
+    border: 1px solid var(---textbox);
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-size: .9rem;
     color: var(--fg);
@@ -183,12 +183,12 @@ section#formandinputsignup {
 
 #formandinputsignup .form .form-control input[type="text"] {
     padding: 15px;
-    background: #eee;
+    background: var(--textbox);
     border-radius: 50px;
     width: 100%;
-    border: 1px solid #eee;
+    border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
-    font-weight: 600;
+    font-weight: 400;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-size: .9rem;
     color: var(--fg);
@@ -219,12 +219,12 @@ section#formandinputsignup {
 
 #formandinput .form .form-control input[type="password"] {
     padding: 15px;
-    background: #eee;
+    background: var(--textbox);
     border-radius: 50px;
     width: 100%;
-    border: 1px solid #eee;
+    border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
-    font-weight: 600;
+    font-weight: 400;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-size: .9rem;
     color: var(--fg);
@@ -247,10 +247,10 @@ section#formandinputsignup {
 
 #formandinputsignup .form .form-control input[type="password"] {
     padding: 15px;
-    background: #eee;
+    background: var(--textbox);
     border-radius: 50px;
     width: 100%;
-    border: 1px solid #eee;
+    border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
     font-weight: 600;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -270,7 +270,6 @@ section#formandinputsignup {
     padding: 10px;
     border-radius: 50px !important;
     box-shadow: var(--box-shadow);
-    border: 1px solid #eee !important;
     background-color: var(--primarycolor) !important;
 }
 
@@ -279,7 +278,6 @@ section#formandinputsignup {
     padding: 10px;
     border-radius: 50px !important;
     box-shadow: var(--box-shadow);
-    border: 1px solid #eee !important;
     background-color: var(--primarycolor) !important;
 }
 
@@ -471,7 +469,6 @@ justify-content: flex-start;
 @media (max-width:900px){
     .login-container{
         display: flex;
-        flex-direction: column;
     }
 
     .signup-container {

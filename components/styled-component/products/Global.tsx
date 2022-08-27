@@ -10,15 +10,17 @@ export const FlexContainer = styled.div`
 `;
 
 export const List = styled.div`
-    width: 100%;
+        width: 100%;
     height: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: 100%;
     flex-direction: column-reverse;
     gap: 1rem;
     margin-top: 5rem;
     padding: 0px 5rem;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    align-items: center;
 `;
 
 export const Controls = styled.div`
@@ -66,6 +68,10 @@ export const Top = styled.div`
 
 export const Center = styled.div`
 margin: auto auto auto auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 `
 
 export const Row = styled.div`

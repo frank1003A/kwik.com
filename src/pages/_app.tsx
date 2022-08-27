@@ -1,18 +1,19 @@
-import "../../styles/globals.css";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import type { AppProps } from "next/app";
-//import React, { useState, useEffect } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { store } from "../redux/store";
-import { Provider } from "react-redux";
-import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "next-themes";
-import { createGlobalStyle } from 'styled-components'
+import '../../styles/globals.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
+import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Provider } from 'react-redux';
+import { createGlobalStyle } from 'styled-components';
+
+import { store } from '../redux/store';
+
+import type { AppProps } from "next/app";
 // Your themeing variables
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -36,12 +37,12 @@ const GlobalStyle = createGlobalStyle`
     0px 4px 5px 0px rgb(0 0 0 / 14%), 
     0px 1px 10px 0px rgb(0 0 0 / 12%);
   }
-` ;
+`;
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
-    <GlobalStyle/>
+      <GlobalStyle />
       <SessionProvider session={session}>
         <DndProvider backend={HTML5Backend}>
           <ThemeProvider enableSystem={false}>

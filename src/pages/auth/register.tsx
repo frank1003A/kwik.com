@@ -9,13 +9,14 @@ import { NextPage } from 'next';
 import user from '../../../model/user';
 import { postRequest } from '../../../lib/axios/axiosClient';
 import { initialUserData } from '../../../components/Data/initialData';
+import MainLogo from '../../../components/asset/MainLogo';
 
 const register: NextPage = () => {
   const [userState, setUserState] = useState<user>(initialUserData)
 
   const handlePostUser = async (): Promise<void> => {
     try {
-      const userData = await postRequest("api/users", userState)
+      const userData = await postRequest("api/user", userState)
       if (userData.data) console.log(userData)
       alert('Your account has successfully been created')
     } catch (error: any) {
@@ -23,24 +24,16 @@ const register: NextPage = () => {
     }
   }
 
-  const handleControls = (): JSX.Element => {
-    if (!(userState.email && userState.fullname  && userState.password)){
-      return (
-        <ButtonComponent 
-        onClick={handlePostUser}
-        innerText="Sign Up" 
-        className={styles["loginbtn"]}
-        btnDisabled={true}
-         />
-      )
-    }else {
-      return (
-        <ButtonComponent 
-        onClick={handlePostUser}
-        innerText="Sign Up" 
-        className={styles["loginbtn"]} />
-      )
+  const handleControls = (): boolean => {
+    let stat = false
+    if (!(
+      userState.email 
+      && userState.fullname  
+      && userState.password))
+      {
+      stat = true
     }
+    return stat
   }
 
   return (
@@ -52,19 +45,8 @@ const register: NextPage = () => {
       </Head>
     <section id={styles.formandinputsignup}>
       <div className={styles["form"]}>
-        <div className={styles["logocont"]}>
-          <Image src={"/kwik_favicon.png"} width={30} height={30} />
-        </div>
         <Typography variant="h5" fontWeight={"bold"}>
           Sign Up
-        </Typography>
-        <Typography
-          variant="h6"
-          fontWeight={"bold"}
-          color={"#666"}
-          fontSize={"12px"}
-        >
-          see your growth and get consulting support!
         </Typography>
         <ButtonComponent
           innerText="Sign in with Google"
@@ -112,7 +94,12 @@ const register: NextPage = () => {
           </div>
           <Link href="#">Terms & Condition</Link>
         </div>
-        {handleControls()}
+        <ButtonComponent 
+        onClick={handlePostUser}
+        innerText="Sign Up" 
+        className={styles["loginbtn"]}
+        btnDisabled={handleControls()}
+         />
       </div>
       <div className={styles["frmout"]}>
         <span>Already have an Account?</span>
@@ -122,7 +109,7 @@ const register: NextPage = () => {
         <span>@2022 Protek All right reserved</span>
       </div>
     </section>
-    <section id={styles.imgandtext}>svg</section>
+    <section id={styles.imgandtext}><MainLogo/></section>
   </div>
   )
 }

@@ -51,12 +51,12 @@ import CreatorBox from "../../components/KwikCreator/CreatorBox";
 import GridbasedWrapper from "../../components/KwikCreator/GridbasedWrapper";
 import RxDiv from "../../components/RxDiv";
 import { reorder } from "../../components/KwikCreator/Helper";
-import {nanoid} from 'nanoid';
+import { nanoid } from "nanoid";
 import Droppable from "../../components/KwikCreator/Droppable";
 
 const kwik_creator: NextPage = () => {
   const [components, setComponents] = useState<DropComponents[]>([]);
-  const [newValue, setNewValue] = useState<DropComponents[]>([])
+  const [newValue, setNewValue] = useState<DropComponents[]>([]);
   const [color, setcolor] = useState<string>("#2124B1");
   const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
   const [editComp, setEditComp] = useState<boolean>(false);
@@ -126,8 +126,11 @@ const kwik_creator: NextPage = () => {
     //setCompProperty(con)
   };
 
-  const addCompToPaper = (id: number, setter: React.Dispatch<React.SetStateAction<DropComponents[]>>) => {
-    let genDropId = nanoid(5)
+  const addCompToPaper = (
+    id: number,
+    setter: React.Dispatch<React.SetStateAction<DropComponents[]>>
+  ) => {
+    let genDropId = nanoid(5);
     const componentList = component_data.filter((comp) => id === comp.id);
     let addedComponents: DropComponents = {
       root_id: componentList[0].id,
@@ -137,7 +140,7 @@ const kwik_creator: NextPage = () => {
       component_props: { ...inputprops },
     };
     setter((comp) => [...comp, addedComponents]);
-  }
+  };
 
   const logoContainer: JSX.Element[] = [
     <div className={styles.title} id="dflogo">
@@ -240,9 +243,7 @@ const kwik_creator: NextPage = () => {
       comp.component === "container" &&
       comp.drop_id
     ) {
-      return (
-        <div></div>
-      );
+      return <div></div>;
     }
     if (
       comp.component_type === "TextareaAutosize" &&
@@ -336,7 +337,11 @@ const kwik_creator: NextPage = () => {
             </ResizableBox> */
 
   const dropContainer: JSX.Element[] = [
-    <DropWrapper addCompToPaper={addCompToPaper} setter={setComponents} className={stx["rxBx"]}>
+    <DropWrapper
+      addCompToPaper={addCompToPaper}
+      setter={setComponents}
+      className={stx["rxBx"]}
+    >
       <>
         {components.map((i, idx) => {
           return (
@@ -365,7 +370,7 @@ const kwik_creator: NextPage = () => {
     </>,
   ];
 
-  const renderTextfieldProp = (dropid: number  ) => {
+  const renderTextfieldProp = (dropid: number) => {
     return (
       <>
         <div className={stx["header"]}>
@@ -417,8 +422,8 @@ const kwik_creator: NextPage = () => {
         <div className={stx.prop}>
           <label className={stx["labhdr"]}>FONT</label>
           <select
-          name="font"
-          title="font-Change"
+            name="font"
+            title="font-Change"
             onChange={(e) => handleInputStyle(e, "fontFamily", dropid)}
           >
             <option value="sans-serif">sans-serif</option>
@@ -452,7 +457,11 @@ const kwik_creator: NextPage = () => {
         {/**<div className={styles["resizable_container"]} contentEditable="true"/> */}
         <CreatorBox>
           {/** {dropContainer} */}
-          <DropWrapper addCompToPaper={addCompToPaper} setter={setComponents} className={stx["rxBx"]}>
+          <DropWrapper
+            addCompToPaper={addCompToPaper}
+            setter={setComponents}
+            className={stx["rxBx"]}
+          >
             <>
               {components.map((i, idx) => {
                 return (

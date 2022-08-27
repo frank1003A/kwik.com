@@ -1,9 +1,9 @@
-import Chip from "@mui/material/Chip";
-import { ChartData } from "chart.js";
-import React, { FC, useState } from "react";
-import styles from "../styles/Home.module.css";
-import BarChart from "./BarChart"
-import DoughnutChart from "./Doughnut"
+import Chip from '@mui/material/Chip';
+import { ChartData } from 'chart.js';
+import React, { FC, useState } from 'react';
+
+import styles from '../styles/Home.module.css';
+import BarChart from './BarChart';
 
 interface view {
   invoice: number,

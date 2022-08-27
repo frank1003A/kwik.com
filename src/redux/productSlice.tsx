@@ -1,6 +1,7 @@
 
 import { createSlice, Draft, PayloadAction, current } from '@reduxjs/toolkit'
 import { ObjectId } from 'mongodb'
+import { nanoid } from 'nanoid'
 import { initialProductData} from '../../components/Data/initialData'
 import products from '../../model/products'
 import type { RootState } from './store'
@@ -40,7 +41,7 @@ const productSlice = createSlice({
 export const { 
     updateProductSelected,
     updateProducts,
-    clearProducts
+    clearProducts,
 } = productSlice.actions
 
 export const product = (state: RootState) => state.product.product

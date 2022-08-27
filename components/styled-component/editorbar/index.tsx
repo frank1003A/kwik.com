@@ -13,7 +13,7 @@ export const PropertyEditor = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   //gap: 1rem;
-  @media (max-width:500px) {
+  @media (max-width: 500px) {
     display: none;
   }
 `;
@@ -42,7 +42,6 @@ export const PropertiesContainer = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background: var(--primarycolor);
   }
-
 `;
 
 export const Header = styled.section`
@@ -56,19 +55,19 @@ export const Header = styled.section`
   align-items: center;
   justify-content: center;
   color: var(--fg);
-  padding: .75rem 0px;
+  padding: 0.6rem 0px;
   //border-bottom: 1px solid #eee;
   letter-spacing: 0.00938em;
-`
+`;
 
 export const Property = styled.div`
   width: 100%;
- // height: 30px;
+  // height: 30px;
   background: var(--prp);
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
   justify-content: center;
   border-bottom: 1px solid var(--prp);
   padding: 1rem 0px 1rem 0px;
@@ -86,12 +85,12 @@ export const Property = styled.div`
   select {
     height: 35px;
     background-color: #eee;
-   border: none;
+    border: none;
     border-radius: 4px;
     width: 200px;
-    padding: .5rem;
-    color: #eee;
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    padding: 0.5rem;
+    color: #555;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.4375em;
@@ -100,20 +99,20 @@ export const Property = styled.div`
   }
 
   input[type="text"] {
-  height: 34px;
-  width: 100%;
-  border: 1px solid #555;
-  border-radius: 4px;
-  padding: 1rem;
-  color: rgb(255 255 255);
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.4375em;
-  background: transparent;
-  letter-spacing: 0.00938em;
-  position: relative;
-}
+    height: 34px;
+    width: 100%;
+    border: 1px solid var(--bg);
+    border-radius: 4px;
+    padding: 1rem;
+    color: #555;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375em;
+    background: #eee;
+    letter-spacing: 0.00938em;
+    position: relative;
+  }
 `;
 
 export const CanvasProperty = styled.div`
@@ -135,9 +134,9 @@ export const CanvasProperty = styled.div`
 `;
 
 export const NumberInput = styled.div`
-    width: 50%;
-    height: 40px;
-    background: #eee;
+  width: 50%;
+  height: 40px;
+  background: #eee;
   div {
     display: flex;
     input {

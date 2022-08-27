@@ -11,6 +11,9 @@ import { useRouter } from "next/dist/client/router";
 import type { NextPage } from "next";
 import { signIn } from "next-auth/react"
 import { motion } from "framer-motion";
+import MainLogo from "../../../components/asset/MainLogo";
+import { useTheme } from "next-themes"
+import { WbCloudy, WbSunny } from "@mui/icons-material";
 
 const login: NextPage = () => {
 
@@ -31,6 +34,13 @@ const login: NextPage = () => {
     if (res?.ok) router.replace("/")
     if (res?.error) setError(res.error)
   }
+
+  const handleContrl = (): boolean => {
+    let stat = false
+    if (!userInfo.email || !userInfo.password) stat = true
+    return stat
+  }
+
   return (
     <div className={styles["login-container"]}>
       <Head>
@@ -88,7 +98,9 @@ const login: NextPage = () => {
           <ButtonComponent 
            innerText="Login" 
            className={styles["loginbtn"]}
-           onClick={handleSubmit} />
+           onClick={handleSubmit} 
+           btnDisabled={handleContrl()}
+           />
         </div>
         <div className={styles["frmout"]}>
           <span>Not yet registered?</span>
@@ -99,7 +111,7 @@ const login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <Image src={'/templateview.svg'} width={1000} height={1000} />
+        <MainLogo/>
       </section>
     </div>
   );
@@ -107,9 +119,15 @@ const login: NextPage = () => {
 
 export default login;
 
+/**<div>
+          <button onClick={() => setTheme("light")}>{theme! === 'dark' ? <WbCloudy /> : <WbSunny />}</button>
+        </div> */
+
 
 /**
           <div className={styles["logocont"]}>
             <Image src={"/kwik_favicon.png"} width={30} height={30} />
           </div> */
 //<input type="password" placeholder="min. 8 characters" />
+
+// <Image src={'/templateview.svg'} width={1000} height={1000} />

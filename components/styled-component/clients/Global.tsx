@@ -7,22 +7,18 @@ export const FlexContainer = styled.div`
   flex-wrap: wrap;
   justify-content: flex-start;
   padding: 0px 1rem;
-
-  @media (max-width: 500px) {
-    padding: 0px !important;
-  }
 `;
 
 export const List = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  padding: 0px 5rem;
-  flex-direction: column-reverse;
-  gap: 1rem;
-  margin-top: 5rem;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+      width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    padding: 0px 5rem;
+    gap: 1rem;
+    margin-top: 5rem;
+    justify-content: space-evenly;
+    align-items: center;
 
   @media (max-width: 500px) {
     padding: 0px !important;
@@ -45,7 +41,13 @@ export const Card = styled.div`
   //width: 250px;
   //height: 200px;
   background: var(--cd);
-  box-shadow: var(--card-box-shadow)
+  box-shadow: var(--card-box-shadow);
+
+  @media (max-width: 500px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
 `;
 
 export const Top = styled.div`
@@ -78,7 +80,11 @@ export const Top = styled.div`
 `;
 
 export const Center = styled.div`
-  margin: auto auto auto auto;
+margin: auto auto auto auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 `;
 
 export const Row = styled.div`

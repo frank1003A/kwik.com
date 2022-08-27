@@ -4,18 +4,26 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   /**height: 100vh; */
-  background: --bg;
+  background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
+
+  @media (max-width: 500px) {
+    padding: 1.5rem !important;
+  }
+
 `;
 
 export const VhContainer = styled.div`
   width: 100%;
   display: flex;
   height: 100vh; 
-  background: --bg;
+  background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
+  @media (max-width: 500px) {
+    padding: 1.5rem !important;
+  }
 `;
 //#CCCCCC light grey
   export const ControlledInput = styled.input<{customHeight?: string}>`
@@ -85,7 +93,31 @@ export const UserBadge = styled.div`
 `;
 
 export const Center = styled.div`
-  margin: auto auto auto auto;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const CustomColor = styled.span`
+    padding: 0px 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .8rem;
+    margin: 0;
+    width: 100%;
+
+    input[type="text"]{
+      background-color: var(--txt);
+      color: #555;
+    }
+
+    input[type="color"]{
+      height: 100%;
+    }
 `;
 
 export const Top = styled.div`
@@ -93,7 +125,7 @@ export const Top = styled.div`
   left: 250px;
   display: flex;
   padding: .5rem 3rem;
-  background: var(--bg);
+  background: var(var(--bg));
   border-bottom: 1px solid #2221;
   align-items: center;
   position: fixed;
@@ -125,11 +157,15 @@ export const List = styled.div`
     height: max-content;
     padding: 5rem 15rem;
     flex-direction: column;
-    background: var(--bg);
+    background: var(var(--bg));
     gap: 1rem;
     padding-bottom: 2rem;
     flex-wrap: nowrap;
     justify-content: space-evenly;
+
+    @media (max-width: 500px) {
+      padding: 1rem 3rem;
+    }
     
     span {
       color: var(--fg)

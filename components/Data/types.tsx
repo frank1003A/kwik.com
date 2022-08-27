@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { RectType } from "react-select/dist/declarations/src/utils"
 
 export interface STATUS {
   status: 'draft' | 'pending' | 'complete' 
@@ -57,5 +58,8 @@ export interface Invoice {
   termLabel: string
   term: string
 
-  status?: STATUS["status"]
+  status?: STATUS["status"],
+  pageStyles?: React.CSSProperties,
+  styles?: React.CSSProperties,
+  colorTheme?: string,
 }

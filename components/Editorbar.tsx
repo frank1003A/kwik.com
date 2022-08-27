@@ -10,6 +10,7 @@ import {
   PictureAsPdf,
   Percent,
   Settings,
+  Image,
 } from "@mui/icons-material";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
@@ -20,7 +21,9 @@ interface Props {
   status?: ReactNode;
   editController?: JSX.Element,
   updateDisabled?: boolean,
-  handleVat?: () => void
+  handleVat?: () => void,
+  exportPDF?: () => void,
+  exportJPEG?: () => void
 }
 
 const Editorbar: FC<Props> = ({
@@ -30,15 +33,31 @@ const Editorbar: FC<Props> = ({
   status,
   editController,
   updateDisabled,
-  handleVat
+  handleVat,
+  exportPDF,
+  exportJPEG
 }) => {
   return (
     <div className={styles.editorContainer}>
       <ButtonComponent
         className={btnStyles.muiButtonBackground}
-        icon={<PictureAsPdf />}
+        icon={<Print/>}
         innerText="PRINT"
         onClick={handlePrint}
+      />
+
+      <ButtonComponent
+      icon={<PictureAsPdf />}
+      className={btnStyles.muiButtonBackground}
+      innerText="PDF"
+      onClick={exportPDF}
+      />
+
+     <ButtonComponent
+      icon={<Image />}
+      className={btnStyles.muiButtonBackground}
+      innerText="JPEG"
+      onClick={exportJPEG}
       />
 
       <ButtonComponent

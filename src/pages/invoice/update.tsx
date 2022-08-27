@@ -46,28 +46,32 @@ import Editorbar from "../../../components/Editorbar";
 import { CirclePicker, CompactPicker } from "react-color";
 import { PhotoFilter } from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
-import SettingsComponent from '../../../components/InvoiceSettings'
+import SettingsComponent from "../../../components/InvoiceSettings";
 import { useSession } from "next-auth/react";
+//import { exportComponentAsJPEG, exportComponentAsPDF,  } from "react-component-export-image";
+import { motion } from "framer-motion";
+import CustomLoader from "../../../components/asset/CustomLoader";
+import CustomSnackbar from "../../../components/CustomSnackbar";
 
 /**Google Translate Data Response Type */
 interface languageResponse {
   data?: {
     languages: {
-      language: string
-    }[]
-  }
+      language: string;
+    }[];
+  };
 }
 
 const EditInvoice: NextPage = () => {
   const { query } = useRouter();
 
-  const router = useRouter()
+  const router = useRouter();
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
-      router.replace('/auth/login')
+      router.replace("/auth/login");
     },
-  })
+  });
 
   const { data, isError, isLoading } = useGetter(
     `/api/invoice/?invoice_id=${query.invoice_id}`
@@ -82,7 +86,7 @@ const EditInvoice: NextPage = () => {
   const [edcActive, setEdcActive] = useState<boolean>(false);
   const [invComp, setInvComp] = useState<boolean>(false);
   const [languages, setLanguages] = useState<languageResponse>({});
-  const [sModal, setSModal] = useState<boolean>(false)
+  const [sModal, setSModal] = useState<boolean>(false);
 
   /**
    * edtable true means the core input element is disabled.
@@ -99,6 +103,13 @@ const EditInvoice: NextPage = () => {
   const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
     data ? { ...data } : { ...initialInvoice }
   );
+  const [informUser, setInformUser] = useState<{
+    updatealert: boolean;
+    message: string;
+  }>({
+    updatealert: false,
+    message: "",
+  });
 
   const setter = () => {
     if (data !== undefined) setInvoiceRepo(data);
@@ -118,8 +129,8 @@ const EditInvoice: NextPage = () => {
     setdisplayColorPicker(false);
   };
 
-  const handleShowSettingsModal = () => setSModal(true)
-  const handleCloseSettingsModal = () => setSModal(false)
+  const handleShowSettingsModal = () => setSModal(true);
+  const handleCloseSettingsModal = () => setSModal(false);
 
   const handleOpenNotifyEdit = () => setNotifyEdit(true);
   const handleCloseNotifyEdit = (
@@ -473,10 +484,11 @@ const EditInvoice: NextPage = () => {
     const { _id, ...InvUpdate } = InvoiceRepo; // REMOVE ID FIELD
     try {
       const UpdatedInvoice = await patchRequest(
-        `api/invoices/?invoice_id=${query.invoice_id}`,
+        `api/user/invoice/invoices/?invoice_id=${query.invoice_id}`,
         InvUpdate
       );
-      if (UpdatedInvoice.data) alert(`updated invoice ${query.invoice_id}`);
+      if (UpdatedInvoice.data) 
+          setInformUser({...informUser, updatealert: true, message: `updated invoice ${query.invoice_id}`})
     } catch (error: any) {
       console.log(error);
     }
@@ -517,13 +529,13 @@ const EditInvoice: NextPage = () => {
     }
   };
 
-  /**get all google translate anguages */ 
+  /**get all google translate anguages */
   const options: AxiosRequestConfig = {
     method: "GET",
     url: "https://google-translate1.p.rapidapi.com/language/translate/v2/languages",
     headers: {
       "Accept-Encoding": "application/gzip",
-      "X-RapidAPI-Key": '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
+      "X-RapidAPI-Key": "6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c",
       "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
     },
   };
@@ -572,17 +584,19 @@ const EditInvoice: NextPage = () => {
    * Translate current language 
    */
 
-   const encodeParamsTranslate = new URLSearchParams();
+  const encodeParamsTranslate = new URLSearchParams();
 
   const translateLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-
     /**translate and assign to variables */
-   const noteslabel = encodeParamsTranslate.append("q", `${InvoiceRepo.notesLabel}`)
-   //encodeParamsTranslate.append("q",  `${InvoiceRepo.notes}`);
-   encodeParamsTranslate.append("target", e.target.value);
-   encodeParamsTranslate.append("source", "en");
-   
-   /**
+    const noteslabel = encodeParamsTranslate.append(
+      "q",
+      `${InvoiceRepo.notesLabel}`
+    );
+    //encodeParamsTranslate.append("q",  `${InvoiceRepo.notes}`);
+    encodeParamsTranslate.append("target", e.target.value);
+    encodeParamsTranslate.append("source", "en");
+
+    /**
     * /**Assign traslation to invoice 
    let inv: Invoice = {...InvoiceRepo}
    if (noteslabel !== undefined) inv.notes = noteslabel
@@ -591,28 +605,30 @@ const EditInvoice: NextPage = () => {
    if (typeof noteslabel === "string")
    setInvoiceRepo({...InvoiceRepo, notesLabel: noteslabel})
     */
-  }
-   
-   const optionsTranslate: AxiosRequestConfig = {
-     method: 'POST',
-     url: 'https://google-translate1.p.rapidapi.com/language/translate/v2',
-     headers: {
-       'content-type': 'application/x-www-form-urlencoded',
-       'Accept-Encoding': 'application/gzip',
-       'X-RapidAPI-Key': '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
-       'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
-     },
-     data: encodeParamsTranslate
-   };
-   
-   useEffect(() => {
-    axios.request(optionsTranslate).then(function (response) {
-      console.log('translated', response.data);
-    }).catch(function (error) {
-      console.error(error);
-    });
-   }, [languages])
-   
+  };
+
+  const optionsTranslate: AxiosRequestConfig = {
+    method: "POST",
+    url: "https://google-translate1.p.rapidapi.com/language/translate/v2",
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      "Accept-Encoding": "application/gzip",
+      "X-RapidAPI-Key": "6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c",
+      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
+    },
+    data: encodeParamsTranslate,
+  };
+
+  useEffect(() => {
+    axios
+      .request(optionsTranslate)
+      .then(function (response) {
+        console.log("translated", response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }, [languages]);
 
   const handleEditable = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: boolean = e.target.checked;
@@ -632,197 +648,280 @@ const EditInvoice: NextPage = () => {
   };
 
   return (
-    <Layout>
-      <Container>
-        <div className={styles.fileAndEditor}>
-          {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
-          <Editorbar
-            saveText="UPDATE"
-            updateDisabled={editable === false ? false : true}
-            handlePrint={() => handlePrint()}
-            handleSave={() => updateInvoice()}
-            status={dispStats(InvoiceRepo.status!)}
-            editController={
-              <FormControlLabel
-                label={`EDIT`}
-                sx={{
-                  margin: "0",
-                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                  fontWeight: "500",
-                  textTransform: "capitalize",
-                  color: "#555",
-                  fontSize: "0.875rem",
-                  lineHeight: "1.5",
-                  letterSpacing: "0.00938em",
+    <>
+      {isLoading ? (
+        <motion.div
+          layout
+          style={{
+            width: "100%",
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 20,
+          }}
+        >
+          <CustomLoader />
+          <Typography>
+            Please wait while we get things set up for you...
+          </Typography>
+        </motion.div>
+      ) : (
+        <Layout>
+          <Container>
+            <div className={styles.fileAndEditor}>
+              {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
+              <Editorbar
+                saveText="UPDATE"
+                updateDisabled={editable === false ? false : true}
+                handlePrint={() => handlePrint()}
+                handleSave={() => updateInvoice()}
+                handleVat={() => handleShowSettingsModal()}
+                status={dispStats(InvoiceRepo.status!)}
+                exportPDF={async () => {
+                  const { exportComponentAsPDF } = await import(
+                    "react-component-export-image"
+                  );
+                  exportComponentAsPDF(componentRef, {
+                    pdfOptions: {
+                      orientation: "p",
+                      w: 100,
+                      h: 100,
+                    },
+                  });
                 }}
-                labelPlacement="end"
-                control={
-                  <Checkbox
-                    color="primary"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleEditable(e)
+                exportJPEG={async () => {
+                  const { exportComponentAsPNG } = await import(
+                    "react-component-export-image"
+                  );
+                  exportComponentAsPNG(componentRef, {
+                    html2CanvasOptions: {
+                      backgroundColor: "white",
+                    },
+                  });
+                }}
+                editController={
+                  <FormControlLabel
+                    label={`EDIT`}
+                    sx={{
+                      margin: "0",
+                      fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                      fontWeight: "500",
+                      textTransform: "capitalize",
+                      color: "#555",
+                      fontSize: "0.875rem",
+                      lineHeight: "1.5",
+                      letterSpacing: "0.00938em",
+                    }}
+                    labelPlacement="end"
+                    control={
+                      <Checkbox
+                        color="primary"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleEditable(e)
+                        }
+                      />
                     }
                   />
                 }
               />
-            }
-          />
-          <div className={styles.editorFlex}>
-            {isLoading ? (
-              <SquareLoader style={{ margin: "auto auto auto auto" }} />
-            ) : (
-              <InvoiceMain
-                style={{ background: background }}
-                contentEditable={editable}
-                ref={componentRef}
-                customStyle={{ color: fontColor, fontFamily: font }}
-                options={countryList}
-                pdfMode={editPdf}
-                cur={currency}
-                itemArr={InvoiceRepo.invoiceitems}
-                addTC={addTC}
-                tR={taxRate}
-                removeItem={removeItem}
-                handleChange={handleChange}
-                handleDetailInput={handleDetailInput}
-                handleItemInput={handleItemInput}
-                invoice={InvoiceRepo}
-                dateSet={setInvoiceRepo}
-                selClr={setInvoiceRepo}
-              ></InvoiceMain>
-            )}
-            <PropertyEditor>
-              <Header>
-                <PhotoFilter />
-                <Typography variant="subtitle1" color="#555">
-                  Page Design
-                </Typography>
-              </Header>
-              <PropertiesContainer>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Font Family
-                  </Typography>
-                  <select
-                    name="font"
-                    title="font-Change"
-                    onChange={(e) => setFont(e.target.value)}
-                  >
-                    <option value="sans-serif">sans-serif</option>
-                    <option value="monospace">monospace</option>
-                    <option value="fantasy">fantasy</option>
-                    <option value="cursive">cursive</option>
-                  </select>
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Background Color
-                  </Typography>
-                  <CompactPicker
-                    onChange={(color) => setBackground(color.hex)}
-                  />
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Font Color
-                  </Typography>
-                  <CompactPicker
-                    onChange={(color) => setFontColor(color.hex)}
-                  />
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Language
-                  </Typography>
-                  <div style={{ width: "230px", padding: "0px 2px" }}>
-                    <select
-                      name="font"
-                      title="font-Change"
-                      onChange={(e) => translateLanguage(e)}
-                    >
-                      {languages.data?.languages.map((l) => {
-                        return <option value={l.language}>{l.language}</option>;
-                      })}
-                    </select>
-                  </div>
-                </Property>
-                <Property>
-                  <Typography variant="overline" color="#555">
-                    Composer
-                  </Typography>
-                </Property>
-              </PropertiesContainer>
-            </PropertyEditor>
-          </div>
-        </div>
+              <div className={styles.editorFlex}>
+                <InvoiceMain
+                  style={{ ...InvoiceRepo.pageStyles }}
+                  customStyle={{ ...InvoiceRepo.styles }}
+                  contentEditable={editable}
+                  ref={componentRef}
+                  options={countryList}
+                  pdfMode={editPdf}
+                  cur={currency}
+                  itemArr={InvoiceRepo.invoiceitems}
+                  addTC={addTC}
+                  tR={taxRate}
+                  removeItem={removeItem}
+                  handleChange={handleChange}
+                  handleDetailInput={handleDetailInput}
+                  handleItemInput={handleItemInput}
+                  invoice={InvoiceRepo}
+                  dateSet={setInvoiceRepo}
+                  selClr={setInvoiceRepo}
+                  onChangeComplete={(color) =>
+                    setInvoiceRepo({ ...InvoiceRepo, colorTheme: color.hex })
+                  }
+                  selectedColor={InvoiceRepo.colorTheme}
+                ></InvoiceMain>
+                <PropertyEditor>
+                  <Header>
+                    <PhotoFilter />
+                    <Typography variant="subtitle1" color="#555">
+                      Page Design
+                    </Typography>
+                  </Header>
+                  <PropertiesContainer>
+                    <Property>
+                      <Typography variant="overline" color="#555">
+                        Font Family
+                      </Typography>
+                      <select
+                        name="font"
+                        title="font-Change"
+                        onChange={(e) =>
+                          setInvoiceRepo({
+                            ...InvoiceRepo,
+                            styles: {
+                              ...InvoiceRepo.styles,
+                              fontFamily: e.target.value,
+                            },
+                          })
+                        }
+                        color={"#555"}
+                      >
+                        <option value="sans-serif">sans-serif</option>
+                        <option value="monospace">monospace</option>
+                        <option value="fantasy">fantasy</option>
+                        <option value="cursive">cursive</option>
+                        <option value="sans-serif">Roboto</option>
+                      </select>
+                    </Property>
+                    <Property>
+                      <Typography variant="overline" color="#555">
+                        Background Color
+                      </Typography>
+                      <CompactPicker
+                        onChange={(color) =>
+                          setInvoiceRepo({
+                            ...InvoiceRepo,
+                            pageStyles: {
+                              background: color.hex,
+                            },
+                          })
+                        }
+                      />
+                    </Property>
+                    <Property>
+                      <Typography variant="overline" color="#555">
+                        Font Color
+                      </Typography>
+                      <CompactPicker
+                        onChange={(color) =>
+                          setInvoiceRepo({
+                            ...InvoiceRepo,
+                            styles: {
+                              ...InvoiceRepo.styles,
+                              color: color.hex,
+                            },
+                          })
+                        }
+                      />
+                    </Property>
+                    <Property>
+                      <Typography variant="overline" color="#555">
+                        Language
+                      </Typography>
+                      <div style={{ width: "230px", padding: "0px 2px" }}>
+                        <select
+                          name="font"
+                          title="font-Change"
+                          onChange={(e) =>
+                            setInvoiceRepo({
+                              ...InvoiceRepo,
+                              styles: {
+                                ...InvoiceRepo.styles,
+                                fontLanguageOverride: e.target.value,
+                              },
+                            })
+                          }
+                        >
+                          {languages.data?.languages.map((l) => {
+                            return (
+                              <option value={l.language}>{l.language}</option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    </Property>
+                  </PropertiesContainer>
+                </PropertyEditor>
+              </div>
+            </div>
 
-        <Snackbar
-          open={opensuccess}
-          autoHideDuration={4000}
-          onClose={handlesucClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert
-            onClose={handlesucClose}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            <Typography>Invoice Saved</Typography>
-          </Alert>
-        </Snackbar>
+            <Snackbar
+              open={opensuccess}
+              autoHideDuration={4000}
+              onClose={handlesucClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+              <Alert
+                onClose={handlesucClose}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                <Typography>Invoice Saved</Typography>
+              </Alert>
+            </Snackbar>
 
-        {/**Notify of Editable Status */}
-        <Snackbar
-          open={notifyEdit}
-          autoHideDuration={4000}
-          onClose={handleCloseNotifyEdit}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        >
-          <Alert
-            onClose={handleCloseNotifyEdit}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            <Typography>Content is now Editable</Typography>
-          </Alert>
-        </Snackbar>
+            {/**Notify of Editable Status */}
+            <Snackbar
+              open={notifyEdit}
+              autoHideDuration={4000}
+              onClose={handleCloseNotifyEdit}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+              <Alert
+                onClose={handleCloseNotifyEdit}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                <Typography>Content is now Editable</Typography>
+              </Alert>
+            </Snackbar>
 
-        <Modals
-        OpenModal={sModal}
-        handleCloseModal={handleCloseSettingsModal}
-        pd="1rem"
-        >
-          <SettingsComponent 
-          taxOnChangeHandler={
-            (e: React.ChangeEvent<HTMLInputElement>) => setTaxRate(Number(e.target.value))
-            }
-            currentTaxRate={taxRate}
-            /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
-            />
-        </Modals>
+             <CustomSnackbar
+        openAlert={informUser.updatealert}
+        closeAlert={() => setInformUser({ ...informUser, updatealert: false })}
+        outputText={informUser.message}
+        verticalPosition="bottom"
+        horizontalPosition="center"
+      />
 
-        <Modals
-          OpenModal={opensaved}
-          handleCloseModal={handleOpenSaveInfoClose}
-          pd="1rem"
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              justifyContent: "center",
-              flexDirection: "column",
-              marginBottom: "1rem",
-            }}
-          >
-            <Image src="/print2.svg" height={300} width={300} />
-            Invoice Saved
-          </div>
-          <ButtonComponent innerText={"Continue"} />
-        </Modals>
-      </Container>
-    </Layout>
+            <Modals
+              OpenModal={sModal}
+              handleCloseModal={handleCloseSettingsModal}
+              pd="1rem"
+            >
+              <SettingsComponent
+                taxOnChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTaxRate(Number(e.target.value))
+                }
+                currentTaxRate={taxRate}
+                /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+              />
+            </Modals>
+
+            <Modals
+              OpenModal={opensaved}
+              handleCloseModal={handleOpenSaveInfoClose}
+              pd="1rem"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Image src="/print2.svg" height={300} width={300} />
+                Invoice Saved
+              </div>
+              <ButtonComponent innerText={"Continue"} />
+            </Modals>
+          </Container>
+        </Layout>
+      )}
+    </>
   );
 };
 

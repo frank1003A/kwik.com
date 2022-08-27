@@ -21,7 +21,7 @@ interface Props {
   due: string;
   editLink?: JSX.Element,
   invId?: ObjectId | string,
-  status?: JSX.Element
+  status?: (JSX.Element | undefined)[]
   handleDelete: (id: string) => void
 }
 

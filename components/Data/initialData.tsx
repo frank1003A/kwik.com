@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb'
-import { nanoid } from 'nanoid'
-import clients from '../../model/clients'
-import products from '../../model/products'
-import user from '../../model/user'
-import { InvoiceItems, Invoice } from './types'
+import { nanoid } from 'nanoid';
+
+import clients from '../../model/clients';
+import products from '../../model/products';
+import user from '../../model/user';
+import { Invoice, InvoiceItems } from './types';
 
 export const initialInvoiceItems: InvoiceItems = {
   _id: nanoid(5),
@@ -48,7 +48,15 @@ export const initialInvoice: Invoice = {
   notes: 'It was great doing business with you.',
   termLabel: 'Terms & Conditions',
   term: 'Please make the payment by the due date.',
-  status: 'draft'
+  status: 'draft',
+  pageStyles: {
+    background: "#FFFFF",
+  },
+  styles: {
+    fontFamily: "Roboto",
+    color: "#555",
+  },
+  colorTheme: "#2124b1"
 }
 
 export const initialClientData: clients = {

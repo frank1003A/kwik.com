@@ -11,6 +11,7 @@ import { Typography } from "@mui/material";
 import { motion } from "framer-motion"
 import Image from 'next/image'
 import { useTheme } from "next-themes";
+import CustomLoader from "../../components/asset/CustomLoader";
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
           alignItems: 'center',
           columnGap: 10
         }}>
-            <SquareLoader color={theme === "dark" ? "orange" : "blue"} />
+            <CustomLoader/>
             <Typography>Please wait...</Typography>
             </motion.div>
       )

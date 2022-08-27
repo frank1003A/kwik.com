@@ -1,89 +1,139 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import {
+  Bookmark,
+  Clear,
+  Edit,
+  Filter1,
+  ImportContacts,
+  ImportExport,
+  KeyboardOptionKeyOutlined,
+  PersonAdd,
+  Receipt,
+  Sort,
+} from "@mui/icons-material";
+import {
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Divider,
+  FormGroup,
+  IconButton,
+  StepLabel,
+  Typography,
+  Button,
+  Paper,
+  Tooltip,
+  Select,
+} from "@mui/material";
+import styles from "../../styles/Home.module.css";
+import { motion } from "framer-motion";
 import { NextPage } from "next";
-import { Container, ControlledInput, VhContainer } from "../../components/styled-component/Global";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, {
+  ChangeEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Avatar from "react-avatar";
+import { useSelector } from "react-redux";
+import { useSWRConfig } from "swr";
+
+import AlertDialogSlide from "../../components/AlertDialog";
+import ClientIcon from "../../components/asset/ClientIcon";
+import CustomLoader from "../../components/asset/CustomLoader";
+import ButtonComponent from "../../components/Button";
+import CustomSnackbar from "../../components/CustomSnackbar";
+import { initialClientData } from "../../components/Data/initialData";
 import Layout from "../../components/Layout";
+import ModalComponent from "../../components/Modal";
+import MuiSearchbar from "../../components/MuiSearchbar";
 import {
   Card,
+  Center,
   FlexContainer,
   List,
-  Top,
   Row,
-  Center,
+  Top,
 } from "../../components/styled-component/clients/Global";
-import Avatar from "react-avatar";
-import ButtonComponent from "../../components/Button";
-import { PersonAdd, Edit, Clear, Add, PictureAsPdf, CreateNewFolder, BookOnline, Receipt } from "@mui/icons-material";
-import { Divider, IconButton, TextField, Typography } from "@mui/material";
+import {
+  ControlledInput,
+  Form,
+  VhContainer,
+} from "../../components/styled-component/Global";
 import useGetter from "../../hooks/useGetter";
-import clientClass from "../../model/clients";
-import { ScaleLoader } from "react-spinners";
-import ModalComponent from "../../components/Modal";
 import {
   deleteRequest,
   patchRequest,
   postRequest,
 } from "../../lib/axios/axiosClient";
-import { initialClientData } from "../../components/Data/initialData";
-import AlertDialogSlide from "../../components/AlertDialog";
-import { useRouter } from "next/router";
-import useLocalStorage from "../../hooks/localStorage";
-import { useAppDispatch } from "../redux/hooks";
-import { useSelector } from "react-redux";
+import clientClass from "../../model/clients";
+import { sortData, sortMultipleData } from "../../utils/utils";
 import { updateClient } from "../redux/clientSlice";
+import { useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { useSession } from "next-auth/react";
-import { motion } from "framer-motion"
-import { useTheme } from "next-themes";
 
 const clients: NextPage = () => {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
   const { data, isError, isLoading } = useGetter(
     `/api/user/client/clients/?user_id=${session?.user?.id}`
-    );
+  );
+  const { mutate } = useSWRConfig();
 
-  const router = useRouter()
-  const {theme} = useTheme()
-  
-  const { } = useSession({
+  const router = useRouter();
+  const { theme } = useTheme();
+
+  const {} = useSession({
     required: true,
     onUnauthenticated() {
-      router.replace('/auth/login')
+      router.replace("/auth/login");
     },
-  })
+  });
 
   const [clients, setClients] = useState<clientClass[]>([]);
-  const [singleClient, setSClient] = useState<clientClass>(
-    data ? { ...data } : { ...initialClientData }
-  );
+  const [singleClient, setSClient] = useState<clientClass>({
+    ...initialClientData,
+  });
+  const [updateSingleClient, setUpdateSingleClient] = useState<clientClass>({
+    ...initialClientData,
+  });
   const [dialogResponse, setDialogResponse] = useState<string>("");
   const [contextCreated, setContextCreated] = useState<boolean>(false);
 
+  const [cim, setCim] = useState<boolean>(false);
   const [openUpdateModal, setopenUpdateModal] = useState(false);
+  const [isSortingF, setSortingF] = useState(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [sorted, setSorted] = useState<clientClass[]>([]);
+  const [informUser, setInformUser] = useState<{
+    savealert: boolean;
+    updatealert: boolean;
+    deletealert: boolean;
+    message: string;
+  }>({
+    savealert: false,
+    updatealert: false,
+    deletealert: false,
+    message: "",
+  });
 
   const handleUpdateModal = () => setopenUpdateModal(true);
   const handleCloseUpdateModal = () => setopenUpdateModal(false);
 
-  const SelectedClient = useSelector((state: RootState) => state.client);
   const dispatch = useAppDispatch();
 
   const createSingleClientInvoice = (cli: clientClass) => {
+    const { _id, owner, ...toPass } = cli;
     dispatch(
       updateClient({
-        client: cli,
+        client: toPass,
       })
     );
-    setContextCreated(true);
+    setCim(true);
   };
-
-  const navigateToInvoiceCeationRoute = () => {
-    if (contextCreated === true)
-      router.push("http://localhost:3000/invoice/create");
-  };
-
-  useEffect(() => {
-    /**Naviagte to route if context client data is retrieved */
-    navigateToInvoiceCeationRoute();
-  }, [contextCreated]);
 
   /**Modal */
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -94,27 +144,17 @@ const clients: NextPage = () => {
   /**Dialog */
   const [openDialog, setOpenDialog] = React.useState(false);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
+  const handleOpenDialog = async () => setOpenDialog(true);
 
-  const handleNoCloseDialog = () => {
-    setOpenDialog(false);
-    setDialogResponse("No");
-  };
+  const handleDialogClose = () => setOpenDialog(false);
 
-  const handleYesCloseDialog = () => {
-    setOpenDialog(false);
-    setDialogResponse("Yes");
-  };
+  const handleNoCloseDialog = () => setDialogResponse("No");
 
-  const setter = () => {
-    if (data !== undefined) setClients(data);
-    if (isError) console.log(isError);
-  };
+  const handleYesCloseDialog = () => setDialogResponse("Yes");
 
   useEffect(() => {
-    setter();
+    if (data !== undefined) setClients(data);
+    if (isError) console.log(isError);
   }, [data]);
 
   const handleChange = (
@@ -122,57 +162,150 @@ const clients: NextPage = () => {
     name: keyof clientClass
   ) => {
     const value = e.target.value;
-    const nC = { ...singleClient };
+    let nC =
+      e.currentTarget.ariaLabel === "update"
+        ? { ...updateSingleClient }
+        : { ...singleClient };
     if (name !== "_id" && typeof value === "string") nC[name] = value;
-    setSClient(nC);
+    e.currentTarget.ariaLabel === "update"
+      ? setUpdateSingleClient(nC)
+      : setSClient(nC);
+    /**
+     * since sorted is a different arr, changes in the original wont affect it
+     * so we need to update the sorted table to reflect the changes in the original
+     */
+    if (isSearching || openUpdateModal) {
+      let fS: clientClass[] = clients.filter((key) => key._id === nC._id);
+      fS[0] = nC;
+      setSorted(fS);
+    }
   };
 
   const postNewClient = async (): Promise<void> => {
     try {
+      const { _id, ...newClientDb } = singleClient;
       const newClient = await postRequest(
-        `api/user/client/clients/?user_id=${session?.user?.id}`, singleClient);
-      if (newClient.data) alert("new Client added");
+        `api/user/client/clients/?user_id=${session?.user?.id}`,
+        newClientDb
+      );
+      if (newClient.data) {
+        setInformUser({
+          ...informUser,
+          savealert: true,
+          message: "new Client added",
+        });
+      }
+      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
   const deleteClientData = async (id: string): Promise<void> => {
-    handleOpenDialog(); // open delete dialog
-    if (dialogResponse === "Yes") {
-      try {
-        const clientData = await deleteRequest(`api/user/client/clients/?client_id=${id}`);
-        if (clientData.data)
-          alert(`client <${id}> has been removed from database`);
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    } else {
-      return;
+    try {
+      const clientData = await deleteRequest(`api/clients/?client_id=${id}`);
+      if (clientData.status === 200)
+        if (clientData.data){
+          setInformUser({
+            ...informUser,
+            deletealert: true,
+            message: `client - ${id} - has been removed from database`,
+          });
+        }
+      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 
   const updateField = (cli: clientClass) => {
-    setSClient(cli);
+    setUpdateSingleClient(cli);
   };
 
   const updateCleintData = async (id: string): Promise<void> => {
-    const { _id, ...ClientUpdate } = singleClient; // REMOVE ID FIELD
+    setopenUpdateModal(false)
+    const { _id, owner, ...ClientUpdate } = updateSingleClient; // REMOVE ID FIELD
     try {
       const UpdateClient = await patchRequest(
-        `api/user/client/clients/?client_id=${id}`,
+        `api/clients/?client_id=${id}`,
         ClientUpdate
       );
-      if (UpdateClient.data) alert(`updated client ${id}`);
+      if (UpdateClient.data)
+        setInformUser({
+          ...informUser,
+          updatealert: true,
+          message: `updated client ${id}`,
+        });
+      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error);
     }
   };
 
+  const renderSortedClients = () => {
+    return [
+      sorted.map((cli) => {
+        return (
+          <Card as={motion.div} layout>
+            <Row>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: ".5rem",
+                }}
+              >
+                <Avatar
+                  name={cli.fullname}
+                  color={theme === "dark" ? "orange" : "#2124B1"}
+                  round="4px"
+                  size="40px"
+                />
+                <Typography id={"clientname"}>{cli.fullname}</Typography>
+              </div>
+              <Typography id={"email"}>{cli.email}</Typography>
+              <Typography id={"email"}>{cli.buisness}</Typography>
+              <Typography id={"email"}>{cli.phone}</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: ".5rem",
+                }}
+              >
+                <IconButton onClick={() => createSingleClientInvoice(cli)}>
+                  <Receipt style={{ color: "orange" }} />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    handleUpdateModal();
+                    updateField(cli);
+                  }}
+                >
+                  <Edit style={{ color: "#2124b1" }} />
+                </IconButton>
+                <IconButton
+                  onClick={() =>
+                    deleteClientData(cli._id ? cli._id.toString() : "")
+                  }
+                >
+                  <Clear style={{ color: "red" }} />
+                </IconButton>
+              </div>
+            </Row>
+          </Card>
+        );
+      }),
+    ];
+  };
+
   const renderClients = () => {
     return isLoading ? (
       <Center>
-        <ScaleLoader color="blue" />
+        <CustomLoader />
+        <Typography>Fetching Clients</Typography>
       </Center>
     ) : (
       [
@@ -190,7 +323,7 @@ const clients: NextPage = () => {
                 >
                   <Avatar
                     name={cli.fullname}
-                    color={theme === "dark" ?  "orange" : "#2124B1"}
+                    color={theme === "dark" ? "orange" : "#2124B1"}
                     round="4px"
                     size="40px"
                   />
@@ -208,7 +341,7 @@ const clients: NextPage = () => {
                   }}
                 >
                   <IconButton onClick={() => createSingleClientInvoice(cli)}>
-                    <Receipt style={{color: "orange"}}/>
+                    <Receipt style={{ color: "orange" }} />
                   </IconButton>
                   <IconButton
                     onClick={() => {
@@ -216,14 +349,14 @@ const clients: NextPage = () => {
                       updateField(cli);
                     }}
                   >
-                    <Edit style={{color: "#2124b1"}} />
+                    <Edit style={{ color: "#2124b1" }} />
                   </IconButton>
                   <IconButton
                     onClick={() =>
                       deleteClientData(cli._id ? cli._id.toString() : "")
                     }
                   >
-                    <Clear style={{color: "red"}} />
+                    <Clear style={{ color: "red" }} />
                   </IconButton>
                 </div>
               </Row>
@@ -234,10 +367,118 @@ const clients: NextPage = () => {
     );
   };
 
+  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const searchbar = inputRef.current;
+    searchbar?.addEventListener("focusin", () => setIsSearching(true));
+    searchbar?.addEventListener("focusout", () => setIsSearching(false));
+    return () => {
+      searchbar?.removeEventListener("focusin", () => setIsSearching(true));
+      searchbar?.removeEventListener("focusout", () => setIsSearching(false));
+    };
+  }, []);
+
+  const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
+    {
+      icon: (
+        <Sort
+          sx={{
+            color: "#555",
+            ":hover": {
+              color: theme === "light" ? "#2124b1" : "#FFA500",
+            },
+          }}
+        />
+      ),
+      tip: "Sort Client Data",
+      func: () => setSortingF(!isSortingF),
+    },
+    {
+      icon: (
+        <ImportContacts
+          sx={{
+            color: "#555",
+            ":hover": {
+              color: theme === "light" ? "#2124b1" : "#FFA500",
+            },
+          }}
+        />
+      ),
+      tip: "Import Excel File",
+    },
+    {
+      icon: (
+        <PersonAdd
+          sx={{
+            color: "#555",
+            ":hover": {
+              color: theme === "light" ? "#2124b1" : "#FFA500",
+            },
+          }}
+        />
+      ),
+      tip: "New Customer",
+      func: handleOpenModal,
+    },
+    {
+      icon: (
+        <ImportExport
+          sx={{
+            color: "#555",
+            ":hover": {
+              color: theme === "light" ? "#2124b1" : "#FFA500",
+            },
+          }}
+        />
+      ),
+      tip: "Export Data",
+    },
+  ];
+
+  const renderFSort: React.ReactNode = [
+    <select>
+      <option value={0}>Sort By</option>
+      <option value={1}>Newest</option>
+      <option value={2}>Oldest</option>
+    </select>,
+  ];
+
   return (
     <Layout>
       <VhContainer>
-        {clients.length < 1 && data ? (
+        <Top>
+          <Typography>Clients</Typography>
+          <span style={{ display: "flex", gap: "1rem" }}>
+            <MuiSearchbar
+              ref={inputRef}
+              handleSearch={(e: ChangeEvent<HTMLInputElement>) =>
+                setSorted(
+                  sortMultipleData<clientClass>(
+                    clients,
+                    ["fullname", "phone", "buisness", "email"],
+                    e.target.value
+                  )
+                )
+              }
+            />
+            <motion.div animate layout>
+              {isSortingF && renderFSort}
+            </motion.div>
+            <span>
+              {topIcons.map((key) => {
+                return (
+                  <Tooltip title={key.tip}>
+                    <IconButton aria-label="" onClick={key.func}>
+                      {key.icon}
+                    </IconButton>
+                  </Tooltip>
+                );
+              })}
+            </span>
+          </span>
+        </Top>
+        {clients.length < 1 && !isLoading && data ? (
           <Center>
             <div
               style={{
@@ -247,29 +488,16 @@ const clients: NextPage = () => {
                 alignItems: "center",
               }}
             >
+              <ClientIcon width={300} height={300} />
               <Typography> No Client Yet</Typography>
-              <ButtonComponent
-                innerText="Invoice"
-                icon={<Add />}
-                customStyle={{
-                  borderRadius: "30px",
-                  boxShadow: "0",
-                  background: "red",
-                }}
-              />
             </div>
           </Center>
         ) : (
           <React.Fragment>
-            <Top>
-              <Typography>Clients</Typography>
-              <ButtonComponent
-                icon={<PersonAdd />}
-                onClick={handleOpenModal}
-              />
-            </Top>
             <FlexContainer>
-              <List>{renderClients()}</List>
+              <List>
+                {sorted.length > 0 ? renderSortedClients() : renderClients()}
+              </List>
             </FlexContainer>
           </React.Fragment>
         )}
@@ -293,38 +521,79 @@ const clients: NextPage = () => {
               width: "100%",
             }}
           >
-            <ControlledInput
-              type={"text"}
-              value={singleClient.fullname}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "fullname")
-              }
-            />
-            <ControlledInput
-              type={"text"}
-              value={singleClient.email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "email")
-              }
-            />
-            <ControlledInput
-              type={"text"}
-              value={singleClient.buisness}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "buisness")
-              }
-            />
-            <ControlledInput
-              type={"text"}
-              value={singleClient.phone}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "phone")
-              }
-            />
+            <Form>
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Fullname</StepLabel>
+                  <ControlledInput
+                    aria-label="update"
+                    type={"text"}
+                    value={updateSingleClient.fullname}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "fullname")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's email</StepLabel>
+                  <ControlledInput
+                    aria-label="update"
+                    type={"text"}
+                    value={updateSingleClient.email}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "email")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText>lowercase*</FormHelperText>
+              </FormControl>
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Buisnessname</StepLabel>
+                  <ControlledInput
+                    aria-label="update"
+                    type={"text"}
+                    value={updateSingleClient.buisness}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "buisness")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Phone </StepLabel>
+                  <ControlledInput
+                    aria-label="update"
+                    type={"text"}
+                    value={updateSingleClient.phone}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "phone")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+            </Form>
             <ButtonComponent
               customStyle={{ background: "green" }}
-              onClick={() => updateCleintData(singleClient._id?.toString()!)}
+              onClick={() =>
+                updateCleintData(updateSingleClient._id?.toString()!)
+              }
               innerText="Update"
+              btnDisabled={
+                !(updateSingleClient.fullname && updateSingleClient.phone
+                  ? true
+                  : false)
+              }
             />
           </div>
         </div>
@@ -347,40 +616,120 @@ const clients: NextPage = () => {
               gap: "1rem",
             }}
           >
-            <ControlledInput
-              placeholder="fullname"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "fullname")
-              }
-            />
-            <ControlledInput
-              placeholder="email"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "email")
-              }
-            />
-            <ControlledInput
-              placeholder="buisness name, if any"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "buisness")
-              }
-            />
-            <ControlledInput
-              placeholder="+234_phonenumber"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "phone")
-              }
-            />
+            <Form>
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Fullname</StepLabel>
+                  <ControlledInput
+                    placeholder="fullname"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "fullname")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Email</StepLabel>
+                  <ControlledInput
+                    placeholder="email"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "email")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Buisness Name</StepLabel>
+                  <ControlledInput
+                    placeholder="buisness name, if any"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "buisness")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+
+              <FormControl component="fieldset">
+                <FormLabel component="legend"></FormLabel>
+                <FormGroup>
+                  <StepLabel>Client's Buisness Phone</StepLabel>
+                  <ControlledInput
+                    placeholder="+234_phonenumber"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(e, "phone")
+                    }
+                  />
+                </FormGroup>
+                <FormHelperText></FormHelperText>
+              </FormControl>
+            </Form>
           </div>
-          <ButtonComponent innerText="Save" onClick={postNewClient} />
+          <ButtonComponent
+            innerText="Save"
+            btnDisabled={
+              !(singleClient.fullname && singleClient.phone) ? true : false
+            }
+            onClick={postNewClient}
+          />
         </div>
       </ModalComponent>
+
+      <ModalComponent
+        OpenModal={cim}
+        handleCloseModal={() => setCim(false)}
+        pd={"2rem"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <Typography>Create Client Invoice</Typography>
+          <Divider />
+        </div>
+        <div className={styles["card"]}>
+          <Link href="http://localhost:3000/invoice/create">
+            <Typography>Go To Create Invoice</Typography>
+          </Link>
+        </div>
+      </ModalComponent>
+
       <AlertDialogSlide
         dialogTitle="Delete Client Data"
         dialogText="Are you sure you want to delete this data?"
         openDialog={openDialog}
-        handleNoCloseDialog={handleNoCloseDialog}
-        handleYesCloseDialog={handleYesCloseDialog}
+        handleCloseDialog={handleDialogClose}
+        handleNoDialog={handleNoCloseDialog}
+        handleYesDialog={handleYesCloseDialog}
+      />
+
+      <CustomSnackbar
+        openAlert={informUser.savealert}
+        closeAlert={() => setInformUser({ ...informUser, savealert: false })}
+        outputText={informUser.message}
+        verticalPosition="bottom"
+        horizontalPosition="center"
+      />
+      <CustomSnackbar
+        openAlert={informUser.updatealert}
+        closeAlert={() => setInformUser({ ...informUser, updatealert: false })}
+        outputText={informUser.message}
+        verticalPosition="bottom"
+        horizontalPosition="center"
+      />
+
+      <CustomSnackbar
+        openAlert={informUser.deletealert}
+        closeAlert={() => setInformUser({ ...informUser, deletealert: false })}
+        outputText={informUser.message}
+        verticalPosition="bottom"
+        horizontalPosition="center"
       />
     </Layout>
   );

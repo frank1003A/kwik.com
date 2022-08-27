@@ -1,27 +1,24 @@
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import { CheckCircleSharp, Delete } from '@mui/icons-material';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import SearchIcon from '@mui/icons-material/Search';
+import { Modal } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
-import Image from 'next/image';
-import Avatar from 'react-avatar';
-import { UserBadge } from './styled-component/Global';
-import { CheckCircleSharp } from '@mui/icons-material';
-import LeftAnchor from './LeftAnchor';
+import MenuItem from '@mui/material/MenuItem';
+import { alpha, styled } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import * as React from 'react';
+import Avatar from 'react-avatar';
+
 import useCurrentUser from '../hooks/useCurrentUser';
+import LeftAnchor from './LeftAnchor';
+import { UserBadge } from './styled-component/Global';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,7 +47,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
+  color: "inherit",
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -71,11 +68,46 @@ interface Props {
 }
 
 export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}: Props) {
+  
   const { user } = useCurrentUser()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = React.useState<boolean>(false)
+  const [mounted, setMounted] = React.useState<boolean>(false)
+  const [searchModal, setSearchModal] = React.useState<boolean>(false)
+  const inputRef = React.useRef<HTMLInputElement | null>(null)
+
+  React.useEffect(() => {
+    if (searchModal === true) inputRef.current?.focus()
+  }, [searchModal])
+
+  const style: React.CSSProperties = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "100%",
+    background: "#000000db",
+    height: "100vh",
+    padding: "2rem",
+    overflow: "hidden",
+  };
+
+  const handleOpenSearchModal = (
+    e: React.FocusEvent<HTMLInputElement | 
+    HTMLTextAreaElement, Element>) => {
+   if (e.bubbles === true) {
+    setSearchModal(true) 
+    e.bubbles = false}
+  }
+  const handleCloseSearchModal = (e: React.FocusEvent<HTMLInputElement | 
+    HTMLTextAreaElement, Element>) => {
+      setSearchModal(false)
+}
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { theme } = useTheme()
 
@@ -151,7 +183,7 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
         >
           <Avatar 
           name={user.fullname}
-          color={theme === "dark" ?  "orange" : "#2124B1"}
+          color={mounted && theme === "dark" ?  "#FFA500" : "#2124B1"}
           round="50%"
           size="40px"
           />
@@ -166,8 +198,9 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
       <AppBar
         sx={{
           position: "fixed",
-          background: theme === "dark" ? "#27272f" : "white",
-          color: theme === "dark" ? "#fff" : "#2124B1",
+          maxHeight: "64px",
+          background: mounted && theme === "dark" ? "#27272f" : "white",
+          color: mounted && theme === "dark" ? "#fff" : "#2124B1",
           boxShadow: 0,
         }}  
       >
@@ -187,13 +220,16 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
             {/**<LeftAnchor anchor={'left'} open={false} /> */}
           </IconButton>
           <Image src={"/kwik.png"} alt="Kwik Logo" width={128} height={43} />
-          <Search>
+          <Search sx={{background: "transparent"}}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Search templates…"
               inputProps={{ "aria-label": "search" }}
+              onClick={(e) => {
+                setSearchModal(true);
+              }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
@@ -220,7 +256,7 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
             >
               <Avatar
                 name= {user.fullname}
-                color={theme === "dark" ?  "orange" : "#2124B1"}
+                color={mounted && theme === "dark" ?  "#FFA500" : "#2124B1"}
                 round="50%"
                 size="40px"
               />
@@ -242,6 +278,33 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      <Modal 
+       open={searchModal}
+       onClose={handleCloseSearchModal}
+       aria-labelledby="modal-modal-title"
+       aria-describedby="modal-modal-description"
+      >
+        <motion.div style={style} layout>
+          <div>
+            <IconButton aria-label="" onClick={() => setSearchModal(false)}>
+              <Delete/>
+            </IconButton>
+          </div>
+        <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search templates…"
+              inputProps={{ "aria-label": "search" }}
+              ref={inputRef}
+            />
+          </Search>
+          <div>
+              <p>Search For anything</p>
+            </div>
+        </motion.div>
+      </Modal>
     </Box>
   );
 }

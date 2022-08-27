@@ -23,7 +23,7 @@ const EditableSelect = ({
       {invoice.companyCountry ? (
         <input
           type="text"
-          value={invoice.companyCountry}
+          defaultValue={invoice.companyCountry}
           onDoubleClick={() => setter({...invoice, companyCountry: ""})}
           style={customStyle}
         />

@@ -1,26 +1,23 @@
-import React, { FC, LegacyRef, SyntheticEvent, useState, Dispatch, SetStateAction} from "react";
-import styles from "../styles/Invoice.module.css";
-import { Typography } from "@mui/material";
-import { Divider } from "@mui/material";
+import { Divider } from '@mui/material';
+import React, { Dispatch, FC, LegacyRef, SetStateAction, SyntheticEvent, useState } from 'react';
+import { ColorChangeHandler } from 'react-color';
+
 import {
-  Header,
-  LogoContainer,
-  TitleContainer,
+  Button_Add,
   CompanySection,
-  RecieverSection,
+  Header,
   InvoiceDescription,
   InvoiceTable,
-  Button_Add,
-  TotalContainer,
+  LogoContainer,
   NotesContainer,
+  RecieverSection,
   TandC_Container,
-} from "../components/Data/default_template";
-import {
-  initialInvoice,
-  initialInvoiceItems,
-} from "../components/Data/initialData";
-import { Invoice, InvoiceItems } from "./Data/types";
-import { Style } from "@mui/icons-material";
+  TitleContainer,
+  TotalContainer,
+} from '../components/Data/default_template';
+import { initialInvoice, initialInvoiceItems } from '../components/Data/initialData';
+import styles from '../styles/Invoice.module.css';
+import { Invoice, InvoiceItems } from './Data/types';
 
 interface Props {
   options: { value: string; text: string }[];
@@ -49,8 +46,10 @@ interface Props {
   id?:string,
   clientInputRef?:LegacyRef<HTMLDivElement>,
   customStyle?: React.CSSProperties,
-  dateSet: Dispatch<SetStateAction<Invoice>>
-  selClr: Dispatch<SetStateAction<Invoice>>
+  dateSet: Dispatch<SetStateAction<Invoice>>,
+  selClr: Dispatch<SetStateAction<Invoice>>,
+  onChangeComplete?: ColorChangeHandler,
+  selectedColor?: string
 }
 
 const invoiceMain = React.forwardRef(
@@ -73,11 +72,12 @@ const invoiceMain = React.forwardRef(
       clientInputRef,
       customStyle,
       dateSet, 
-      selClr
+      selClr,
+      onChangeComplete,
+      selectedColor,
     }: Props,
     ref: React.LegacyRef<HTMLDivElement>
   ) => {
-    const [selectedColor, setselectedColor] = useState<string>("#2124B1");
     return (
       <div className={styles["invoice-box"]} ref={ref} style={style}>
         <div className={styles.top} id="trinfo">
@@ -147,8 +147,8 @@ const invoiceMain = React.forwardRef(
           >
             <InvoiceTable
               invoice={invoice}
-              onChangeComplete={(color) => setselectedColor(color.hex)}
-              selectedColor={selectedColor}
+              onChangeComplete={onChangeComplete}
+              selectedColor={selectedColor as string}
               cur={cur}
               itemArr={itemArr}
               removeItem={removeItem}

@@ -60,11 +60,9 @@ const InvoiceSettings = ({
           }}
         >
           <Typography variant="body1" color="initial">
-            Settings
+            Invoice Settings
             </Typography>
           <SwitchContainer>
-          <Switch onChange={switchOnchangehandler} />
-          <WbSunny />
           </SwitchContainer>
         </div>
         <Divider />

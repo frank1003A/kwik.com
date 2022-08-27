@@ -4,9 +4,10 @@
 
 <div align="center">
   <h1>Kwik.com</h1>
-  <p>A portfolio invoice and quotation maker for the web</p>
+  <p>A paper design invoice and quotation maker for the web</p>
   <a href="https://github.com/frank1003A?tab=repositories">
-   Written by Frank Ezene
+   Kwik is just a portfolio project Written by Frank Ezene, 
+   it is not intended to be a real project, hence the countless bugs. ✌
   <a>
 </div>
 

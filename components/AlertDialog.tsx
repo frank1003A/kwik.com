@@ -21,12 +21,18 @@ interface Props {
     dialogTitle: string,
     dialogText: string,
     openDialog: boolean,
-    handleNoCloseDialog: () => void,
-    handleYesCloseDialog: () => void
+    handleNoDialog: () => void,
+    handleYesDialog: () => void,
+    handleCloseDialog: () => void
 }
 
 export default function AlertDialogSlide({
-    dialogText, dialogTitle, openDialog, handleNoCloseDialog, handleYesCloseDialog}: Props) {
+    dialogText, 
+    dialogTitle, 
+    openDialog,
+    handleCloseDialog, 
+    handleNoDialog, 
+    handleYesDialog}: Props) {
 
   return (
     <div>
@@ -34,7 +40,7 @@ export default function AlertDialogSlide({
         open={openDialog}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleNoCloseDialog || handleYesCloseDialog}
+        onClose={handleCloseDialog}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{dialogTitle}</DialogTitle>
@@ -44,8 +50,8 @@ export default function AlertDialogSlide({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleNoCloseDialog}>No</Button>
-          <Button onClick={handleYesCloseDialog}>Yes</Button>
+          <Button onClick={handleNoDialog}>No</Button>
+          <Button onClick={handleYesDialog}>Yes</Button>
         </DialogActions>
       </Dialog>
     </div>

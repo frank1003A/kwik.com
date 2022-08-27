@@ -9,11 +9,28 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
-import  { ArrowRightAlt, InboxOutlined, Mail, Menu } from '@mui/icons-material'
+import  { 
+  ArrowRightAlt, 
+  InboxOutlined, 
+  Mail, 
+  Menu,
+  Dashboard,
+  PanoramaPhotosphereRounded,
+  FilePresent,
+  Handshake,
+  FileOpen,
+  CreateRounded,
+  AddCircle,
+  Message,
+  Settings,
+  People,
+} from '@mui/icons-material'
 import Link from 'next/link'
 import Image from 'next/image'
 import Sidebar from './Sidebar'
 import styles from '../styles/Home.module.css'
+import { useRouter } from "next/router"
+import Chip from '@mui/material/Chip';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -23,6 +40,8 @@ interface Props {
 }
 
 export default function TemporaryDrawer({anchor, open}:Props) {
+  const router = useRouter();
+
   const [state, setState] = useState({
     left: false,
   });
@@ -89,10 +108,98 @@ export default function TemporaryDrawer({anchor, open}:Props) {
             onClose={toggleDrawer(anchor, false)}
             sx={{marginTop: 65}}
           >
-            <Sidebar id={styles["leftanchorsidebar"]}/>
           </Drawer>
         </React.Fragment>
       ))}
     </div>
   );
 }
+
+/**<div className={styles.nav}>
+        <Link href={"/"}>
+          <div
+            className={
+              router.pathname == "/"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <Dashboard />
+            </div>
+            <p>Dashboard</p>
+          </div>
+        </Link>
+
+        <Link href={"/invoices"}>
+          <div
+            className={
+              router.pathname == "/invoices"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <FilePresent />
+            </div>
+            <p>Invoices</p>
+          </div>
+        </Link>
+        <Link href={"/clients"}>
+          <div
+            className={
+              router.pathname == "/clients"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <People />
+            </div>
+            <p>Clients</p>
+          </div>
+        </Link>
+
+        <Link href={"/products"}>
+          <div
+            className={
+              router.pathname == "/products"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+            onClick={() => router.push("/products")}
+          >
+            <div className={styles.smallcontainer}>
+              <FilePresent />
+            </div>
+            <p>Products</p>
+          </div>
+        </Link>
+
+        <Link href={"/profile"}>
+          <div
+            className={
+              router.pathname == "/profile"
+                ? styles.outercontainerActive
+                : styles.outercontainer
+            }
+          >
+            <div className={styles.smallcontainer}>
+              <Message />
+            </div>
+            <p>Profile</p>
+            <Chip
+              label={"2"}
+              sx={{
+                borderRadius: "4px",
+                height: "30px",
+                width: "30px",
+                fontSize: "xx-small",
+              }}
+              variant="filled"
+              color="error"
+              size="medium"
+            />
+          </div>
+        </Link>
+      </div> */
