@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Container = styled.div`
   width: 100%;
   display: flex;
-  /**height: 100vh; */
+  /**min-height: 100vh; */
   background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
@@ -17,7 +17,7 @@ export const Container = styled.div`
 export const VhContainer = styled.div`
   width: 100%;
   display: flex;
-  height: 100vh; 
+  min-height: 100vh; 
   background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
@@ -93,12 +93,16 @@ export const UserBadge = styled.div`
 `;
 
 export const Center = styled.div`
-    top: 50%;
-    left: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+        width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 100%;
+    padding: 4.5rem 2rem;
     justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
 `;
 
 export const CustomColor = styled.span`

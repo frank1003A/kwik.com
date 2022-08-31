@@ -205,21 +205,8 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
         }}  
       >
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2, 
-              display: {
-                xs: "flex",
-                md: "none",
-              },
-             }}
-          >
-            {/**<LeftAnchor anchor={'left'} open={false} /> */}
-          </IconButton>
-          <Image src={"/kwik.png"} alt="Kwik Logo" width={128} height={43} />
+        <LeftAnchor anchor={'left'} open={false} />
+          <Image src={"/kwik_logo.png"} alt="Kwik Logo" width={128} height={30} />
           <Search sx={{background: "transparent"}}>
             <SearchIconWrapper>
               <SearchIcon />

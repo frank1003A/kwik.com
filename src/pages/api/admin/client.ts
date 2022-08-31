@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId  } from 'mongodb'
-import clientPromise from '../../../lib/Mongodb'
-import clients from '../../../model/clients';
+import clientPromise from '../../../../lib/Mongodb'
+import clients from '../../../../model/clients';
 
 export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
   //PATCH request: http://localhost:3000/api/user/client/clients/?client_id

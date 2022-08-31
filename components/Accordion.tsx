@@ -8,19 +8,15 @@ import HeaderIcon from '@mui/icons-material/LineAxis'
 import styles from '../styles/Invoice.module.css'
 
 interface Props {
-    headerChildren: JSX.Element,
-    lineChildren: JSX.Element, 
-    companyChildren: JSX.Element, 
-    billingChildren: JSX.Element, 
-  invoiceDetailChildren: JSX.Element, 
-  tableChildren: JSX.Element, 
-  notesChildren: JSX.Element, 
-  tandcChildren: JSX.Element
+    headerChildren: React.ReactNode,
+    lineChildren: React.ReactNode, 
+    companyChildren: React.ReactNode, 
+  notesChildren: React.ReactNode, 
+  tandcChildren: React.ReactNode
 }
 
 export default function ControlledAccordions({
-  headerChildren, lineChildren, companyChildren, billingChildren, 
-  invoiceDetailChildren, tableChildren, notesChildren, tandcChildren
+  headerChildren, lineChildren, companyChildren, notesChildren, tandcChildren
 }:Props) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
@@ -74,48 +70,6 @@ export default function ControlledAccordions({
         <AccordionDetails>
           <Typography>
             {companyChildren}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion expanded={expanded === 'panel4'} className={styles['accxtra']} onChange={handleChange('panel4')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel4bh-content"
-          id="panel4bh-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Billing Details</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            {billingChildren}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion expanded={expanded === 'panel5'} className={styles['accxtra']} onChange={handleChange('panel5')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel5bh-content"
-          id="panel5bh-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Invoice Details</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            {invoiceDetailChildren}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion expanded={expanded === 'panel6'} className={styles['accxtra']} onChange={handleChange('panel6')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel6bh-content"
-          id="panel6bh-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Table</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            {tableChildren}
           </Typography>
         </AccordionDetails>
       </Accordion>

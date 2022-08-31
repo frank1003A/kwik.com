@@ -71,7 +71,7 @@ const Settings = ({
                 handleThemeChange(e)
               }
             />
-            {theme! === "dark" ? <WbCloudy /> : <WbSunny />}
+            {theme! === "dark" ? <WbSunny />: <WbCloudy />}
           </SwitchContainer>
         </div>
         <Divider />

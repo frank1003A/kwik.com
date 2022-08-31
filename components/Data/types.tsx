@@ -37,9 +37,9 @@ export interface Invoice {
   invoiceTitleLabel: string
   invoiceTitle: string
   invoiceDateLabel: string
-  invoiceDate: string
+  invoiceDate: Date
   invoiceDueDateLabel: string
-  invoiceDueDate: string
+  invoiceDueDate: Date
 
   invoiceitems: InvoiceItems[]
 

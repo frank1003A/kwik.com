@@ -56,16 +56,22 @@ export const Top = styled.section`
     justify-content: center;
   }
 `;
-export const Main = styled.section`
+export const Main = styled.section<{
+  /**@alias `grid-template-colums` */
+  gtc?: string
+  }>`
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     background: var(--bg);
     display: grid;
-    grid-template-columns: 0px 0px 0px;
-    padding: 4.5rem 2rem;
-    justify-content: space-around;
+    margin: 6rem 0 6rem 0;
+    grid-template-columns: ${(props) => props.gtc ? props.gtc : '0px 0px 0px'} ;
+    grid-row-gap: 3rem;
+    padding: 0 2rem;
     justify-items: center;
+    align-content: center;
     align-items: center;
+    justify-content: space-around;
 
   span {
     margin: 0;
@@ -87,11 +93,16 @@ export const Main = styled.section`
 `;
 
 export const Center = styled.div`
-  margin: auto auto auto auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+        width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 100%;
+    padding: 4.5rem 2rem;
     justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
 `;
 
 export const Status = styled.div`

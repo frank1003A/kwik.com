@@ -99,7 +99,6 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
-            onClick={() => router.push("/products")}
           >
             <div className={styles.smallcontainer}>
               <FilePresent />

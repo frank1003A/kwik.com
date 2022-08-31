@@ -1,36 +1,18 @@
-import * as React from 'react';
+import { ArrowRightAlt, Mail, Menu } from '@mui/icons-material';
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton'
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { useRouter } from 'next/router';
+import * as React from 'react';
 import { useState } from 'react';
-import  { 
-  ArrowRightAlt, 
-  InboxOutlined, 
-  Mail, 
-  Menu,
-  Dashboard,
-  PanoramaPhotosphereRounded,
-  FilePresent,
-  Handshake,
-  FileOpen,
-  CreateRounded,
-  AddCircle,
-  Message,
-  Settings,
-  People,
-} from '@mui/icons-material'
-import Link from 'next/link'
-import Image from 'next/image'
-import Sidebar from './Sidebar'
-import styles from '../styles/Home.module.css'
-import { useRouter } from "next/router"
-import Chip from '@mui/material/Chip';
+import {motion} from "framer-motion"
+
+import Sidebar from './Sidebar';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -108,6 +90,9 @@ export default function TemporaryDrawer({anchor, open}:Props) {
             onClose={toggleDrawer(anchor, false)}
             sx={{marginTop: 65}}
           >
+            <motion.span  layout transition={{bounce: 20}}>
+            <Sidebar/>
+            </motion.span>
           </Drawer>
         </React.Fragment>
       ))}

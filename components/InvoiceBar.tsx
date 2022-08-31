@@ -10,66 +10,28 @@ import { ObjectId } from "mongodb";
 import Avatar from "react-avatar";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Create, Print } from "@mui/icons-material";
+import { Clear, Create, Delete, DeleteSweepRounded, Print } from "@mui/icons-material";
 import { motion } from "framer-motion"
+import { convertDateFormat } from "../utils/utils";
+import CustomIconBtn from "./CustomIconBtn";
+import { useTheme } from "next-themes";
 
 interface Props {
   name: string;
   clientname: string;
   invtitle: string;
   amt: number | string;
-  due: string;
+  due: Date;
   editLink?: JSX.Element,
   invId?: ObjectId | string,
   status?: (JSX.Element | undefined)[]
-  handleDelete: (id: string) => void
+  handleDelete: () => void
 }
 
 const InvoiceBar: FC<Props> = ({ 
   name, invtitle, amt, due,invId, status, handleDelete }) => {
 
-    const router = useRouter()
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const isMenuOpen = Boolean(anchorEl);
-  
-  const handleMenuClose = (id: string) => {
-    setAnchorEl(null);
-    handleDelete(id)
-  };
-
-  const menuId = 'delete invoice'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={() => handleMenuClose}>Delete Invoice</MenuItem>
-    </Menu>
-  );
-
-
-  const handleRemoveOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const updateRoute = () => {
-   router.push('http://localhost:3000/invoice/update', {
-    query: {invoice_id: invId?.toString()}
-   })
-  }
+  const { theme } = useTheme();
 
   return (
     <motion.div className={styles.invcard} layout>
@@ -84,17 +46,20 @@ const InvoiceBar: FC<Props> = ({
           <Typography id="cn">{invtitle}</Typography>
           <Status>{status}</Status>
           </div>
-          <IconButton
-          size="large"
-          edge="end"
-          aria-label="account of current user"
-          aria-controls={menuId}
-          aria-haspopup="true"
-          onClick={handleRemoveOpen}
-          color="inherit"
-          >
-          <MoreHorizIcon fill='#2124b1'/>
-          </IconButton>
+          <CustomIconBtn
+          icon={
+          <Clear 
+          sx={{
+            color: "#555",
+              ":hover": {
+                color: theme === "light" ? "#2124b1" : "#FFA500",
+              },
+          }}
+          />
+        }
+          toolTip="Delete"
+          handleClick={handleDelete}
+          />
         </Row>
       </div>
       <div className={styles.barmain}>
@@ -102,12 +67,12 @@ const InvoiceBar: FC<Props> = ({
           <div className={styles.invamt}>
             <Column>
               <span>NGN {amt}</span>
-              <Typography id="amtlabel">Amount</Typography>
+              <Typography id="amtlabel">Amount Total</Typography>
             </Column>
           </div>
           <div className={styles.induedate}>
             <Column>
-              <span>{due}</span>
+              <span>{convertDateFormat(due.toString(),"mm/dd/yyyy")}</span>
               <Typography id="dlabel">Due Date</Typography>
             </Column>
           </div>
@@ -120,7 +85,7 @@ const InvoiceBar: FC<Props> = ({
            <span>
            <Link href={{
             pathname: 'http://localhost:3000/invoice/update',
-            query: {invoice_id: invId?.toString()}
+            query: {invoice_id: invId?.toString()},
           }}>
            <Tooltip title="Update">
               <Create />
@@ -135,7 +100,6 @@ const InvoiceBar: FC<Props> = ({
             </ButtonContainer>
         </Row>
       </div>
-      {renderMenu}
     </motion.div>
   );
 };

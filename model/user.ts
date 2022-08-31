@@ -13,5 +13,6 @@ export default class user {
         public buisness_address2?: string,
         public buisness_logo?: string,
         public country?: string,
+        public dateCreated?: Date
     ){}
 }

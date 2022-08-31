@@ -6,25 +6,34 @@ import {
     Divider, 
     FormControl, 
     FormLabel, 
-    StepLabel
+    StepLabel,
 } from '@mui/material'
-import React, { useRef } from 'react'
+import React, { ChangeEvent, useRef } from 'react'
 import ButtonComponent from './Button';
 import { Invoice } from './Data/types';
 import { ControlledInput, Form, SwitchContainer } from './styled-component/Global'
+import currencyList from "../components/Data/currencyList"
 
 interface Props {
-    switchOnchangehandler?: () => void;
+    editController?: JSX.Element;
     taxOnChangeHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     currentTaxRate?: number;
-    handleDefaultLogo?:(value: string) => void
+    handleDefaultLogo?:(value: string) => void,
+    handleCurrency?: (e: ChangeEvent<HTMLSelectElement>) => void,
+    handleStatusChange?: (e: ChangeEvent<HTMLSelectElement>) => void,
+    handleCloseBtn? : () => void,
+    data: Invoice
 }
   
 const InvoiceSettings = ({
-  switchOnchangehandler, 
+  editController,
   taxOnChangeHandler, 
   currentTaxRate,
-  handleDefaultLogo
+  handleDefaultLogo,
+  handleCurrency,
+  handleStatusChange, 
+  handleCloseBtn,
+  data,
 }: Props) => {
 
   const fileInput = useRef<HTMLInputElement>(null)
@@ -62,18 +71,36 @@ const InvoiceSettings = ({
           <Typography variant="body1" color="initial">
             Invoice Settings
             </Typography>
-          <SwitchContainer>
-          </SwitchContainer>
         </div>
-        <Divider />
+        <Divider/>
         <FormControl>
-          <FormLabel>Logo</FormLabel>
-          <ControlledInput type={"file"} 
-          ref={fileInput}
-          customHeight={'fit-content'}
-          accept="image/*"
-          onChange={handleChangeImage}/>
-          <StepLabel>Add default logo</StepLabel>
+          <FormLabel>Invoice Status</FormLabel>
+          <select
+            style={{ padding: "0px 8px" }}
+            id="select"
+            value={data.status}
+            onChange={handleStatusChange}
+          >
+            <option value={"draft"}>draft</option>
+            <option value={"pending"}>pending</option>
+            <option value={"complete"}>complete</option>
+          </select>
+          <StepLabel>change status</StepLabel>
+        </FormControl>
+          <Divider />
+        <FormControl>
+          <FormLabel>Currency</FormLabel>
+          <select 
+          onChange={handleCurrency}
+          value={data.currency}
+          >
+            {currencyList?.map(list => {
+              return (
+                <option value={list.name}>{list.name}</option>
+              )
+            })}
+          </select>
+          <StepLabel>Add currency</StepLabel>
         </FormControl>
         <Divider />
         <FormControl>
@@ -100,8 +127,7 @@ const InvoiceSettings = ({
         </FormControl>
         <Divider />
         <div style={{display: 'flex',width: '100%',gap: '.1rem'}}>
-        <ButtonComponent innerText='Save' customStyle={{width: '50px'}}/>
-        <ButtonComponent innerText='Cancel'/>
+        <ButtonComponent innerText='Continue' onClick={handleCloseBtn} customStyle={{width: '100%'}}/>
         </div>
       </Form>
     </React.Fragment>

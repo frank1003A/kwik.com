@@ -1,68 +1,36 @@
-import {
-  CreateOutlined,
-  CreateRounded,
-  DateRange,
-  ImportExportSharp,
-  LocalActivity,
-  Sort,
-} from "@mui/icons-material";
-import {
-  Chip,
-  Divider,
-  FormLabel,
-  IconButton,
-  StepLabel,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  FC,
-  SyntheticEvent,
-} from "react";
-import { useEffect, useState } from "react";
-import { useRef } from "react";
-import styled from "styled-components";
-import {
-  Center,
-  Container,
-  Main,
-  Status,
-  Top,
-} from "../../components/styled-component/invoices/index";
+import 'react-datepicker/dist/react-datepicker.css';
 
-import Create from "../../components/asset/Create";
-import CustomLoader from "../../components/asset/CustomLoader";
-import Button from "../../components/Button";
-import { Invoice } from "../../components/Data/types";
-import InvoiceBar from "../../components/InvoiceBar";
-import Layout from "../../components/Layout";
-import Modal from "../../components/Modal";
-import MuiSearchbar from "../../components/MuiSearchbar";
-import { FlexContainer } from "../../components/styled-component/clients/Global";
-import { ControlledInput } from "../../components/styled-component/Global";
-import useGetter from "../../hooks/useGetter";
-import { deleteRequest } from "../../lib/axios/axiosClient";
-import styles from "../../styles/Home.module.css";
-import {
-  convertDateFormat,
-  sortData,
-  sortDataByDate,
-  sortMultipleData,
-} from "../../utils/utils";
+import { CreateOutlined, DateRange, ImportExportSharp, LocalActivity, Sort } from '@mui/icons-material';
+import { Chip, Divider, FormControl, FormHelperText, FormLabel, IconButton, Tooltip, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { ChangeEvent, useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { useRef } from 'react';
+import DatePicker from 'react-datepicker';
+import { useSWRConfig } from 'swr';
+
+import Create from '../../components/asset/Create';
+import CustomLoader from '../../components/asset/CustomLoader';
+import ButtonComponent from '../../components/Button';
+import CustomIconBtn from '../../components/CustomIconBtn';
+import CustomSnackbar from '../../components/CustomSnackbar';
+import { Invoice } from '../../components/Data/types';
+import InvoiceBar from '../../components/InvoiceBar';
+import Layout from '../../components/Layout';
+import Modal from '../../components/Modal';
+import MuiSearchbar from '../../components/MuiSearchbar';
+import { ControlledInput } from '../../components/styled-component/Global';
+import { Center, Container, Main, Top } from '../../components/styled-component/invoices';
+import useGetter from '../../hooks/useGetter';
+import { deleteRequest } from '../../lib/axios/axiosClient';
+import styles from '../../styles/Home.module.css';
+import { convertDateFormat, sortDataByDate, sortMultipleData } from '../../utils/utils';
 
 import type { NextPage } from "next";
-import { isBoxedPrimitive } from "util/types";
-import CustomSnackbar from "../../components/CustomSnackbar";
-import { useSWRConfig } from "swr";
-import CustomIconBtn from "../../components/CustomIconBtn";
-import { useTheme } from "next-themes";
-
 interface Props {
   invoices: Invoice[];
 }
@@ -78,9 +46,11 @@ const invoices: NextPage<Props> = () => {
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<Invoice[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [startDate, setstartDate] = useState<string>();
-  const [endDate, setendDate] = useState<string>();
+  const [startDate, setstartDate] = useState<Date>(new Date());
+  const [endDate, setendDate] = useState<Date>(new Date());
+  const [sbd, setSBD] = useState<boolean>(false);
   const [dateSort, setDateSort] = useState<boolean>(false);
+  const [dueDateSort, setDueDateSort] = useState<boolean>(false);
   const [sorted, setSorted] = useState<Invoice[]>([]);
   const [isFiltering, setIsFiltering] = useState<boolean>(false);
   const [informUser, setInformUser] = useState<{
@@ -94,16 +64,28 @@ const invoices: NextPage<Props> = () => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (startDate && endDate !== undefined) {
+    if (startDate && endDate !== undefined && dateSort) {
       const sortedData: Invoice[] = sortDataByDate(
         invoices,
-        convertDateFormat(startDate, "yyyy-mm-dd")!,
-        convertDateFormat(endDate, "yyyy-mm-dd")!,
+        convertDateFormat(startDate.toString(),  "yyyy-mm-dd")!,
+        convertDateFormat(endDate.toString(), "yyyy-mm-dd")!,
         "invoiceDate"
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, dateSort, sbd]);
+
+  useEffect(() => {
+    if (startDate && endDate !== undefined && dueDateSort) {
+      const sortedData: Invoice[] = sortDataByDate(
+        invoices,
+        convertDateFormat(startDate.toString(), "yyyy-mm-dd")!,
+        convertDateFormat(endDate.toString(), "yyyy-mm-dd")!,
+        "invoiceDueDate"
+      );
+      setSorted(sortedData);
+    }
+  }, [startDate, endDate, dueDateSort, sbd]);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
@@ -127,7 +109,7 @@ const invoices: NextPage<Props> = () => {
   const deleteInvoice = async (id: string) => {
     try {
       const deleteInvoice = await deleteRequest(
-        `api/invoices/?invoice_id=${id}`
+        `api/user/invoice/invoices/?invoice_id=${id}`
       );
       if (deleteInvoice)
         setInformUser({
@@ -142,16 +124,24 @@ const invoices: NextPage<Props> = () => {
   };
 
   const dispStats = (status: string) => {
-    const clr = ["red", "yellow", "green"];
+    type stringUnion =
+      | "default"
+      | "primary"
+      | "secondary"
+      | "error"
+      | "info"
+      | "success"
+      | "warning";
+    const clr = ["error", "warning", "success"];
     return ["draft", "pending", "complete"].map((key, idx) => {
       if (status === key) {
         return (
           <Chip
-            id="chipFont"
             label={status}
-            sx={{ borderRadius: "4px", background: clr[idx], color: "#fff" }}
+            sx={{ borderRadius: "4px", color: "#FFFFF" }}
             variant="filled"
-            size="medium"
+            size="small"
+            color={clr[idx] as stringUnion}
           />
         );
       }
@@ -229,7 +219,7 @@ const invoices: NextPage<Props> = () => {
         />
       ),
       tip: "Sort data by date",
-      func: () => setIsFiltering(!isFiltering),
+      func: () => setSBD(!sbd),
     },
     {
       icon: (
@@ -246,9 +236,26 @@ const invoices: NextPage<Props> = () => {
     },
   ];
 
+  const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (Number(e.target.value) ===  1) {
+      const sortedInvoices = invoices.map(obj => { return {...obj, invoiceDate: new Date(obj.invoiceDate), }})
+      .sort((a: any,b: any) => b.invoiceDate - a.invoiceDate)
+      setSorted(sortedInvoices)
+    }
+    else if (Number(e.target.value) ===  2) {
+      const sortedInvoices = invoices.map(obj => { return {...obj, invoiceDate: new Date(obj.invoiceDate), }})
+      .sort((a: any,b: any) => a.invoiceDate - b.invoiceDate)
+      setSorted(sortedInvoices)
+    }
+    else {
+      setSorted([])
+    }
+  }
+  
+
   const renderFSort: React.ReactNode = [
     <>
-      <select>
+      <select onChange={handleNewOldSort}>
         <option value={0}>Sort By</option>
         <option value={1}>Newest</option>
         <option value={2}>Oldest</option>
@@ -265,6 +272,22 @@ const invoices: NextPage<Props> = () => {
         <option value={"pending"}>Pending</option>
         <option value={"complete"}>Complete</option>
       </select>
+    </>,
+  ];
+
+  const renderDateSort: React.ReactNode = [
+    <>
+    <ButtonComponent
+      innerText="reset"
+      onClick={() => {
+        setSorted([]); 
+        setstartDate(new Date())
+        setendDate(new Date())
+        /**setDateSort(false); 
+        setDueDateSort(false); 
+        setIsFiltering(false) */
+      }}
+      />
 
       <CustomIconBtn
         icon={
@@ -277,11 +300,25 @@ const invoices: NextPage<Props> = () => {
             }}
           />
         }
-        toolTip="Filter by date"
+        toolTip="Filter by date created"
         handleClick={() => setDateSort(!dateSort)}
       />
-    </>,
-  ];
+      <CustomIconBtn
+        icon={
+          <DateRange
+            sx={{
+              color: "#555",
+              ":hover": {
+                color: theme === "light" ? "#2124b1" : "#FFA500",
+              },
+            }}
+          />
+        }
+        toolTip="Filter by due date"
+        handleClick={() => setDueDateSort(!dueDateSort)}
+      />
+    </>
+  ]
 
   return (
     <Layout>
@@ -302,13 +339,14 @@ const invoices: NextPage<Props> = () => {
             />
             <motion.div layout animate>
               {isFiltering && renderFSort}
+              {sbd && renderDateSort}
             </motion.div>
             <span>
-              {topIcons.map((key) => {
+              {topIcons.map((k, idx) => {
                 return (
-                  <Tooltip title={key.tip}>
-                    <IconButton aria-label="" onClick={key.func}>
-                      {key.icon}
+                  <Tooltip title={k.tip} key={idx}>
+                    <IconButton aria-label="" onClick={k.func}>
+                      {k.icon}
                     </IconButton>
                   </Tooltip>
                 );
@@ -316,7 +354,7 @@ const invoices: NextPage<Props> = () => {
             </span>
           </div>
         </Top>
-        {dateSort ? (
+        {dateSort || dueDateSort ? (
           <motion.div
             layout
             animate
@@ -324,37 +362,25 @@ const invoices: NextPage<Props> = () => {
               display: "flex",
               marginTop: "3.4rem",
               padding: ".8rem 0px",
-              width: "100%",
+              width: "50%",
               transition: ".2s",
               background: "#fff",
               justifyContent: "space-evenly",
             }}
           >
-            <FlexContainer>
+            <FormControl>
               <FormLabel>Start Date</FormLabel>
-              <ControlledInput
-                type="date"
-                name="start"
-                id=""
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setstartDate(e.target.value)
-                }
-              />
-            </FlexContainer>
-            <FlexContainer>
+              <ControlledInput as={DatePicker} selected={startDate} onChange={(date:Date) => setstartDate(date)}/>
+              <FormHelperText></FormHelperText>
+            </FormControl>
+            <FormControl>
               <FormLabel>End Date</FormLabel>
-              <ControlledInput
-                type="date"
-                name=""
-                id=""
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setendDate(e.target.value)
-                }
-              />
-            </FlexContainer>
+              <ControlledInput as={DatePicker} selected={endDate} onChange={(date:Date) => setendDate(date)}/>
+              <FormHelperText></FormHelperText>
+            </FormControl>
           </motion.div>
         ) : null}
-        <Main as={motion.div} layout>
+        <Main as={motion.div} layout gtc={isLoading || invoices.length < 1 ? "100%" : "0px 0px 0px"}>
           {isLoading ? (
             <Center>
               <CustomLoader />
@@ -366,6 +392,7 @@ const invoices: NextPage<Props> = () => {
             sorted.map((inv, idx) => {
               return (
                 <InvoiceBar
+                  key={idx}
                   handleDelete={() => deleteInvoice(inv._id!?.toString())}
                   amt={inv.total}
                   clientname={inv.clientName}
@@ -388,6 +415,7 @@ const invoices: NextPage<Props> = () => {
             invoices.map((inv, idx) => {
               return (
                 <InvoiceBar
+                  key={inv.invoiceTitle}
                   handleDelete={() => deleteInvoice(inv._id!?.toString())}
                   amt={inv.total}
                   clientname={inv.clientName}

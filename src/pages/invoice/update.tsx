@@ -1,31 +1,19 @@
 import {
-  Badge,
   Checkbox,
-  Chip,
-  Divider,
-  FormControlLabel,
-  Switch,
-  Typography,
-  MenuItem,
-  TextField,
+  Chip, FormControlLabel, Typography
 } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
-import { ObjectId } from "mongodb";
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { SyntheticEvent, useEffect, useState } from "react";
-import { useRef } from "react";
-import React from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import useSWR from "swr";
 
 import ButtonComponent from "../../../components/Button";
 import { countryList } from "../../../components/Data/countryList";
 import { initialInvoice } from "../../../components/Data/initialData";
 import { Invoice, InvoiceItems, STATUS } from "../../../components/Data/types";
-import EditableColor from "../../../components/EditableColor";
 import InvoiceMain from "../../../components/InvoiceMain";
 import Layout from "../../../components/Layout";
 import Modals from "../../../components/Modal";
@@ -33,23 +21,27 @@ import {
   Header,
   PropertiesContainer,
   Property,
-  PropertyEditor,
+  PropertyEditor
 } from "../../../components/styled-component/editorbar";
 import { Container } from "../../../components/styled-component/Global";
-import { fetcher, patchRequest } from "../../../lib/axios/axiosClient";
+import { patchRequest } from "../../../lib/axios/axiosClient";
 import styles from "../../../styles/Invoice.module.css";
 
-import type { NextPage } from "next";
-import useGetter from "../../../hooks/useGetter";
-import { SquareLoader } from "react-spinners";
-import Editorbar from "../../../components/Editorbar";
-import { CirclePicker, CompactPicker } from "react-color";
-import { PhotoFilter } from "@mui/icons-material";
+import {
+  PhotoFilter,
+  Redo,
+  RemoveCircleRounded
+} from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
-import SettingsComponent from "../../../components/InvoiceSettings";
+import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
+import { CompactPicker } from "react-color";
+import Editorbar from "../../../components/Editorbar";
+import SettingsComponent from "../../../components/InvoiceSettings";
+import useGetter from "../../../hooks/useGetter";
 //import { exportComponentAsJPEG, exportComponentAsPDF,  } from "react-component-export-image";
 import { motion } from "framer-motion";
+import ControlledAccordions from "../../../components/Accordion";
 import CustomLoader from "../../../components/asset/CustomLoader";
 import CustomSnackbar from "../../../components/CustomSnackbar";
 
@@ -74,7 +66,7 @@ const EditInvoice: NextPage = () => {
   });
 
   const { data, isError, isLoading } = useGetter(
-    `/api/invoice/?invoice_id=${query.invoice_id}`
+    `/api/user/invoice/invoice/?invoice_id=${query.invoice_id}`
   );
 
   const [editPdf, seteditPdf] = useState<boolean>(false);
@@ -87,6 +79,24 @@ const EditInvoice: NextPage = () => {
   const [invComp, setInvComp] = useState<boolean>(false);
   const [languages, setLanguages] = useState<languageResponse>({});
   const [sModal, setSModal] = useState<boolean>(false);
+  const [test, setTest] = useState<boolean>(false);
+  const [toggleDisplay, setToggleDisplay] = useState<{
+    headerdisplay: "" | "none";
+    divider: "" | "none";
+    cs: "" | "none";
+    logo: "" | "none";
+    tt: "" | "none";
+    nt: "" | "none";
+    tc: "" | "none";
+  }>({
+    headerdisplay: "",
+    divider: "",
+    cs: "",
+    logo: "",
+    tt: "",
+    nt: "",
+    tc: "",
+  });
 
   /**
    * edtable true means the core input element is disabled.
@@ -95,11 +105,6 @@ const EditInvoice: NextPage = () => {
    **/
   const [editable, setEditable] = useState<boolean>(true);
   const [notifyEdit, setNotifyEdit] = useState<boolean>(false);
-
-  const [background, setBackground] = useState<string>("#fff");
-  const [fontColor, setFontColor] = useState<string>("#555");
-  const [font, setFont] = useState<string>("");
-  const [displayColorPicker, setdisplayColorPicker] = useState<boolean>(false);
   const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
     data ? { ...data } : { ...initialInvoice }
   );
@@ -120,15 +125,6 @@ const EditInvoice: NextPage = () => {
     setter();
   }, [data]);
 
-  /**Color Picker*/
-  const handleClick = (): void => {
-    setdisplayColorPicker(!displayColorPicker);
-  };
-
-  const handleClose = (): void => {
-    setdisplayColorPicker(false);
-  };
-
   const handleShowSettingsModal = () => setSModal(true);
   const handleCloseSettingsModal = () => setSModal(false);
 
@@ -143,30 +139,13 @@ const EditInvoice: NextPage = () => {
     setNotifyEdit(false);
   };
 
-  const handleActiveSideComponent = (): void => {
-    if (invComp === true) {
-      setInvComp(false);
-      setEdcActive(true);
-    }
-    if (edcActive === true) {
-      setEdcActive(false);
-      setInvComp(true);
-    }
-  };
-
   useEffect(() => {
     setInvComp(true);
   }, []);
 
-  const parentStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  };
-
-  /**const dispInvComponents: JSX.Element[] = [
+  const dispInvComponents: JSX.Element[] = [
     <>
-      <div style={parentStyle}>
+      <div>
         <ControlledAccordions
           headerChildren={
             <div className={styles["acctext"]}>
@@ -174,26 +153,49 @@ const EditInvoice: NextPage = () => {
                 <Typography sx={{ color: "text.secondary" }}>
                   remove all{" "}
                 </Typography>
-                <button title="header-remove" onClick={() => removeJSXElement("dfheader")}>
+                <button
+                  title="header-remove"
+                  onClick={() =>
+                    setToggleDisplay({
+                      ...toggleDisplay,
+                      headerdisplay: "none",
+                    })
+                  }
+                >
                   <RemoveCircleRounded />
                 </button>
               </div>
               <div className={styles["compStyle"]}>
                 <Typography sx={{ color: "text.secondary" }}>logo </Typography>
-                <button title="logo-remove" onClick={() => removeJSXElement("dflogo")}>
+                <button
+                  title="logo-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, logo: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
                 </button>
               </div>
               <div className={styles["compStyle"]}>
                 <Typography sx={{ color: "text.secondary" }}>title </Typography>
-                <button title="title-remove" onClick={() => removeJSXElement("dftitle")}>
+                <button
+                  title="title-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, tt: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
                 </button>
               </div>
               <div className={styles["compStyle"]}>
                 <Typography sx={{ color: "text.secondary" }}>reset </Typography>
-                <button title="none-remove" onClick={() => alert("none")}>
-                  <ResetIcon />
+                <button
+                  title="none-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, headerdisplay: "" })
+                  }
+                >
+                  <Redo />
                 </button>
               </div>
             </div>
@@ -204,8 +206,24 @@ const EditInvoice: NextPage = () => {
                 <Typography sx={{ color: "text.secondary" }}>
                   Divider{" "}
                 </Typography>
-                <button title="divider-remove" onClick={() => removeJSXElement("dfdivider")}>
+                <button
+                  title="divider-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, divider: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, divider: "" })
+                  }
+                >
+                  <Redo />
                 </button>
               </div>
             </div>
@@ -216,44 +234,22 @@ const EditInvoice: NextPage = () => {
                 <Typography sx={{ color: "text.secondary" }}>
                   remove section{" "}
                 </Typography>
-                <button title="cd-remove" onClick={() => removeJSXElement("dfcompanydetail")}>
+                <button
+                  title="cd-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, cs: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
                 </button>
               </div>
-            </div>
-          }
-          billingChildren={
-            <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button title="bill-remove" onClick={() => removeJSXElement("dfbilldetail")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          invoiceDetailChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button title="header-remove" onClick={() => removeJSXElement("dfinvoicedetail")}>
-                  <RemoveCircleRounded />
-                </button>
-              </div>
-            </div>
-          }
-          tableChildren={
-            <div className={styles["acctext"]}>
-              <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
-                  remove section{" "}
-                </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicetable")}>
-                  <RemoveCircleRounded />
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, cs: "" })}
+                >
+                  <Redo />
                 </button>
               </div>
             </div>
@@ -264,8 +260,21 @@ const EditInvoice: NextPage = () => {
                 <Typography sx={{ color: "text.secondary" }}>
                   remove section{" "}
                 </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicenotes")}>
+                <button
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, nt: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, nt: "" })}
+                >
+                  <Redo />
                 </button>
               </div>
             </div>
@@ -276,8 +285,21 @@ const EditInvoice: NextPage = () => {
                 <Typography sx={{ color: "text.secondary" }}>
                   remove section{" "}
                 </Typography>
-                <button onClick={() => removeJSXElement("dfinvoicetandc")}>
+                <button
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, tc: "none" })
+                  }
+                >
                   <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, tc: "" })}
+                >
+                  <Redo />
                 </button>
               </div>
             </div>
@@ -285,14 +307,6 @@ const EditInvoice: NextPage = () => {
         />
       </div>
     </>,
-  ]; */
-
-  const createInvPrompt: JSX.Element[] = [
-    <div>
-      <Image src="/createInv.svg" width={300} height={300} />
-      <Typography>None Yet</Typography>
-      <ButtonComponent innerText="Create Invoice" />
-    </div>,
   ];
 
   const handlesucClose = (
@@ -383,7 +397,9 @@ const EditInvoice: NextPage = () => {
         name !== "logoWidth" &&
         name !== "tax" &&
         typeof value === "string" &&
-        name !== undefined
+        name !== undefined &&
+        name !== "invoiceDate" &&
+        name !== "invoiceDueDate"
       ) {
         newInvoice[name] = value;
       } else if (
@@ -391,7 +407,9 @@ const EditInvoice: NextPage = () => {
         name !== "logoWidth" &&
         name !== "tax" &&
         typeof value === "string" &&
-        name !== undefined
+        name !== undefined &&
+        name !== "invoiceDate" &&
+        name !== "invoiceDueDate"
       ) {
         newInvoice[name] = "";
       }
@@ -429,6 +447,15 @@ const EditInvoice: NextPage = () => {
       newInvoice[name] = value;
 
     setInvoiceRepo(newInvoice); //udate Image or logo
+  };
+
+  const handleDateInput = (
+    date: Date,
+    event: SyntheticEvent<any, Event>,
+    key: keyof Invoice
+  ) => {
+    if (key === "invoiceDate" || key === "invoiceDueDate")
+      setInvoiceRepo({ ...InvoiceRepo, [key]: date });
   };
 
   const addTC = () => {
@@ -475,8 +502,9 @@ const EditInvoice: NextPage = () => {
   };
 
   const removeJSXElement = (elementid: string) => {
+    setTest(!test);
     const element = document.getElementById(elementid) as HTMLElement;
-    element.style.display = "none";
+    element.style.display = test ? "none" : "inherit";
     element.style.transition = "0.5s fade-out";
   };
 
@@ -487,46 +515,41 @@ const EditInvoice: NextPage = () => {
         `api/user/invoice/invoices/?invoice_id=${query.invoice_id}`,
         InvUpdate
       );
-      if (UpdatedInvoice.data) 
-          setInformUser({...informUser, updatealert: true, message: `updated invoice ${query.invoice_id}`})
+      if (UpdatedInvoice.data)
+        setInformUser({
+          ...informUser,
+          updatealert: true,
+          message: `updated invoice ${query.invoice_id}`,
+        });
     } catch (error: any) {
       console.log(error);
     }
   };
 
   const dispStats = (status: string) => {
-    if (status === "draft") {
-      return (
-        <Chip
-          label={status}
-          sx={{ borderRadius: "4px" }}
-          variant="filled"
-          color="error"
-          size="medium"
-        />
-      );
-    } else if (status === "pending") {
-      return (
-        <Chip
-          label={status}
-          sx={{ borderRadius: "4px" }}
-          variant="filled"
-          color="warning"
-          size="medium"
-        />
-      );
-    }
-    if (status === "complete") {
-      return (
-        <Chip
-          label={status}
-          sx={{ borderRadius: "4px" }}
-          variant="filled"
-          color="success"
-          size="medium"
-        />
-      );
-    }
+    type stringUnion =
+      | "default"
+      | "primary"
+      | "secondary"
+      | "error"
+      | "info"
+      | "success"
+      | "warning";
+    const clr = ["error", "warning", "success"];
+    return ["draft", "pending", "complete"].map((key, idx) => {
+      if (status === key) {
+        return (
+          <Chip
+            id="chipFont"
+            label={status}
+            sx={{ borderRadius: "4px" }}
+            variant="filled"
+            size="medium"
+            color={clr[idx] as stringUnion}
+          />
+        );
+      }
+    });
   };
 
   /**get all google translate anguages */
@@ -671,7 +694,7 @@ const EditInvoice: NextPage = () => {
         <Layout>
           <Container>
             <div className={styles.fileAndEditor}>
-              {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
+              <div className={styles.lseditor}>{dispInvComponents}</div>
               <Editorbar
                 saveText="UPDATE"
                 updateDisabled={editable === false ? false : true}
@@ -686,8 +709,6 @@ const EditInvoice: NextPage = () => {
                   exportComponentAsPDF(componentRef, {
                     pdfOptions: {
                       orientation: "p",
-                      w: 100,
-                      h: 100,
                     },
                   });
                 }}
@@ -698,6 +719,8 @@ const EditInvoice: NextPage = () => {
                   exportComponentAsPNG(componentRef, {
                     html2CanvasOptions: {
                       backgroundColor: "white",
+                      scale: 100,
+                      removeContainer: true,
                     },
                   });
                 }}
@@ -735,6 +758,7 @@ const EditInvoice: NextPage = () => {
                   options={countryList}
                   pdfMode={editPdf}
                   cur={currency}
+                  handleDateInput={handleDateInput}
                   itemArr={InvoiceRepo.invoiceitems}
                   addTC={addTC}
                   tR={taxRate}
@@ -743,12 +767,18 @@ const EditInvoice: NextPage = () => {
                   handleDetailInput={handleDetailInput}
                   handleItemInput={handleItemInput}
                   invoice={InvoiceRepo}
-                  dateSet={setInvoiceRepo}
                   selClr={setInvoiceRepo}
                   onChangeComplete={(color) =>
                     setInvoiceRepo({ ...InvoiceRepo, colorTheme: color.hex })
                   }
                   selectedColor={InvoiceRepo.colorTheme}
+                  hsco={toggleDisplay.headerdisplay}
+                  dividerDisplay={toggleDisplay.divider}
+                  csDisplay={toggleDisplay.cs}
+                  logo={toggleDisplay.logo}
+                  titlebox={toggleDisplay.tt}
+                  tanc={toggleDisplay.tc}
+                  notes={toggleDisplay.nt}
                 ></InvoiceMain>
                 <PropertyEditor>
                   <Header>
@@ -865,7 +895,7 @@ const EditInvoice: NextPage = () => {
               open={notifyEdit}
               autoHideDuration={4000}
               onClose={handleCloseNotifyEdit}
-              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
               <Alert
                 onClose={handleCloseNotifyEdit}
@@ -876,13 +906,15 @@ const EditInvoice: NextPage = () => {
               </Alert>
             </Snackbar>
 
-             <CustomSnackbar
-        openAlert={informUser.updatealert}
-        closeAlert={() => setInformUser({ ...informUser, updatealert: false })}
-        outputText={informUser.message}
-        verticalPosition="bottom"
-        horizontalPosition="center"
-      />
+            <CustomSnackbar
+              openAlert={informUser.updatealert}
+              closeAlert={() =>
+                setInformUser({ ...informUser, updatealert: false })
+              }
+              outputText={informUser.message}
+              verticalPosition="bottom"
+              horizontalPosition="center"
+            />
 
             <Modals
               OpenModal={sModal}
@@ -894,7 +926,7 @@ const EditInvoice: NextPage = () => {
                   setTaxRate(Number(e.target.value))
                 }
                 currentTaxRate={taxRate}
-                /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+                data={InvoiceRepo}
               />
             </Modals>
 

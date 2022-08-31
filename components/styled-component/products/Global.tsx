@@ -67,11 +67,16 @@ export const Top = styled.div`
 `;
 
 export const Center = styled.div`
-margin: auto auto auto auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 100%;
+    padding: 4.5rem 2rem;
     justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
 `
 
 export const Row = styled.div`

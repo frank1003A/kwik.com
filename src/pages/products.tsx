@@ -95,6 +95,7 @@ const products: NextPage = () => {
   const [updateValue, setUpdateValue] = useState<string[]>([]);
   const [inProps, setIProp] = useState<boolean>(false);
   const [sorted, setSorted] = useState<productsClass[]>([]);
+  const [isSortingF, setSortingF] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [updated, setUpdated] = useState<boolean>(false);
   const [informUser, setInformUser] = useState<{
@@ -206,7 +207,7 @@ const products: NextPage = () => {
     const valueUpdates = prod.filter((p, i) => {
       const obj: productsClass = { ...p };
       if (name !== "_id" && name !== undefined) {
-        if (name !== "qty") obj[name] = value;
+        if (name !== "qty" && name !== "dateCreated") obj[name] = value;
         if (name === "qty") obj[name] = Number(value);
       }
       console.log(obj);
@@ -242,7 +243,9 @@ const products: NextPage = () => {
 
   const handleDelete = async (id: string): Promise<void> => {
     try {
-      const productData = await deleteRequest(`api/products/?product_id=${id}`);
+      const productData = await deleteRequest(
+        `api/user/product/products/?product_id=${id}`
+      );
       if (productData.data)
         setInformUser({
           ...informUser,
@@ -259,7 +262,7 @@ const products: NextPage = () => {
     const { _id, owner, ...ProUpdate } = singleProduct; // REMOVE ID FIELD
     try {
       const UpdateProduct = await patchRequest(
-        `api/products/?product_id=${id}`,
+        `api/user/product/products/?product_id=${id}`,
         ProUpdate
       );
       if (UpdateProduct.data)
@@ -354,6 +357,7 @@ const products: NextPage = () => {
     return isLoading ? (
       <Center>
         <CustomLoader />
+        <Typography>Fetching Products</Typography>
       </Center>
     ) : (
       [
@@ -435,6 +439,30 @@ const products: NextPage = () => {
     };
   }, []);
 
+    const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (Number(e.target.value) ===  1) {
+      const sortedProducts = products.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!), }})
+      .sort((a: any,b: any) => b.dateCreated - a.dateCreated)
+      setSorted(sortedProducts)
+    }
+    else if (Number(e.target.value) ===  2) {
+      const sortedProducts = products.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!), }})
+      .sort((a: any,b: any) => a.dateCreated - b.dateCreated)
+      setSorted(sortedProducts)
+    }
+    else {
+      setSorted([])
+    }
+  } 
+
+  const renderFSort: React.ReactNode = [
+    <select onChange={handleNewOldSort}>
+      <option value={0}>Sort By</option>
+      <option value={1}>Newest</option>
+      <option value={2}>Oldest</option>
+    </select>,
+  ];
+
   const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
       icon: (
@@ -448,6 +476,7 @@ const products: NextPage = () => {
         />
       ),
       tip: "Sort Product Data",
+      func: () => setSortingF(!isSortingF),
     },
     {
       icon: (
@@ -523,6 +552,7 @@ const products: NextPage = () => {
                 );
               }}
             />
+            {isSortingF && renderFSort}
             <span>
               {topIcons.map((key) => {
                 return (
@@ -670,7 +700,7 @@ const products: NextPage = () => {
       <ModalComponent
         OpenModal={openSFModal}
         handleCloseModal={handleCloseSFModal}
-        pd={"2rem"}
+        pd={"1rem"}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography>New Invoice For Product</Typography>
@@ -684,51 +714,77 @@ const products: NextPage = () => {
               width: "100%",
             }}
           >
-            {selectedProducts.product?.map((pr) => {
-              return (
-                <motion.div
-                  style={{
-                    width: "100%",
-                    borderRadius: "8px",
-                    display: "flex",
-                    background: "whitesmoke",
-                    //boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
-                    justifyContent: "space-between",
-                    padding: ".5rem",
-                    alignItems: "center",
-                    gap: ".5rem",
-                  }}
-                  layout
-                  animate
-                >
-                  <div
+            <div
+              style={{
+                height: selectedProducts.product.length > 0 ? "35vh" : "",
+                display: "flex",
+                gap: ".5rem",
+                overflow: "auto",
+                width: "100%",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {selectedProducts.product?.map((pr) => {
+                return (
+                  <motion.div
                     style={{
+                      width: "100%",
+                      borderRadius: "8px",
                       display: "flex",
-                      gap: "1rem",
+                      background: "whitesmoke",
+                      //boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
                       justifyContent: "space-between",
+                      padding: ".5rem",
                       alignItems: "center",
+                      gap: ".5rem",
                     }}
+                    layout
+                    animate
                   >
-                    <Avatar
-                      name={pr.description}
-                      color={theme === "dark" ? "orange" : "#2124B1"}
-                      round="8px"
-                      size="40px"
-                    />
-                    <Typography>{pr.description}</Typography>
-                  </div>
+                    <div
+                      style={{
+                        width: "100%",
+                        borderRadius: "8px",
+                        display: "flex",
+                        background: "whitesmoke",
+                        //boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
+                        justifyContent: "space-between",
+                        padding: ".5rem",
+                        alignItems: "center",
+                        gap: ".5rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "1rem",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          name={pr.description}
+                          color={theme === "dark" ? "orange" : "#2124B1"}
+                          round="8px"
+                          size="40px"
+                        />
+                        <Typography>{pr.description}</Typography>
+                      </div>
 
-                  <Tooltip
-                    title="Delete"
-                    onClick={() =>
-                      deleteFromselectedProducts(pr._id?.toString()!)
-                    }
-                  >
-                    <Clear />
-                  </Tooltip>
-                </motion.div>
-              );
-            })}
+                      <Tooltip
+                        title="Delete"
+                        onClick={() =>
+                          deleteFromselectedProducts(pr._id?.toString()!)
+                        }
+                      >
+                        <Clear />
+                      </Tooltip>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
             <Typography>Note</Typography>
             <Divider />
             <Typography variant="subtitle2" color="#555">

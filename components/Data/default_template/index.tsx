@@ -17,7 +17,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { TextareaAutosize } from "@mui/material";
+import TextareaAutosize from 'react-textarea-autosize';
 import ButtonComponent from "../../Button";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -40,9 +40,10 @@ export const LogoContainer: FC<LogoProps> = ({
   pdfMode,
   handleChange,
   invoice,
+  logo
 }) => {
   return (
-    <div className={styles.title} id="dflogo">
+    <div className={styles.title} id="dflogo" style={{display: logo}}>
       <EditableImageFile
         className="logo"
         placeholder="Company Logo"
@@ -61,10 +62,11 @@ export const TitleContainer: FC<TitleContainerProps> = ({
   handleDetailInput,
   invoice,
   contentEditable,
-  customStyle
+  customStyle,
+  titlebox
 }) => {
   return (
-    <div id="dftitle">
+    <div id="dftitle" style={{display: titlebox}}>
       <input
         type="text"
         className={styles.topHeader}
@@ -79,12 +81,12 @@ export const TitleContainer: FC<TitleContainerProps> = ({
 };
 
 /**Default Template Invoice Header */
-export const Header: FC<HeaderProps> = ({ titleInput, logo }) => {
+export const Header: FC<HeaderProps> = ({ titleInput, logo, hsStyleOverride }) => {
   return (
-    <div className={styles.topLogo} id="dfheader">
+    <motion.div transition={{ease:"easeInOut"}} className={styles.topLogo} style={{display: hsStyleOverride}} id="dfheader">
       {logo}
       {titleInput}
-    </div>
+    </motion.div>
   );
 };
 
@@ -95,7 +97,7 @@ export const CompanySection: FC<CompanyProps> = ({
   invoice,
   contentEditable,
   customStyle,
-  setter
+  setter,
 }) => {
   return (
     <div className={styles.sectionTwo} id="dfcompanydetail">
@@ -143,10 +145,10 @@ export const RecieverSection: FC<RecieverProps> =  ({
   contentEditable,
   id,
   ref,
-  customStyle
+  customStyle,
 }, ) => {
   return (
-    <div className={styles.sendTO} id="dfbilldetail">
+    <div className={styles.sendTO}  id="dfbilldetail">
       <input
         type="text"
         disabled={(!contentEditable) ? false : contentEditable}
@@ -202,10 +204,10 @@ export const RecieverSection: FC<RecieverProps> =  ({
 /**default template Invoice information */
 export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
   handleDetailInput,
+  handleDateInput,
   invoice,
   contentEditable,
   customStyle,
-  setter
 }) => {
   return (
     <div className={styles.invDetails} id="dfinvoicedetail">
@@ -254,9 +256,10 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
           selectedDate={invoice.invoiceDate}
           dateName={"invoiceDate"}
           invoice={invoice}
-          setter={setter}
-          handleDateInput={(e) => handleDetailInput(e, "invoiceDate")}
+          handleDateInput={(date , e) => handleDateInput(date, e, "invoiceDate")}
           customStyle={customStyle}
+          disabled={(!contentEditable) ? false : contentEditable}
+          placeholderText="Invoice Date"
         />
         <input
           type="text"
@@ -271,10 +274,11 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
         <EditableDate
           selectedDate={invoice.invoiceDueDate}
           invoice={invoice}
-          setter={setter}
           dateName={"invoiceDueDate"}
-          handleDateInput={(e) => handleDetailInput(e, "invoiceDueDate")}
+          handleDateInput={(date , e) => handleDateInput(date, e, "invoiceDueDate")}
           customStyle={customStyle}
+          disabled={(!contentEditable) ? false : contentEditable}
+          placeholderText="Due Date"
         />
       </div>
     </div>
@@ -337,6 +341,9 @@ export const InvoiceTable: FC<TableProps> = ({
               <TableRow
                 key={inv._id?.toString()}
                 sx={{"&:last-child td, &:last-child th": { border: 0 },
+                transition: "ease-in-out",
+                animation: "ease-in-out",
+                animationName: "-moz-initial"
                 }}
               >
                 <TableCell align="left">
@@ -344,12 +351,15 @@ export const InvoiceTable: FC<TableProps> = ({
                     aria-label="minimum height"
                     className={styles.tA}
                     minRows={2}
-                    style={{ width: 200, height: 28, color: "#555", ...customStyle }}
+                    style={{height: 28, width: 200}}
+                    maxLength={200}
+                    color={!customStyle?.color ? "#555" : customStyle.color}
                     placeholder="item description"
                     value={inv.description}
                     disabled={(!contentEditable) ? false : contentEditable}
                     onChange={(e) => handleItemInput(e, i, "description")}
                   />
+                  {/**{ width: 200, height: 28, color: "#555", ...customStyle } */}
                 </TableCell>
                 <TableCell align="center" aria-disabled>
                   <input
@@ -462,9 +472,9 @@ export const TotalContainer: FC<TotalContainerProps> = ({
 
 /**Notes Section: Default Template*/
 export const NotesContainer: FC<NotesContainerProps> = ({ 
-  handleDetailInput, invoice, contentEditable, customStyle}) => {
+  handleDetailInput, notes, invoice, contentEditable, customStyle}) => {
   return (
-    <div id="dfinvoicenotes">
+    <div id="dfinvoicenotes" style={{display: notes}}>
       <input
         type="text"
         disabled={(!contentEditable) ? false : contentEditable}
@@ -483,7 +493,9 @@ export const NotesContainer: FC<NotesContainerProps> = ({
         onChange={(e) => handleDetailInput(e, "notes")}
         value={invoice.notes}
         placeholder="It was great doing buisness with you"
-        style={{ width: 400, color: "#555", ...customStyle }}
+        style={{height: 28, width: 400}}
+        maxLength={200}
+        color={!customStyle?.color ? "#555" : customStyle.color}
       />
     </div>
   );
@@ -494,10 +506,11 @@ export const TandC_Container: FC<TermsAndConditionProps> = ({
   handleDetailInput,
   invoice,
   contentEditable,
-  customStyle
+  customStyle,
+  tanc
 }) => {
   return (
-    <div id="dfinvoicetandc">
+    <div id="dfinvoicetandc" style={{display: tanc}}>
       <input
         type="text"
         disabled={(!contentEditable) ? false : contentEditable}
@@ -515,7 +528,9 @@ export const TandC_Container: FC<TermsAndConditionProps> = ({
         value={invoice.term}
         onChange={(e) => handleDetailInput(e, "term")}
         placeholder="please make payments by due date"
-        style={{ width: 685, color: "#555", ...customStyle }}
+        style={{height: 28, width: 685}}
+        maxLength={200}
+        color={!customStyle?.color ? "#555" : customStyle.color}
       />
     </div>
   );

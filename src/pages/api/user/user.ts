@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId  } from 'mongodb'
-import clientPromise from '../../../lib/Mongodb'
-import user from '../../../model/user';
+import clientPromise from '../../../../lib/Mongodb'
+import user from '../../../../model/user';
 import bcrypt from 'bcrypt'
 
 export default async function (req: NextApiRequest,res: NextApiResponse) {
@@ -18,6 +18,7 @@ export default async function (req: NextApiRequest,res: NextApiResponse) {
   if (req.method === "POST") {
     try {
         const newUser = req.body as user //
+        newUser.dateCreated = new Date()
         const client = await clientPromise
         const db = client.db("Kwik") // connect to database 
         await hashPassword(newUser) // password hash

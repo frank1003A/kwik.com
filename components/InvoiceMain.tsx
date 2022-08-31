@@ -46,10 +46,17 @@ interface Props {
   id?:string,
   clientInputRef?:LegacyRef<HTMLDivElement>,
   customStyle?: React.CSSProperties,
-  dateSet: Dispatch<SetStateAction<Invoice>>,
   selClr: Dispatch<SetStateAction<Invoice>>,
   onChangeComplete?: ColorChangeHandler,
-  selectedColor?: string
+  selectedColor?: string,
+  handleDateInput: (date: Date, event: SyntheticEvent<any, Event>, key: keyof Invoice) => void,
+  hsco?: string,
+  dividerDisplay?: string,
+  csDisplay?:string,
+  tanc?: string,
+  notes?: string,
+  logo?: string,
+  titlebox?: string
 }
 
 const invoiceMain = React.forwardRef(
@@ -71,10 +78,17 @@ const invoiceMain = React.forwardRef(
       id,
       clientInputRef,
       customStyle,
-      dateSet, 
       selClr,
       onChangeComplete,
       selectedColor,
+      handleDateInput,
+      hsco,
+      dividerDisplay,
+      csDisplay,
+      tanc,
+      notes,
+      logo,
+      titlebox
     }: Props,
     ref: React.LegacyRef<HTMLDivElement>
   ) => {
@@ -88,6 +102,7 @@ const invoiceMain = React.forwardRef(
                 pdfMode={pdfMode}
                 handleChange={handleChange}
                 invoice={invoice}
+                logo={logo}
               />
             }
             titleInput={
@@ -96,8 +111,10 @@ const invoiceMain = React.forwardRef(
                 contentEditable={contentEditable}
                 handleDetailInput={handleDetailInput}
                 customStyle={customStyle}
+                titlebox={titlebox}
               />
             }
+            hsStyleOverride={hsco}
           />
 
           <Divider
@@ -105,11 +122,14 @@ const invoiceMain = React.forwardRef(
               borderColor: selectedColor,
               marginBottom: "2rem",
               marginTop: "1rem",
+              display: dividerDisplay,
             }}
             id="dfdivider"
           />
 
-          <div style={{ display: "flex", gap: "1rem", flexDirection: "row" }}>
+        
+
+          <div style={{ display: csDisplay ? "none":"flex", gap: "1rem", flexDirection: "row" }}>
             <CompanySection
               invoice={invoice}
               handleDetailInput={handleDetailInput}
@@ -120,7 +140,8 @@ const invoiceMain = React.forwardRef(
             />
           </div>
 
-          <div className={styles.invInfo} ref={clientInputRef}>
+          <div className={styles.invInfo} 
+          style={{display:"flex"}} ref={clientInputRef}>
             <RecieverSection
               invoice={invoice}
               handleDetailInput={handleDetailInput}
@@ -129,9 +150,9 @@ const invoiceMain = React.forwardRef(
               customStyle={customStyle}
             />
             <InvoiceDescription
+              handleDateInput={handleDateInput}
               handleDetailInput={handleDetailInput}
               invoice={invoice}
-              setter={dateSet}
               contentEditable={contentEditable}
               customStyle={customStyle}
             />
@@ -144,6 +165,7 @@ const invoiceMain = React.forwardRef(
               overflow: "auto",
               background: "transparent",
             }}
+
           >
             <InvoiceTable
               invoice={invoice}
@@ -175,6 +197,7 @@ const invoiceMain = React.forwardRef(
               handleDetailInput={handleDetailInput}
               contentEditable={contentEditable}
               customStyle={customStyle}
+              notes={notes}
             />
 
             <br />
@@ -184,6 +207,7 @@ const invoiceMain = React.forwardRef(
               handleDetailInput={handleDetailInput}
               contentEditable={contentEditable}
               customStyle={customStyle}
+              tanc={tanc}
             />
           </div>
         </div>

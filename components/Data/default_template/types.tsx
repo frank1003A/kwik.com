@@ -8,14 +8,16 @@ export interface LogoProps {
     pdfMode?: boolean,
       handleChange?: (name: keyof Invoice, value: string| number | number[] ) => void,
       invoice: typeof initialInvoice,
-      customStyle?: React.CSSProperties
+      customStyle?: React.CSSProperties,
+      logo?: string
   }
   
 export interface TitleContainerProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    titlebox?: string
   }
   
 export interface HeaderProps {
@@ -23,7 +25,8 @@ export interface HeaderProps {
     logo: JSX.Element,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    hsStyleOverride?: string
   }
   
 export interface CompanyProps {
@@ -48,8 +51,8 @@ export interface InvoiceDescriptionProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    setter: Dispatch<SetStateAction<Invoice>>
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    handleDateInput: (date: Date, event: SyntheticEvent<any, Event>, key: keyof Invoice) => void
   }
   
 export interface TableProps {
@@ -85,12 +88,14 @@ export interface NotesContainerProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    notes?:string
   }
   
 export interface TermsAndConditionProps {
     handleDetailInput: (e: Event | SyntheticEvent<any, Event>, name: keyof Invoice) => void,
     invoice: typeof initialInvoice,
     contentEditable?: boolean,
-    customStyle?: React.CSSProperties
+    customStyle?: React.CSSProperties,
+    tanc?: string
   }

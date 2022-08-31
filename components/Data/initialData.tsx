@@ -30,15 +30,15 @@ export const initialInvoice: Invoice = {
   invoiceTitleLabel: 'Invoice#',
   invoiceTitle: '',
   invoiceDateLabel: 'Invoice Date',
-  invoiceDate: '',
+  invoiceDate: new Date(),
   invoiceDueDateLabel: 'Due Date',
-  invoiceDueDate: '',
+  invoiceDueDate: new Date(),
   invoiceitems: [
     {...initialInvoiceItems}
   ],
   subTotalLabel: 'Sub Total',
   subTotal: '',
-  taxLabel: 'Sale Tax (10%)',
+  taxLabel: 'Sale Tax',
   tax: 0,
   totalLabel: 'TOTAL',
   total: '',

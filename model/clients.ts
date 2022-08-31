@@ -14,5 +14,6 @@ export default class clients {
         public phone?: string,
         public countryCode?: string,
         public owner?: string,
+        public dateCreated?: Date
     ){}
 }

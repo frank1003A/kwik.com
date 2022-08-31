@@ -123,6 +123,7 @@ const clients: NextPage = () => {
   const handleUpdateModal = () => setopenUpdateModal(true);
   const handleCloseUpdateModal = () => setopenUpdateModal(false);
 
+  const SelectedClient = useSelector((state: RootState) => state.client);
   const dispatch = useAppDispatch();
 
   const createSingleClientInvoice = (cli: clientClass) => {
@@ -166,7 +167,7 @@ const clients: NextPage = () => {
       e.currentTarget.ariaLabel === "update"
         ? { ...updateSingleClient }
         : { ...singleClient };
-    if (name !== "_id" && typeof value === "string") nC[name] = value;
+    if (name !== "_id" && typeof value === "string" && name !== "dateCreated") nC[name] = value;
     e.currentTarget.ariaLabel === "update"
       ? setUpdateSingleClient(nC)
       : setSClient(nC);
@@ -203,7 +204,7 @@ const clients: NextPage = () => {
 
   const deleteClientData = async (id: string): Promise<void> => {
     try {
-      const clientData = await deleteRequest(`api/clients/?client_id=${id}`);
+      const clientData = await deleteRequest(`api/user/client/clients/?client_id=${id}`);
       if (clientData.status === 200)
         if (clientData.data){
           setInformUser({
@@ -227,15 +228,17 @@ const clients: NextPage = () => {
     const { _id, owner, ...ClientUpdate } = updateSingleClient; // REMOVE ID FIELD
     try {
       const UpdateClient = await patchRequest(
-        `api/clients/?client_id=${id}`,
+        `api/user/client/clients/?client_id=${id}`,
         ClientUpdate
       );
-      if (UpdateClient.data)
+      if (UpdateClient.data) {
         setInformUser({
           ...informUser,
           updatealert: true,
           message: `updated client ${id}`,
         });
+        setSorted([])
+      }
       mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error);
@@ -436,8 +439,23 @@ const clients: NextPage = () => {
     },
   ];
 
+  const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (Number(e.target.value) ===  1) {
+      const sortedClients = clients.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!) }})
+      .sort((a: any,b: any) => b.dateCreated - a.dateCreated)
+      setSorted(sortedClients)
+    }
+    else if (Number(e.target.value) ===  2) {
+      const sortedClients = clients.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!) }})
+      .sort((a: any,b: any) => a.dateCreated - b.dateCreated)
+      setSorted(sortedClients)
+    }
+  } 
+
+  //onChange={handleNewOldSort}
+
   const renderFSort: React.ReactNode = [
-    <select>
+    <select onChange={handleNewOldSort}>
       <option value={0}>Sort By</option>
       <option value={1}>Newest</option>
       <option value={2}>Oldest</option>
@@ -693,9 +711,14 @@ const clients: NextPage = () => {
           <Typography>Create Client Invoice</Typography>
           <Divider />
         </div>
+        <span style={{ padding: '.5rem' }}>
+        <Typography variant="subtitle1" color="GrayText">
+          To:  {SelectedClient.client.fullname}
+        </Typography>
+        </span>
         <div className={styles["card"]}>
           <Link href="http://localhost:3000/invoice/create">
-            <Typography>Go To Create Invoice</Typography>
+            <Typography>Create Invoice</Typography>
           </Link>
         </div>
       </ModalComponent>

@@ -43,6 +43,7 @@ const Editorbar: FC<Props> = ({
         className={btnStyles.muiButtonBackground}
         icon={<Print/>}
         innerText="PRINT"
+        key={1}
         onClick={handlePrint}
       />
 
@@ -51,6 +52,7 @@ const Editorbar: FC<Props> = ({
       className={btnStyles.muiButtonBackground}
       innerText="PDF"
       onClick={exportPDF}
+      key={2}
       />
 
      <ButtonComponent
@@ -58,6 +60,7 @@ const Editorbar: FC<Props> = ({
       className={btnStyles.muiButtonBackground}
       innerText="JPEG"
       onClick={exportJPEG}
+      key={3}
       />
 
       <ButtonComponent
@@ -66,6 +69,7 @@ const Editorbar: FC<Props> = ({
         btnDisabled={updateDisabled}
         innerText={saveText}
         onClick={handleSave}
+        key={4}
       />
 
       <ButtonComponent
@@ -73,6 +77,7 @@ const Editorbar: FC<Props> = ({
         icon={<Settings />}
         innerText="Custom Settings"
         onClick={handleVat}
+        key={5}
       />
 
       {editController}

@@ -1,4 +1,4 @@
-import { PhotoFilter } from '@mui/icons-material';
+import { PhotoFilter, Redo, RemoveCircleRounded } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import { motion } from 'framer-motion';
@@ -7,9 +7,8 @@ import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { SyntheticEvent, useContext, useEffect, useState } from 'react';
+import React, { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useRef } from 'react';
-import React from 'react';
 import { CompactPicker } from 'react-color';
 import { useSelector } from 'react-redux';
 import { useReactToPrint } from 'react-to-print';
@@ -35,6 +34,7 @@ import { clearProducts } from '../../redux/productSlice';
 import { RootState } from '../../redux/store';
 
 import type { NextPage } from "next";
+import ControlledAccordions from '../../../components/Accordion';
 interface Props {
   invoice: Invoice;
 }
@@ -71,6 +71,24 @@ const createInvoice: NextPage<Props> = () => {
   const [sModal, setSModal] = useState<boolean>(false);
   const [clipboard, setClipboard] = useState<boolean>(false);
   const [languages, setLanguages] = useState<languageResponse>({});
+  const [toggleDisplay, setToggleDisplay] = useState<{
+    headerdisplay: "" | "none";
+    divider: "" | "none";
+    cs: "" | "none";
+    logo: "" | "none";
+    tt: "" | "none";
+    nt: "" | "none";
+    tc: "" | "none";
+  }>({
+    headerdisplay: "",
+    divider: "",
+    cs: "",
+    logo: "",
+    tt: "",
+    nt: "",
+    tc: "",
+  });
+
 
   const SelectedProducts = useSelector((state: RootState) => state.product);
   const SelectedClient = useSelector((state: RootState) => state.client);
@@ -129,7 +147,7 @@ const createInvoice: NextPage<Props> = () => {
 
   useEffect(() => {
     if (SelectedClient.client.fullname) handleClientTransfer()
-  }, [])
+  }, [SelectedClient.client])
   
 
   const handlesucClose = (
@@ -209,7 +227,9 @@ const createInvoice: NextPage<Props> = () => {
       name !== "invoiceitems" &&
       name !== "_id" &&
       name !== "status" &&
-      name !== "owner"
+      name !== "owner" &&
+      name !== "invoiceDate" && 
+      name !== "invoiceDueDate"
     ) {
       if (
         name !== "logoWidth" &&
@@ -265,6 +285,182 @@ const createInvoice: NextPage<Props> = () => {
 
     setInvoiceRepo(newInvoice); //update Image or logo
   };
+
+  const handleDateInput = (
+    date: Date, 
+    event: SyntheticEvent<any, Event>, 
+    key: keyof Invoice
+    ) => {
+      console.log(event.currentTarget)
+      if (key === ("invoiceDate") || key === "invoiceDueDate")
+           setInvoiceRepo({...InvoiceRepo, [key]: date})
+  } 
+  
+  const dispInvComponents: JSX.Element[] = [
+    <>
+      <div>
+        <ControlledAccordions
+          headerChildren={
+            <div className={styles["acctext"]}>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  remove all{" "}
+                </Typography>
+                <button
+                  title="header-remove"
+                  onClick={() =>
+                    setToggleDisplay({
+                      ...toggleDisplay,
+                      headerdisplay: "none",
+                    })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>logo </Typography>
+                <button
+                  title="logo-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, logo: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>title </Typography>
+                <button
+                  title="title-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, tt: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, headerdisplay: "" })
+                  }
+                >
+                  <Redo />
+                </button>
+              </div>
+            </div>
+          }
+          lineChildren={
+            <div className={styles["acctext"]}>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Divider{" "}
+                </Typography>
+                <button
+                  title="divider-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, divider: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, divider: "" })
+                  }
+                >
+                  <Redo />
+                </button>
+              </div>
+            </div>
+          }
+          companyChildren={
+            <div className={styles["acctext"]}>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  remove section{" "}
+                </Typography>
+                <button
+                  title="cd-remove"
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, cs: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, cs: "" })}
+                >
+                  <Redo />
+                </button>
+              </div>
+            </div>
+          }
+          notesChildren={
+            <div className={styles["acctext"]}>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  remove section{" "}
+                </Typography>
+                <button
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, nt: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, nt: "" })}
+                >
+                  <Redo />
+                </button>
+              </div>
+            </div>
+          }
+          tandcChildren={
+            <div className={styles["acctext"]}>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  remove section{" "}
+                </Typography>
+                <button
+                  onClick={() =>
+                    setToggleDisplay({ ...toggleDisplay, tc: "none" })
+                  }
+                >
+                  <RemoveCircleRounded />
+                </button>
+              </div>
+              <div className={styles["compStyle"]}>
+                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <button
+                  title="none-remove"
+                  onClick={() => setToggleDisplay({ ...toggleDisplay, tc: "" })}
+                >
+                  <Redo />
+                </button>
+              </div>
+            </div>
+          }
+        />
+      </div>
+    </>,
+  ];
 
   /**
    * const handleDefaultLogoChange = (
@@ -341,9 +537,10 @@ const createInvoice: NextPage<Props> = () => {
 
   const handleInvoicePost = async (): Promise<void> => {
     try {
+      const { _id, ...InvoiceToPost } = InvoiceRepo
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${user._id}`,
-        InvoiceRepo
+        InvoiceToPost
       );
       if (InvoicePost.data) setOpensuccess(true);
     } catch (error: any) {
@@ -378,7 +575,7 @@ const createInvoice: NextPage<Props> = () => {
         <Layout>
           <Container>
             <div className={styles.fileAndEditor}>
-              {/**<div className={styles.lseditor}>{dispInvComponents}</div> */}
+              <div className={styles.lseditor}>{dispInvComponents}</div>
               <Editorbar
                 saveText="SAVE"
                 handlePrint={() => handlePrint()}
@@ -408,17 +605,24 @@ const createInvoice: NextPage<Props> = () => {
                   itemArr={InvoiceRepo.invoiceitems}
                   addTC={addTC}
                   tR={taxRate}
+                  handleDateInput={handleDateInput}
                   removeItem={removeItem}
                   handleChange={handleImageChange}
                   handleDetailInput={handleDetailInput}
                   handleItemInput={handleItemInput}
                   invoice={InvoiceRepo}
-                  dateSet={setInvoiceRepo}
                   selClr={setInvoiceRepo}
                   onChangeComplete={(color) =>
                     setInvoiceRepo({ ...InvoiceRepo, colorTheme: color.hex })
                   }
                   selectedColor={InvoiceRepo.colorTheme}
+                  hsco={toggleDisplay.headerdisplay}
+                  dividerDisplay={toggleDisplay.divider}
+                  csDisplay={toggleDisplay.cs}
+                  logo={toggleDisplay.logo}
+                  titlebox={toggleDisplay.tt}
+                  tanc={toggleDisplay.tc}
+                  notes={toggleDisplay.nt}
                 />
                 <PropertyEditor>
                   <Header>
@@ -540,7 +744,9 @@ const createInvoice: NextPage<Props> = () => {
                 }}
               >
                 <Image src="/print2.svg" height={300} width={300} />
-                Thank You for using Kwik Invoice Generator
+                <Typography variant="subtitle1" color="initial">
+                  Thank You for using Kwik Invoice Generator
+                </Typography>
               </div>
               <ButtonComponent innerText={"Continue"} />
             </Modals>
@@ -555,7 +761,16 @@ const createInvoice: NextPage<Props> = () => {
                   setTaxRate(Number(e.target.value))
                 }
                 currentTaxRate={taxRate}
-                /**handleDefaultLogo={(value) => handleDefaultLogoChange('defaultLogo', value)} */
+                handleStatusChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                   updateInvoiceStatus("status", e.target.value as STATUS["status"])
+                }}
+                handleCurrency={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setInvoiceRepo({...InvoiceRepo, 
+                    currency: e.target.value, 
+                  })
+                }}
+                handleCloseBtn={handleCloseSettingsModal}
+                data={InvoiceRepo}
               />
             </Modals>
 

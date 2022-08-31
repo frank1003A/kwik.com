@@ -8,5 +8,6 @@ export default class products {
         public rate?: string,
         public qty?: number,
         public owner?: string,
+        public dateCreated?: Date,
     ){}
 }

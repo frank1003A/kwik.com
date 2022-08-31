@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import MainLogo from "../../../components/asset/MainLogo";
 import { useTheme } from "next-themes"
 import { WbCloudy, WbSunny } from "@mui/icons-material";
+import CustomSnackbar from "../../../components/CustomSnackbar";
 
 const login: NextPage = () => {
 
@@ -24,6 +25,13 @@ const login: NextPage = () => {
     password: ""
   })
   const [error, setError] = useState<string>("")
+  const [informUser, setInformUser] = useState<{
+    successlogin: boolean;
+    message: string;
+  }>({
+    successlogin: false,
+    message: "",
+  });
 
   const handleSubmit = async () => {
     const res = await signIn("credentials", {
@@ -31,7 +39,10 @@ const login: NextPage = () => {
       password: userInfo.password,
       redirect: false,
     })
-    if (res?.ok) router.replace("/")
+    if (res?.ok) {
+      setInformUser({...informUser, successlogin: true, message: `Successful Login`}) 
+      router.replace("/")
+    }
     if (res?.error) setError(res.error)
   }
 
@@ -113,6 +124,15 @@ const login: NextPage = () => {
       <section id={styles.imgandtext}>
         <MainLogo/>
       </section>
+
+      <CustomSnackbar
+        openAlert={informUser.successlogin}
+        closeAlert={() => setInformUser({ ...informUser, successlogin: false })}
+        outputText={informUser.message}
+        verticalPosition="top"
+        horizontalPosition="left"
+      />
+
     </div>
   );
 };

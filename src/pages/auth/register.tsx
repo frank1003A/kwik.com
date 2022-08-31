@@ -10,15 +10,31 @@ import user from '../../../model/user';
 import { postRequest } from '../../../lib/axios/axiosClient';
 import { initialUserData } from '../../../components/Data/initialData';
 import MainLogo from '../../../components/asset/MainLogo';
+import CustomSnackbar from '../../../components/CustomSnackbar';
+import { useRouter } from 'next/router';
 
 const register: NextPage = () => {
   const [userState, setUserState] = useState<user>(initialUserData)
+  const [informUser, setInformUser] = useState<{
+    registeralert: boolean;
+    message: string;
+  }>({
+    registeralert: false,
+    message: "",
+  });
+
+  const router = useRouter()
 
   const handlePostUser = async (): Promise<void> => {
     try {
-      const userData = await postRequest("api/user", userState)
-      if (userData.data) console.log(userData)
-      alert('Your account has successfully been created')
+      const userData = await postRequest("api/user/user", userState)
+      if (userData.data) {
+        setInformUser({...informUser, 
+          registeralert: true, 
+          message: 'Your account has successfully been created'
+        }) 
+      }
+     if (userData.status === 200) router.replace("/auth/login")
     } catch (error: any) {
       console.log(error.message)
     }
@@ -110,6 +126,14 @@ const register: NextPage = () => {
       </div>
     </section>
     <section id={styles.imgandtext}><MainLogo/></section>
+    <CustomSnackbar
+        openAlert={informUser.registeralert}
+        closeAlert={() => setInformUser({ ...informUser, registeralert: false })}
+        outputText={informUser.message}
+        verticalPosition="top"
+        horizontalPosition="left"
+      />
+
   </div>
   )
 }
