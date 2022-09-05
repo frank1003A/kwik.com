@@ -1,12 +1,6 @@
 import { FormLabel, TextareaAutosize, Typography } from "@mui/material";
 import React, {
-  Fragment,
-  SetStateAction,
-  SyntheticEvent,
-  useEffect,
-  useState,
-  useRef,
-  useLayoutEffect,
+  Fragment, ReactElement, SyntheticEvent, useState
 } from "react";
 import { ColorResult } from "react-color";
 
@@ -14,47 +8,34 @@ import component_data from "../../components/Data/Kwik_Creator/components";
 import {
   DropComponents,
   Inputprops,
-  styleInputProps,
+  styleInputProps
 } from "../../components/Data/Kwik_Creator/types";
 import EditableColorInput from "../../components/EditableColor";
 import EditableImageFile from "../../components/EditableImageFile";
-import Editorbar from "../../components/Editorbar";
-import EditorLayout from "../../components/EditorLayout";
 import DropWrapper from "../../components/KwikCreator/DropWrapper";
 import Item from "../../components/KwikCreator/Item";
 /**import Item from "../../components/CreatorDnd/item";
 import DropWrapper from "../../components/CreatorDnd/DropWrapper"; */
-import KwikCreatorPanel from "../../components/KwikCreatorPanel";
-import PropertyBar from "../../components/PropertyBar";
 import home_styles from "../../styles/Home.module.css";
 import styles from "../../styles/Invoice.module.css";
 import stx from "../../styles/Kwikeditor.module.css";
 
-import type { NextPage } from "next";
 import {
-  Abc,
-  Height,
-  Lightbulb,
-  LineWeight,
-  Opacity,
-  TextFields,
+  Height, LineWeight, TextFields
 } from "@mui/icons-material";
+import type { NextPage } from "next";
 import Image from "next/image";
 import EditableSlider from "../../components/EditableSlider";
-import ResizableBox from "../../components/ResizableBox";
 import Creatorbar from "../../components/KwikCreator/Creatorbar";
-import CreatorPropsbar from "../../components/KwikCreator/CreatorPropsbar";
-import CreatorLayout from "../../components/KwikCreator/CreatorLayout";
-import EditableDiv from "../../components/EditableDiv";
 import CreatorBox from "../../components/KwikCreator/CreatorBox";
+import CreatorPropsbar from "../../components/KwikCreator/CreatorPropsbar";
+import ResizableBox from "../../components/ResizableBox";
 //import Draggable from "react-draggable";
-import GridbasedWrapper from "../../components/KwikCreator/GridbasedWrapper";
-import RxDiv from "../../components/RxDiv";
-import { reorder } from "../../components/KwikCreator/Helper";
 import { nanoid } from "nanoid";
-import Droppable from "../../components/KwikCreator/Droppable";
+import { NextPageWithLayout } from "./_app";
+import CreatorLayout from "../../components/KwikCreator/CreatorLayout";
 
-const kwik_creator: NextPage = () => {
+const kwik_creator: NextPageWithLayout = () => {
   const [components, setComponents] = useState<DropComponents[]>([]);
   const [newValue, setNewValue] = useState<DropComponents[]>([]);
   const [color, setcolor] = useState<string>("#2124B1");
@@ -448,7 +429,6 @@ const kwik_creator: NextPage = () => {
 
   return (
     <>
-      <CreatorLayout>
         <Creatorbar />
         {/**<Editorbar
             handlePrint={() => alert("print")}
@@ -513,18 +493,25 @@ const kwik_creator: NextPage = () => {
               if (cmp.root_id === 6 /**&& cmp.drop_id === currentEdit */)
                 return (
                   <Fragment key={cmp.drop_id}>
-                    {renderTextfieldProp(cmp.drop_id)}
+                    {renderTextfieldProp(cmp.drop_id as number)}
                   </Fragment>
                 );
             })
           )}
         </CreatorPropsbar>
-      </CreatorLayout>
-    </>
+      </>
   );
 };
 
 export default kwik_creator;
+
+kwik_creator.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <CreatorLayout>
+      {page}
+    </CreatorLayout>
+  )
+}
 
 /**{i.root_id !== 4 ? (
   <div className={home_styles["component_edit"]}>

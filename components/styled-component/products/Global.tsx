@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 export const FlexContainer = styled.div`
-    width: 100%;
+        width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
+    -webkit-box-pack: start;
     justify-content: flex-start;
-    padding: 0px 1rem;
 `;
 
 export const List = styled.div`
@@ -16,11 +16,19 @@ export const List = styled.div`
     grid-template-columns: 100%;
     flex-direction: column-reverse;
     gap: 1rem;
-    margin-top: 5rem;
-    padding: 0px 5rem;
+    padding: 2rem 5rem;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    -webkit-box-align: center;
     align-items: center;
+
+    @media (max-width: 1000px) {
+      left: 0px !important;
+    right: 0px !important;
+    width: 100%;
+    padding: 10px 2rem;
+    top: auto !important;
+  }
 `;
 
 export const Controls = styled.div`
@@ -44,26 +52,34 @@ export const Card = styled.div`
 `;
 
 export const Top = styled.div`
-  right: 0;
-  left: 250px;
-  display: flex;
-  padding: .5rem 3rem;
-  background: var(--bg);
-  border-bottom: 1px solid #2221;
-  align-items: center;
-  position: fixed;
-  z-index: 100;
-  justify-content: space-between;
-  div {
+    width: 100%;
     display: flex;
-    gap: 1rem;
-    select {
-      border: none;
-      border-radius: 4px;
-      padding: 0px 0.6rem;
-      box-shadow: 0 0 10px rgb(0 0 0 / 15%);
-    }
+    padding: 0.5rem 3rem;
+    background: var(--bg);
+    border-bottom: 1px solid #2221;
+    -webkit-box-align: center;
+    align-items: center;
+    z-index: 100;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    
+div {
+  display: flex;
+  gap: 1rem;
+  select {
+    border: none;
+    border-radius: 4px;
+    padding: 0px 0.6rem;
+    box-shadow: 0 0 10px rgb(0 0 0 / 15%);
   }
+}
+
+@media (max-width: 1500px) {
+  left: 0px !important;
+  right: 0px !important;
+  top: auto !important;
+  padding: 10px 2rem;
+}
 `;
 
 export const Center = styled.div`

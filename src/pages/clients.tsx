@@ -8,6 +8,7 @@ import {
   KeyboardOptionKeyOutlined,
   PersonAdd,
   Receipt,
+  Restore,
   Sort,
 } from "@mui/icons-material";
 import {
@@ -33,6 +34,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
+  ReactElement,
   useContext,
   useEffect,
   useRef,
@@ -75,8 +77,10 @@ import { sortData, sortMultipleData } from "../../utils/utils";
 import { updateClient } from "../redux/clientSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
+import { NextPageWithLayout } from "./_app";
+import CustomIconBtn from "../../components/CustomIconBtn";
 
-const clients: NextPage = () => {
+const clients: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
   const { data, isError, isLoading } = useGetter(
     `/api/user/client/clients/?user_id=${session?.user?.id}`
@@ -183,6 +187,7 @@ const clients: NextPage = () => {
   };
 
   const postNewClient = async (): Promise<void> => {
+    setOpenModal(false)
     try {
       const { _id, ...newClientDb } = singleClient;
       const newClient = await postRequest(
@@ -245,6 +250,12 @@ const clients: NextPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!(status === "authenticated") && !(session) && !(status === "loading")){
+      router.push("/auth/login")
+    }
+  }, [session, status]);
+
   const renderSortedClients = () => {
     return [
       sorted.map((cli) => {
@@ -305,12 +316,11 @@ const clients: NextPage = () => {
   };
 
   const renderClients = () => {
-    return isLoading ? (
-      <Center>
-        <CustomLoader />
-        <Typography>Fetching Clients</Typography>
-      </Center>
-    ) : (
+    return (status === "loading" || status === "unauthenticated") 
+    ? 
+    (<Center>
+      <CustomLoader text="Fetching Clients"/>
+    </Center>) : (
       [
         clients.map((cli) => {
           return (
@@ -343,24 +353,32 @@ const clients: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
-                  <IconButton onClick={() => createSingleClientInvoice(cli)}>
-                    <Receipt style={{ color: "orange" }} />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      handleUpdateModal();
-                      updateField(cli);
-                    }}
-                  >
-                    <Edit style={{ color: "#2124b1" }} />
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
-                      deleteClientData(cli._id ? cli._id.toString() : "")
-                    }
-                  >
-                    <Clear style={{ color: "red" }} />
-                  </IconButton>
+                  <CustomIconBtn 
+                  handleClick={() => createSingleClientInvoice(cli)}
+                  toolTip="create client Invoice"
+                  icon={<Receipt />}
+                  id="topicon"
+                  />
+
+                  <CustomIconBtn 
+                  handleClick={() => {
+                    handleUpdateModal();
+                    updateField(cli);
+                  }}
+                  toolTip="Update Client Data"
+                  icon={<Edit />}
+                  id="topicon"
+                  />
+
+                  <CustomIconBtn 
+                  handleClick={() =>
+                    deleteClientData(cli._id ? cli._id.toString() : "")
+                  }
+                  toolTip="Delete Client Data"
+                  icon={<Clear />}
+                  id="topicon"
+                  />
+                  
                 </div>
               </Row>
             </Card>
@@ -385,55 +403,36 @@ const clients: NextPage = () => {
   const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
       icon: (
-        <Sort
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
+        <Sort/>
       ),
       tip: "Sort Client Data",
       func: () => setSortingF(!isSortingF),
     },
     {
       icon: (
-        <ImportContacts
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
+        <Restore/>
+      ),
+      tip: "Reset",
+      func() {
+        setSorted([])
+      },
+    },
+    {
+      icon: (
+        <ImportContacts/>
       ),
       tip: "Import Excel File",
     },
     {
       icon: (
-        <PersonAdd
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
+        <PersonAdd/>
       ),
       tip: "New Customer",
       func: handleOpenModal,
     },
     {
       icon: (
-        <ImportExport
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
+        <ImportExport/>
       ),
       tip: "Export Data",
     },
@@ -463,7 +462,7 @@ const clients: NextPage = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <VhContainer>
         <Top>
           <Typography>Clients</Typography>
@@ -480,10 +479,10 @@ const clients: NextPage = () => {
                 )
               }
             />
-            <motion.div animate layout>
+            <motion.div transition={{ type: "spring", bounce: 0.25 }}>
               {isSortingF && renderFSort}
             </motion.div>
-            <span>
+            <span id={"topicon"}>
               {topIcons.map((key) => {
                 return (
                   <Tooltip title={key.tip}>
@@ -496,7 +495,7 @@ const clients: NextPage = () => {
             </span>
           </span>
         </Top>
-        {clients.length < 1 && !isLoading && data ? (
+        {Array.isArray(data) && data.length < 1 && status === "authenticated" ? (
           <Center>
             <div
               style={{
@@ -514,7 +513,8 @@ const clients: NextPage = () => {
           <React.Fragment>
             <FlexContainer>
               <List>
-                {sorted.length > 0 ? renderSortedClients() : renderClients()}
+                {sorted.length > 0 ? renderSortedClients() : renderClients()
+              }
               </List>
             </FlexContainer>
           </React.Fragment>
@@ -754,11 +754,20 @@ const clients: NextPage = () => {
         verticalPosition="bottom"
         horizontalPosition="center"
       />
-    </Layout>
+      </>
   );
 };
 
 export default clients;
+
+clients.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  )
+}
+
 
 /**<Top>
         <Typography>Clients</Typography>

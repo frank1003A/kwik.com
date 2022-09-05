@@ -6,7 +6,7 @@ import Sidebar from '../Sidebar'
 import Head from 'next/head'
 
 interface Props {
-    children: React.ReactChild[]
+    children: React.ReactNode
 }
 
 const CreatorLayout:FC<Props> = ({children}) => {

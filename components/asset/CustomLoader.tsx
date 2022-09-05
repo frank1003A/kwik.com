@@ -1,8 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import SquareLoader from 'react-spinners/SquareLoader'
 import {useTheme} from "next-themes"
+import { motion } from 'framer-motion'
+import { Typography } from '@mui/material'
 
-const CustomLoader = () => {
+interface Props {
+  text?: string 
+}
+
+const CustomLoader = ({text}: Props) => {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState<boolean>(false)
 
@@ -11,9 +17,21 @@ const CustomLoader = () => {
   }, [])
 
   return (
-    <>
-    <SquareLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
-    </>
+    <motion.div
+          layout
+          style={{
+            width: "100%",
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            columnGap: 10,
+          }}
+        >
+          <SquareLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
+          <Typography>{text}</Typography>
+        </motion.div>
   )
 }
 

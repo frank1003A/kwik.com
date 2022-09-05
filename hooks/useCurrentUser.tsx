@@ -17,7 +17,7 @@ const useCurrentUser = () => {
     if (isError) console.log(isError);
   },[data, status])
 
-  return { user, setCurrentUser, isLoading, isError, status };
+  return { user, setCurrentUser, isLoading, isError, status, session };
 };
 
 export default useCurrentUser;

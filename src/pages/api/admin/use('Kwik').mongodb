@@ -1,0 +1,7 @@
+use('Kwik')
+
+db.products.find({"owner": "63143426240035b1130180ca"})
+
+db.clients.deleteMany({owner: '63161069b50af58fb4d786f2'})
+
+//6313b767f8a32e2f9137174e

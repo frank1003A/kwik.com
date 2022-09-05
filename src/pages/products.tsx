@@ -6,6 +6,7 @@ import {
   LocalActivity,
   Receipt,
   ReceiptLong,
+  Restore,
   Sort,
 } from "@mui/icons-material";
 import {
@@ -16,23 +17,19 @@ import {
   Typography,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { nanoid } from "nanoid";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
-  MouseEventHandler,
-  useContext,
+  ReactElement,
   useEffect,
   useRef,
   useState,
 } from "react";
 import Avatar from "react-avatar";
 import { useSelector } from "react-redux";
-import { Transition } from "react-transition-group";
 import { useSWRConfig } from "swr";
 
 import CustomLoader from "../../components/asset/CustomLoader";
@@ -45,6 +42,7 @@ import ModalComponent from "../../components/Modal";
 import MuiSearchbar from "../../components/MuiSearchbar";
 import {
   ControlledInput,
+  Form,
   VhContainer,
 } from "../../components/styled-component/Global";
 import {
@@ -58,17 +56,20 @@ import {
 import useGetter from "../../hooks/useGetter";
 import {
   deleteRequest,
-  getRequest,
   patchRequest,
   postRequest,
 } from "../../lib/axios/axiosClient";
 import productsClass from "../../model/products";
-import { sortData, sortMultipleData } from "../../utils/utils";
+import { sortMultipleData } from "../../utils/utils";
 import { useAppDispatch } from "../redux/hooks";
 import { updateProducts, updateProductSelected } from "../redux/productSlice";
 import { RootState } from "../redux/store";
+import { NextPageWithLayout } from "./_app";
+import NumberFormat from "react-number-format";
+import CustomIconBtn from "../../components/CustomIconBtn";
+import CustomForm from "../../components/asset/CustomForm";
 
-const products: NextPage = () => {
+const products: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
   /**Get request with swr */
   const { data, isError, isLoading } = useGetter(
@@ -136,23 +137,6 @@ const products: NextPage = () => {
   const handleUpdateModal = () => setopenUpdateModal(true);
   const handleCloseUpdateModal = () => setopenUpdateModal(false);
 
-  /**Dialog */
-  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleNoCloseDialog = () => {
-    setDialogResponse(false);
-    setOpenDialog(false);
-  };
-
-  const handleYesCloseDialog = () => {
-    setDialogResponse(true);
-    setOpenDialog(false);
-  };
-
   const handleProductSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
     product: productsClass
@@ -175,47 +159,55 @@ const products: NextPage = () => {
   };
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement> | string,
     name: keyof productsClass
   ) => {
-    const value = e.target.value;
     const nC: productsClass = { ...singleProduct };
-    if (name === "_id") throw new Error("_id fields are mutable fields");
-    if (name === "description") nC[name] = value;
-    if (name === "rate") nC[name] = value;
-    if (name === "type") nC[name] = value;
-    if (name === "qty") nC[name] = Number(value);
-    setSProduct(nC);
 
-    /**
-     * since sorted is a different arr, changes in the original wont affect it
-     * so we need to update the sorted table to reflect the changes in the original
-     */
-    if (isSearching || openUpdateModal) {
-      let fS: productsClass[] = products.filter((key) => key._id === nC._id);
-      fS[0] = nC;
-      setSorted(fS);
-    }
-  };
+    if (typeof e !== "string") {
+      const value = e.target.value;
 
-  const handleUpdate = (
-    e: ChangeEvent<HTMLInputElement>,
-    name: keyof productsClass
-  ) => {
-    const value = e.target.value;
-    let prod: Array<productsClass> = [...products];
-    const valueUpdates = prod.filter((p, i) => {
-      const obj: productsClass = { ...p };
-      if (name !== "_id" && name !== undefined) {
-        if (name !== "qty" && name !== "dateCreated") obj[name] = value;
-        if (name === "qty") obj[name] = Number(value);
+      if (
+        name !== "_id" &&
+        name !== "dateCreated" &&
+        name !== "qty" &&
+        typeof value === "string"
+      ) {
+        nC[name] = value;
+      } else if (name === "qty") nC[name] = Number(value);
+      setSProduct(nC);
+
+      /**
+       * since sorted is a different arr, changes in the original wont affect it
+       * so we need to update the sorted table to reflect the changes in the original
+       */
+      if (isSearching || openUpdateModal) {
+        let fS: productsClass[] = products.filter((key) => key._id === nC._id);
+        fS[0] = nC;
+        setSorted(fS);
       }
-      console.log(obj);
-      //return obj
-    });
-    prod = valueUpdates;
-    //console.log(prod)
-    //setProducts(prod)
+    } else if (typeof e === "string") {
+      const value = e;
+      if (
+        name !== "_id" &&
+        name !== "dateCreated" &&
+        name !== "qty" &&
+        typeof value === "string"
+      ) {
+        nC[name] = value;
+      } else if (name === "qty") nC[name] = Number(value);
+      setSProduct(nC);
+
+      /**
+       * since sorted is a different arr, changes in the original wont affect it
+       * so we need to update the sorted table to reflect the changes in the original
+       */
+      if (isSearching || openUpdateModal) {
+        let fS: productsClass[] = products.filter((key) => key._id === nC._id);
+        fS[0] = nC;
+        setSorted(fS);
+      }
+    }
   };
 
   const updateField = (cli: productsClass) => {
@@ -223,18 +215,20 @@ const products: NextPage = () => {
   };
 
   const postNewProduct = async (): Promise<void> => {
+    setOpenModal(false);
     try {
       const { _id, ...newSinglePro } = singleProduct;
       const newProduct = await postRequest(
         `api/user/product/products/?user_id=${session?.user?.id}`,
         newSinglePro
       );
-      if (newProduct.data)
+      if (newProduct.data) {
         setInformUser({
           ...informUser,
           savealert: true,
           message: `New Product Added`,
         });
+      }
       mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
@@ -246,12 +240,13 @@ const products: NextPage = () => {
       const productData = await deleteRequest(
         `api/user/product/products/?product_id=${id}`
       );
-      if (productData.data)
+      if (productData.data) {
         setInformUser({
           ...informUser,
           deletealert: true,
           message: `product - ${id} - has been permanently deleted`,
         });
+      }
       mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
@@ -259,18 +254,20 @@ const products: NextPage = () => {
   };
 
   const updateProduct = async (id: string): Promise<void> => {
+    setopenUpdateModal(false);
     const { _id, owner, ...ProUpdate } = singleProduct; // REMOVE ID FIELD
     try {
       const UpdateProduct = await patchRequest(
         `api/user/product/products/?product_id=${id}`,
         ProUpdate
       );
-      if (UpdateProduct.data)
+      if (UpdateProduct.data) {
         setInformUser({
           ...informUser,
           savealert: true,
           message: `Updated Product - ${id}`,
         });
+      }
       mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error);
@@ -289,7 +286,7 @@ const products: NextPage = () => {
     return [
       sorted.map((cli, index) => {
         return (
-          <Card as={motion.div} layout>
+          <Card as={motion.div}>
             <Row>
               <div
                 style={{
@@ -308,7 +305,12 @@ const products: NextPage = () => {
                 </Tooltip>
                 <Typography>{cli.description}</Typography>
               </div>
-              <Typography>{cli.rate}</Typography>
+              <NumberFormat
+                thousandSeparator={true}
+                displayType="text"
+                prefix={"NGN"}
+                value={cli.rate}
+              />
               <Typography>{cli.type}</Typography>
               <Typography>{cli.qty}</Typography>
               <div
@@ -354,16 +356,15 @@ const products: NextPage = () => {
 
   /**Controlled Renders */
   const renderProducts = () => {
-    return isLoading ? (
+    return status === "loading" || status === "unauthenticated" ? (
       <Center>
-        <CustomLoader />
-        <Typography>Fetching Products</Typography>
+        <CustomLoader text="Fetching Products" />
       </Center>
     ) : (
       [
         products.map((cli, index) => {
           return (
-            <Card as={motion.div} layout>
+            <Card as={motion.div}>
               <Row>
                 <div
                   style={{
@@ -382,7 +383,23 @@ const products: NextPage = () => {
                   </Tooltip>
                   <Typography>{cli.description}</Typography>
                 </div>
-                <Typography>{cli.rate}</Typography>
+                <Typography
+                  style={{
+                    margin: "0",
+                    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                    fontWeight: "400",
+                    fontSize: "1rem",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.00938em",
+                  }}
+                >
+                  <NumberFormat
+                    thousandSeparator={true}
+                    displayType="text"
+                    prefix={"NGN"}
+                    value={cli.rate}
+                  />
+                </Typography>
                 <Typography>{cli.type}</Typography>
                 <Typography>{cli.qty}</Typography>
                 <div
@@ -393,31 +410,24 @@ const products: NextPage = () => {
                     gap: ".5rem",
                   }}
                 >
-                  <IconButton>
-                    <Tooltip title="Select Product">
-                      <Receipt style={{ color: "orange" }} />
-                    </Tooltip>
-                  </IconButton>
-
-                  <IconButton
-                    onClick={() => {
+                  <CustomIconBtn
+                    handleClick={() => {
                       handleUpdateModal();
                       updateField(cli);
                     }}
-                  >
-                    <Tooltip title="Update">
-                      <Edit />
-                    </Tooltip>
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
+                    toolTip="Update"
+                    icon={<Edit />}
+                    id="topicon"
+                  />
+
+                  <CustomIconBtn
+                    handleClick={() =>
                       handleDelete(cli._id ? cli._id.toString() : "")
                     }
-                  >
-                    <Tooltip title="Delete">
-                      <Clear />
-                    </Tooltip>
-                  </IconButton>
+                    toolTip="Delete"
+                    icon={<Clear />}
+                    id="topicon"
+                  />
                 </div>
               </Row>
             </Card>
@@ -439,21 +449,25 @@ const products: NextPage = () => {
     };
   }, []);
 
-    const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (Number(e.target.value) ===  1) {
-      const sortedProducts = products.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!), }})
-      .sort((a: any,b: any) => b.dateCreated - a.dateCreated)
-      setSorted(sortedProducts)
+  const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (Number(e.target.value) === 1) {
+      const sortedProducts = products
+        .map((obj) => {
+          return { ...obj, dateCreated: new Date(obj.dateCreated!) };
+        })
+        .sort((a: any, b: any) => b.dateCreated - a.dateCreated);
+      setSorted(sortedProducts);
+    } else if (Number(e.target.value) === 2) {
+      const sortedProducts = products
+        .map((obj) => {
+          return { ...obj, dateCreated: new Date(obj.dateCreated!) };
+        })
+        .sort((a: any, b: any) => a.dateCreated - b.dateCreated);
+      setSorted(sortedProducts);
+    } else {
+      setSorted([]);
     }
-    else if (Number(e.target.value) ===  2) {
-      const sortedProducts = products.map(obj => { return {...obj, dateCreated: new Date(obj.dateCreated!), }})
-      .sort((a: any,b: any) => a.dateCreated - b.dateCreated)
-      setSorted(sortedProducts)
-    }
-    else {
-      setSorted([])
-    }
-  } 
+  };
 
   const renderFSort: React.ReactNode = [
     <select onChange={handleNewOldSort}>
@@ -465,77 +479,39 @@ const products: NextPage = () => {
 
   const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
-      icon: (
-        <Sort
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <Sort />,
       tip: "Sort Product Data",
       func: () => setSortingF(!isSortingF),
     },
     {
-      icon: (
-        <ImportExportSharp
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <Restore />,
+      tip: "Reset",
+      func() {
+        setSorted([]);
+      },
+    },
+    {
+      icon: <ImportExportSharp />,
       tip: "Import Excel File",
     },
     {
-      icon: (
-        <AddCircle
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <AddCircle />,
       tip: "New Product",
       func: handleOpenModal,
     },
     {
-      icon: (
-        <ReceiptLong
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <ReceiptLong />,
       tip: "Create Invoice for Products",
       func: handleOpenSFModal,
     },
     {
-      icon: (
-        <LocalActivity
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <LocalActivity />,
       tip: "Activity Log",
     },
   ];
 
   return (
-    <Layout>
+    <>
       <VhContainer>
         <Top>
           <Typography>Products</Typography>
@@ -552,8 +528,10 @@ const products: NextPage = () => {
                 );
               }}
             />
-            {isSortingF && renderFSort}
-            <span>
+            <motion.div transition={{ type: "spring", bounce: 0.25 }}>
+              {isSortingF && renderFSort}
+            </motion.div>
+            <span id="topicon">
               {topIcons.map((key) => {
                 return (
                   <Tooltip title={key.tip}>
@@ -566,7 +544,9 @@ const products: NextPage = () => {
             </span>
           </div>
         </Top>
-        {data && products.length < 1 ? (
+        {Array.isArray(data) &&
+        data.length < 1 &&
+        status === "authenticated" ? (
           <Center>
             <div
               style={{
@@ -607,31 +587,47 @@ const products: NextPage = () => {
               width: "100%",
             }}
           >
-            <ControlledInput
-              placeholder="Product Description"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "description")
-              }
-            />
-            <ControlledInput
-              placeholder="Price / rate"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "rate")
-              }
-            />
-            <ControlledInput
-              placeholder="type ofproduct"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "type")
-              }
-            />
-            <ControlledInput
-              type="number"
-              placeholder="quantity - (in-stock)"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "qty")
-              }
-            />
+            <Form>
+              <CustomForm topLabel="Product Description">
+                <ControlledInput
+                  placeholder="Product Description"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "description")
+                  }
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Rate of Product" bottomText="Number">
+                <ControlledInput
+                  as={NumberFormat}
+                  thousandSeparator={true}
+                  prefix={"#"}
+                  displayType="input"
+                  placeholder="rate"
+                  onValueChange={({ value }) => handleChange(value, "rate")}
+                  renderText={(value) => value}
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Category of Product">
+                <ControlledInput
+                  placeholder="type of product"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "type")
+                  }
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Quantity of Product available">
+                <ControlledInput
+                  type="number"
+                  placeholder="quantity - (in-stock)"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "qty")
+                  }
+                />
+              </CustomForm>
+            </Form>
           </div>
           <ButtonComponent
             customStyle={{ background: "green" }}
@@ -659,34 +655,51 @@ const products: NextPage = () => {
               width: "100%",
             }}
           >
-            <ControlledInput
-              type={"text"}
-              value={singleProduct.description}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "description")
-              }
-            />
-            <ControlledInput
-              type={"text"}
-              value={singleProduct.rate}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "rate")
-              }
-            />
-            <ControlledInput
-              type={"text"}
-              value={singleProduct.type}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "type")
-              }
-            />
-            <ControlledInput
-              type={"number"}
-              value={singleProduct.qty}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, "qty")
-              }
-            />
+            <Form>
+              <CustomForm topLabel="Product Description">
+                <ControlledInput
+                  type={"text"}
+                  value={singleProduct.description}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "description")
+                  }
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Rate of Product" bottomText="Number">
+                <ControlledInput
+                  as={NumberFormat}
+                  thousandSeparator={true}
+                  prefix={"#"}
+                  displayType="input"
+                  value={singleProduct.rate}
+                  placeholder="rate"
+                  onValueChange={({ value }) => handleChange(value, "rate")}
+                  renderText={(value) => value}
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Category of Product">
+                <ControlledInput
+                  type={"text"}
+                  value={singleProduct.type}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "type")
+                  }
+                />
+              </CustomForm>
+
+              <CustomForm topLabel="Quantity of Product available">
+                <ControlledInput
+                  type={"number"}
+                  value={singleProduct.qty}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(e, "qty")
+                  }
+                />
+              </CustomForm>
+            </Form>
+
             <ButtonComponent
               customStyle={{ background: "green" }}
               onClick={() => updateProduct(singleProduct._id?.toString()!)}
@@ -739,7 +752,6 @@ const products: NextPage = () => {
                       alignItems: "center",
                       gap: ".5rem",
                     }}
-                    layout
                     animate
                   >
                     <div
@@ -825,8 +837,12 @@ const products: NextPage = () => {
         verticalPosition="bottom"
         horizontalPosition="center"
       />
-    </Layout>
+    </>
   );
 };
 
 export default products;
+
+products.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};

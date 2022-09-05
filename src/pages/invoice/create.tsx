@@ -1,54 +1,48 @@
-import { PhotoFilter, Redo, RemoveCircleRounded } from '@mui/icons-material';
-import { Typography } from '@mui/material';
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
-import { motion } from 'framer-motion';
-import { nanoid } from 'nanoid';
-import { useSession } from 'next-auth/react';
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import React, { SyntheticEvent, useContext, useEffect, useState } from 'react';
-import { useRef } from 'react';
-import { CompactPicker } from 'react-color';
-import { useSelector } from 'react-redux';
-import { useReactToPrint } from 'react-to-print';
+import { PhotoFilter, Redo, RemoveCircleRounded } from "@mui/icons-material";
+import { Typography } from "@mui/material";
+import { SnackbarCloseReason } from "@mui/material/Snackbar";
+import { motion } from "framer-motion";
+import { nanoid } from "nanoid";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
+import { BlockPicker, ChromePicker, CompactPicker, CustomPicker, HuePicker, SwatchesPicker, TwitterPicker } from "react-color";
+import { useSelector } from "react-redux";
+import { useReactToPrint } from "react-to-print";
 
-import CustomLoader from '../../../components/asset/CustomLoader';
-import ButtonComponent from '../../../components/Button';
-import CustomSnackbar from '../../../components/CustomSnackbar';
-import { countryList } from '../../../components/Data/countryList';
-import { initialInvoice } from '../../../components/Data/initialData';
-import { Invoice, InvoiceItems, STATUS } from '../../../components/Data/types';
-import Editorbar from '../../../components/Editorbar';
-import InvoiceMain from '../../../components/InvoiceMain';
-import SettingsComponent from '../../../components/InvoiceSettings';
-import Layout from '../../../components/Layout';
-import Modals from '../../../components/Modal';
-import { Header, PropertiesContainer, Property, PropertyEditor } from '../../../components/styled-component/editorbar';
-import { Container } from '../../../components/styled-component/Global';
-import useCurrentUser from '../../../hooks/useCurrentUser';
-import { postRequest } from '../../../lib/axios/axiosClient';
-import styles from '../../../styles/Invoice.module.css';
-import { useAppDispatch } from '../../redux/hooks';
-import { clearProducts } from '../../redux/productSlice';
-import { RootState } from '../../redux/store';
+import ControlledAccordions from "../../../components/Accordion";
+import CustomLoader from "../../../components/asset/CustomLoader";
+import ButtonComponent from "../../../components/Button";
+import CustomSnackbar from "../../../components/CustomSnackbar";
+import { countryList } from "../../../components/Data/countryList";
+import { initialInvoice } from "../../../components/Data/initialData";
+import { Invoice, InvoiceItems, STATUS } from "../../../components/Data/types";
+import Editorbar from "../../../components/Editorbar";
+import InvoiceMain from "../../../components/InvoiceMain";
+import SettingsComponent from "../../../components/InvoiceSettings";
+import Modals from "../../../components/Modal";
+import {
+  Header,
+  PropertiesContainer,
+  Property,
+  PropertyEditor,
+} from "../../../components/styled-component/editorbar";
+import { Container } from "../../../components/styled-component/Global";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import { postRequest } from "../../../lib/axios/axiosClient";
+import styles from "../../../styles/Invoice.module.css";
+import { useAppDispatch } from "../../redux/hooks";
+import { clearProducts } from "../../redux/productSlice";
+import { RootState } from "../../redux/store";
 
 import type { NextPage } from "next";
-import ControlledAccordions from '../../../components/Accordion';
-interface Props {
-  invoice: Invoice;
-}
+import { NextPageWithLayout } from "../_app";
+import Layout from "../../../components/Layout";
 
-/**Google Translate Data Response Type */
-interface languageResponse {
-  data?: {
-    languages: {
-      language: string;
-    }[];
-  };
-}
 
-const createInvoice: NextPage<Props> = () => {
+const CreateInvoice: NextPageWithLayout = () => {
   const router = useRouter();
   const {} = useSession({
     required: true,
@@ -70,7 +64,12 @@ const createInvoice: NextPage<Props> = () => {
   });
   const [sModal, setSModal] = useState<boolean>(false);
   const [clipboard, setClipboard] = useState<boolean>(false);
-  const [languages, setLanguages] = useState<languageResponse>({});
+  /** */
+  const [invComp, setInvComp] = useState<boolean>(false)
+  const [edcActive, setEdcActive] = useState<boolean>(false)
+  const [showEditComp, setShowEditComp] = useState<boolean>(false)
+
+
   const [toggleDisplay, setToggleDisplay] = useState<{
     headerdisplay: "" | "none";
     divider: "" | "none";
@@ -89,10 +88,24 @@ const createInvoice: NextPage<Props> = () => {
     tc: "",
   });
 
-
   const SelectedProducts = useSelector((state: RootState) => state.product);
   const SelectedClient = useSelector((state: RootState) => state.client);
   const dispatch = useAppDispatch();
+
+  const handleActiveSideComponent = (): void => {
+    if (invComp === true) {
+      setInvComp(false);
+      setEdcActive(true);
+    }
+    if (edcActive === true) {
+      setEdcActive(false);
+      setInvComp(true);
+    }
+  };
+
+  useEffect(() => {
+    setInvComp(true);
+  }, []);
 
   useEffect(() => {
     if (user !== undefined && status === "authenticated") {
@@ -133,12 +146,12 @@ const createInvoice: NextPage<Props> = () => {
    * likewise we pass the client selected from client page
    */
   const handleClientTransfer = () => {
-    const { fullname } = SelectedClient.client 
-      setInvoiceRepo({
-        ...InvoiceRepo, 
-        clientName: fullname as string,
-      })
-  }
+    const { fullname } = SelectedClient.client;
+    setInvoiceRepo({
+      ...InvoiceRepo,
+      clientName: fullname as string,
+    });
+  };
 
   useEffect(() => {
     /**Transfer products and client data to invoice - if any */
@@ -146,9 +159,8 @@ const createInvoice: NextPage<Props> = () => {
   }, []);
 
   useEffect(() => {
-    if (SelectedClient.client.fullname) handleClientTransfer()
-  }, [SelectedClient.client])
-  
+    if (SelectedClient.client.fullname) handleClientTransfer();
+  }, [SelectedClient.client]);
 
   const handlesucClose = (
     event: Event | SyntheticEvent<any, Event>,
@@ -170,19 +182,92 @@ const createInvoice: NextPage<Props> = () => {
   const handleCloseClipboard = () => setClipboard(false);
 
   const handleItemInput = (
-    e: Event | React.SyntheticEvent<any, Event>,
+    e: (Event | React.SyntheticEvent<any, Event>) | string,
     index: number,
     name: keyof InvoiceItems
   ): void => {
-    e.preventDefault();
-    const { value } = e.currentTarget;
-    let MInvoice: Invoice = { ...InvoiceRepo };
-    let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
+    if (typeof e !== "string") {
+      e.preventDefault();
+      const { value } = e.currentTarget;
+      let MInvoice: Invoice = { ...InvoiceRepo };
+      let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
 
-    const items = Items.map((itm, idx) => {
-      if (index === idx) {
-        const invItems: InvoiceItems = { ...itm };
-        if (name === "_id" && name !== undefined && typeof value === "number") {
+      const items = Items.map((itm, idx) => {
+        if (index === idx) {
+          const invItems: InvoiceItems = { ...itm };
+          if (
+            name !== "_id" &&
+            name !== "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = value;
+          } else if (
+            name === "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = Number(value);
+          }
+
+          if (invItems.quantity && invItems.rate) {
+            invItems.amount = (
+              invItems.quantity * Number(invItems.rate)
+            ).toString();
+          }
+
+          return invItems;
+        }
+        return itm;
+      });
+      MInvoice.invoiceitems = items;
+      getSubTotal(MInvoice);
+      getTxRate(MInvoice);
+      getTotal(MInvoice);
+      setInvoiceRepo(MInvoice);
+    }
+    else if (typeof e === "string") {
+      const value = e
+      let MInvoice: Invoice = { ...InvoiceRepo };
+      let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
+
+      const items = Items.map((itm, idx) => {
+        if (index === idx) {
+          const invItems: InvoiceItems = { ...itm };
+          if (
+            name !== "_id" &&
+            name !== "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = value;
+          } else if (
+            name === "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = Number(value);
+          }
+
+          if (invItems.quantity && invItems.rate) {
+            invItems.amount = (
+              invItems.quantity * Number(invItems.rate)
+            ).toString();
+          }
+
+          return invItems;
+        }
+        return itm;
+      });
+      MInvoice.invoiceitems = items;
+      getSubTotal(MInvoice);
+      getTxRate(MInvoice);
+      getTotal(MInvoice);
+      setInvoiceRepo(MInvoice);
+    }
+  };
+
+  /**if (name === "_id" && name !== undefined && typeof value === "number") {
           throw new Error(
             "An attempt has been made to mutate an Id field which is not allowed"
           );
@@ -197,23 +282,7 @@ const createInvoice: NextPage<Props> = () => {
         } else if (name == "rate" && typeof value === "string") {
           invItems[name] = value;
         }
-
-        if (invItems.quantity && invItems.rate) {
-          invItems.amount = (
-            invItems.quantity * Number(invItems.rate)
-          ).toString();
-        }
-
-        return invItems;
-      }
-      return itm;
-    });
-    MInvoice.invoiceitems = items;
-    getSubTotal(MInvoice);
-    getTxRate(MInvoice);
-    getTotal(MInvoice);
-    setInvoiceRepo(MInvoice);
-  };
+ */
 
   const handleDetailInput = (
     e: Event | SyntheticEvent<any, Event>,
@@ -228,7 +297,7 @@ const createInvoice: NextPage<Props> = () => {
       name !== "_id" &&
       name !== "status" &&
       name !== "owner" &&
-      name !== "invoiceDate" && 
+      name !== "invoiceDate" &&
       name !== "invoiceDueDate"
     ) {
       if (
@@ -282,20 +351,19 @@ const createInvoice: NextPage<Props> = () => {
     if (name === "logo" && typeof value === "string") newInvoice[name] = value;
     if (name === "logoWidth" && typeof value === "number")
       newInvoice[name] = value;
-
     setInvoiceRepo(newInvoice); //update Image or logo
   };
 
   const handleDateInput = (
-    date: Date, 
-    event: SyntheticEvent<any, Event>, 
+    date: Date,
+    event: SyntheticEvent<any, Event>,
     key: keyof Invoice
-    ) => {
-      console.log(event.currentTarget)
-      if (key === ("invoiceDate") || key === "invoiceDueDate")
-           setInvoiceRepo({...InvoiceRepo, [key]: date})
-  } 
-  
+  ) => {
+    console.log(event.currentTarget);
+    if (key === "invoiceDate" || key === "invoiceDueDate")
+      setInvoiceRepo({ ...InvoiceRepo, [key]: date });
+  };
+
   const dispInvComponents: JSX.Element[] = [
     <>
       <div>
@@ -537,7 +605,7 @@ const createInvoice: NextPage<Props> = () => {
 
   const handleInvoicePost = async (): Promise<void> => {
     try {
-      const { _id, ...InvoiceToPost } = InvoiceRepo
+      const { _id, ...InvoiceToPost } = InvoiceRepo;
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${user._id}`,
         InvoiceToPost
@@ -555,7 +623,6 @@ const createInvoice: NextPage<Props> = () => {
       status === "unauthenticated" ||
       !InvoiceRepo.invoiceTitle ? (
         <motion.div
-          layout
           style={{
             width: "100%",
             height: "100vh",
@@ -572,21 +639,14 @@ const createInvoice: NextPage<Props> = () => {
           </Typography>
         </motion.div>
       ) : (
-        <Layout>
+        <>
           <Container>
             <div className={styles.fileAndEditor}>
-              <div className={styles.lseditor}>{dispInvComponents}</div>
               <Editorbar
                 saveText="SAVE"
                 handlePrint={() => handlePrint()}
                 handleSave={() => handleInvoicePost()}
                 handleVat={() => handleShowSettingsModal()}
-                exportPDF={async () => {
-                  const { exportComponentAsPDF } = await import(
-                    "react-component-export-image"
-                  );
-                  exportComponentAsPDF(componentRef);
-                }}
                 exportJPEG={async () => {
                   const { exportComponentAsJPEG } = await import(
                     "react-component-export-image"
@@ -626,13 +686,40 @@ const createInvoice: NextPage<Props> = () => {
                 />
                 <PropertyEditor>
                   <Header>
-                    <PhotoFilter />
-                    <Typography variant="subtitle1" color="#555">
-                      Page Design
-                    </Typography>
+                    <div className={styles["edcToggler"]}>
+                <button
+                  className={
+                    edcActive === true
+                      ? styles["edcBtnActive"]
+                      : styles["edcBtn"]
+                  }
+                  onClick={() => {
+                    handleActiveSideComponent();
+                    setShowEditComp(true);
+                  }}
+                >
+                  Edit Component
+                </button>
+                <button
+                  className={
+                    invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
+                  }
+                  onClick={() => {
+                    handleActiveSideComponent();
+                    setShowEditComp(false);
+                  }}
+                >
+                  Edit Invoice
+                </button>
+              </div>
                   </Header>
-                  <PropertiesContainer>
-                    <Property>
+                  <PropertiesContainer as={motion.div} layout animate>
+                    {
+                      showEditComp ? (
+                        <div>{dispInvComponents}</div>
+                      ) : (
+                        <>
+                        <Property>
                       <Typography variant="overline" color="#555">
                         Font Family
                       </Typography>
@@ -689,32 +776,9 @@ const createInvoice: NextPage<Props> = () => {
                         }
                       />
                     </Property>
-                    <Property>
-                      <Typography variant="overline" color="#555">
-                        Language
-                      </Typography>
-                      <div style={{ width: "230px", padding: "0px 2px" }}>
-                        <select
-                          name="font"
-                          title="font-Change"
-                          onChange={(e) =>
-                            setInvoiceRepo({
-                              ...InvoiceRepo,
-                              styles: {
-                                ...InvoiceRepo.styles,
-                                fontLanguageOverride: e.target.value,
-                              },
-                            })
-                          }
-                        >
-                          {languages.data?.languages.map((l) => {
-                            return (
-                              <option value={l.language}>{l.language}</option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </Property>
+                        </>
+                      )
+                    }
                   </PropertiesContainer>
                 </PropertyEditor>
               </div>
@@ -744,7 +808,7 @@ const createInvoice: NextPage<Props> = () => {
                 }}
               >
                 <Image src="/print2.svg" height={300} width={300} />
-                <Typography variant="subtitle1" color="initial">
+                <Typography variant="subtitle2" color="GrayText">
                   Thank You for using Kwik Invoice Generator
                 </Typography>
               </div>
@@ -761,13 +825,16 @@ const createInvoice: NextPage<Props> = () => {
                   setTaxRate(Number(e.target.value))
                 }
                 currentTaxRate={taxRate}
-                handleStatusChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                   updateInvoiceStatus("status", e.target.value as STATUS["status"])
+                handleStatusChange={(
+                  e: React.ChangeEvent<HTMLSelectElement>
+                ) => {
+                  updateInvoiceStatus(
+                    "status",
+                    e.target.value as STATUS["status"]
+                  );
                 }}
                 handleCurrency={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setInvoiceRepo({...InvoiceRepo, 
-                    currency: e.target.value, 
-                  })
+                  setInvoiceRepo({ ...InvoiceRepo, currency_symbol: e.target.value });
                 }}
                 handleCloseBtn={handleCloseSettingsModal}
                 data={InvoiceRepo}
@@ -800,10 +867,18 @@ const createInvoice: NextPage<Props> = () => {
               </div>
             </Modals>
           </Container>
-        </Layout>
+        </>
       )}
     </>
   );
 };
 
-export default createInvoice;
+export default CreateInvoice;
+
+CreateInvoice.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  )
+}

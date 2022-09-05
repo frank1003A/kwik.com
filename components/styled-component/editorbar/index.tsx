@@ -9,7 +9,7 @@ export const PropertyEditor = styled.div`
   top: 4rem;
   height: 100vh;
   background: var(--prb);
-  border-left: 1px solid var(--prb);
+  border-left: 1px solid var(--sbedge);
   flex-direction: column;
   justify-content: flex-start;
   //gap: 1rem;
@@ -21,7 +21,7 @@ export const PropertyEditor = styled.div`
 export const PropertiesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  //overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 7px;

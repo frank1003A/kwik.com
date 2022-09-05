@@ -88,8 +88,7 @@ const Settings = ({
         </FormControl>
         <Divider />
         <div style={{ display: "flex", width: "100%", gap: ".1rem" }}>
-          <ButtonComponent innerText="Save" customStyle={{ width: "50px" }} />
-          <ButtonComponent innerText="Cancel" />
+          <ButtonComponent innerText="Continue" customStyle={{ width: "100%" }} />
         </div>
       </Form>
     </React.Fragment>

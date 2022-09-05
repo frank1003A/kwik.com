@@ -1,6 +1,6 @@
 .muiButton {
     background-color:var(--primarycolor);
-    border-radius: 4px;
+    border-radius: 50px;
     gap: .5rem;
 }
 

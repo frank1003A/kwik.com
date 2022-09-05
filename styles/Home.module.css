@@ -148,6 +148,12 @@
   cursor: pointer;
 }
 
+.imgcont {
+  background: rgba(0,17,255,0.164);
+  height: 100px;
+  border-radius: 8px;
+}
+
 .card:hover,
 .card:focus,
 .card:active {
@@ -157,6 +163,29 @@
 
 .card .AddIcon {
   font-size: 100px;
+}
+
+.cardD {
+  display: flex;
+  text-align: left;
+  background: #FFFFFF;
+  text-decoration: none;
+  padding: 2rem 1rem;
+  width: 100%;
+  gap: 1rem;
+  border-radius: 4px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cardD:hover,
+.cardD:focus,
+.cardD:active {
+  color: var(--primarycolor);
+  border-color: var(--primarycolor);
 }
 
 .parentContainer {
@@ -169,6 +198,7 @@
   margin-top: 64px;
   justify-content: center;
 }
+
 
 .pContainer {
   position: relative;
@@ -192,6 +222,7 @@
 .btnCreate {
   background: var(--primarycolor);
   color: #fff ;
+  border-radius: 50px;
 }
 
 .btnCreate:hover {
@@ -569,7 +600,7 @@
 }
 
 .sideabr .sd .sdcore > button {
-  border-radius: 4px;
+  border-radius: 50px;
   background-color: var(--primarycolor);
 }
 
@@ -588,111 +619,6 @@
   height: 1em;
   margin-left: 0.5rem;
 }
-
-@media (max-width: 700px) {
-  .grid {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .btmCont {
-    display: grid;
-  }
-
-  .parentdiv{
-    width: fit-content;
-  }
-
-  .cardContainer {
-    width: 245px;
-  }
-
-  .parentContainer {
-    margin-left: 0px !important;
-    height: 100%;
-  }
-
-  .sidebar {
-    display: none;
-    transition: 0.2s;
-  }
-
-  .dashboardCont {
-    width: 100%;
-    height: 100%;
-  }
-
-  .dashboardCont .topCont {
-    flex-direction: column
-  }
-
-  .dashboardCont .topCont .innerdiv {
-    flex-direction: column
-  }
-
-  .ucStack {
-    width: 300px;
-  }
-
-  .table , .tableStack{
-    width: 300px;
-  }
-
-  .footer {
-    display: flex;
-    padding: 1rem 0;
-    bottom: 0;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    grid-gap: 1rem;
-    gap: 1rem;
-    background: var(--primarybackground);
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 1030px) {
-  .dashboardCont {
-    width: 100%;
-    height: 100%;
-  }
-
-  .parentContainer {
-    margin-left: 0px !important;
-    height: 100%;
-  }
-
-  .dashboardCont .topCont .innerdiv {
-    flex-direction: row;
-    flex-wrap: wrap;
-    /* padding: 2rem; */
-    justify-content: center;
-  }
-
-  .table {
-    width: 100%;
-  }
-
-
-}
-
-@media (max-width: 1304px) {
-  .sidebar {
-    display: none;
-    transition: 0.2s;
-  }
-
-  .dashboardCont {
-    width: 100%;
-  }
-
-  .parentContainer {
-    margin-left: 0px !important;
-    height: 100%;
-  }
-}
-
 
 .drag-container {
   text-align: center;
@@ -784,4 +710,116 @@
   line-height: 1.5;
   letter-spacing: 0.00938em;
 }
+
+@media (max-width: 1030px) {
+  .dashboardCont {
+    width: 100%;
+    height: 100%;
+  }
+
+  .parentContainer {
+    margin-left: 0px !important;
+    height: 100%;
+  }
+
+  .dashboardCont .topCont .innerdiv {
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* padding: 2rem; */
+    justify-content: center;
+  }
+
+  .table {
+    width: 100%;
+  }
+
+  .parentdiv {
+    width: 100%;
+  }
+
+
+}
+
+
+@media (max-width: 1304px) {
+  .sidebar {
+    display: none;
+    transition: 0.2s;
+  }
+
+  .dashboardCont {
+    width: 100%;
+  }
+
+  .parentContainer {
+    margin-left: 0px !important;
+    height: 100%;
+  }
+}
+
+
+
+@media (max-width: 700px) {
+  .grid {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btmCont {
+    display: grid;
+  }
+
+  .parentdiv{
+    width: 600px;
+  }
+
+  .cardContainer {
+    width: 245px;
+  }
+
+  .parentContainer {
+    margin-left: 0px !important;
+    height: 100%;
+  }
+
+  .sidebar {
+    display: none;
+    transition: 0.2s;
+  }
+
+  .dashboardCont {
+    width: 100%;
+    height: 100%;
+  }
+
+  .dashboardCont .topCont {
+    flex-direction: column
+  }
+
+  .dashboardCont .topCont .innerdiv {
+    flex-direction: column
+  }
+
+  .ucStack {
+    width: 300px;
+  }
+
+  .table , .tableStack{
+    width: 300px;
+  }
+
+  .footer {
+    display: flex;
+    padding: 1rem 0;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 1rem;
+    gap: 1rem;
+    background: var(--primarybackground);
+    flex-direction: column;
+  }
+}
+
 

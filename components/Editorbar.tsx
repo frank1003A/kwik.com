@@ -47,14 +47,6 @@ const Editorbar: FC<Props> = ({
         onClick={handlePrint}
       />
 
-      <ButtonComponent
-      icon={<PictureAsPdf />}
-      className={btnStyles.muiButtonBackground}
-      innerText="PDF"
-      onClick={exportPDF}
-      key={2}
-      />
-
      <ButtonComponent
       icon={<Image />}
       className={btnStyles.muiButtonBackground}

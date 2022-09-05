@@ -43,6 +43,8 @@ yarn-error.log*
 #compoents
 /components/Kwik_Creator
 /components/KwikCreator
+/components/RxDiv
+/components/ResizableBox
 
 #page files
 /src/pages/KwikCreator.tsx

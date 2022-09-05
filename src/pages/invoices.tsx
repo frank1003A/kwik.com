@@ -1,41 +1,67 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import { CreateOutlined, DateRange, ImportExportSharp, LocalActivity, Sort } from '@mui/icons-material';
-import { Chip, Divider, FormControl, FormHelperText, FormLabel, IconButton, Tooltip, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
-import { useSession } from 'next-auth/react';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { ChangeEvent, useMemo } from 'react';
-import { useEffect, useState } from 'react';
-import { useRef } from 'react';
-import DatePicker from 'react-datepicker';
-import { useSWRConfig } from 'swr';
+import {
+  CreateOutlined,
+  DateRange,
+  ImportExportSharp,
+  LocalActivity,
+  Restore,
+  Sort,
+} from "@mui/icons-material";
+import {
+  Chip,
+  Divider,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, {
+  ChangeEvent,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import DatePicker from "react-datepicker";
+import { useSWRConfig } from "swr";
 
-import Create from '../../components/asset/Create';
-import CustomLoader from '../../components/asset/CustomLoader';
-import ButtonComponent from '../../components/Button';
-import CustomIconBtn from '../../components/CustomIconBtn';
-import CustomSnackbar from '../../components/CustomSnackbar';
-import { Invoice } from '../../components/Data/types';
-import InvoiceBar from '../../components/InvoiceBar';
-import Layout from '../../components/Layout';
-import Modal from '../../components/Modal';
-import MuiSearchbar from '../../components/MuiSearchbar';
-import { ControlledInput } from '../../components/styled-component/Global';
-import { Center, Container, Main, Top } from '../../components/styled-component/invoices';
-import useGetter from '../../hooks/useGetter';
-import { deleteRequest } from '../../lib/axios/axiosClient';
-import styles from '../../styles/Home.module.css';
-import { convertDateFormat, sortDataByDate, sortMultipleData } from '../../utils/utils';
+import Create from "../../components/asset/Create";
+import CustomLoader from "../../components/asset/CustomLoader";
+import ButtonComponent from "../../components/Button";
+import CustomIconBtn from "../../components/CustomIconBtn";
+import CustomSnackbar from "../../components/CustomSnackbar";
+import { Invoice } from "../../components/Data/types";
+import InvoiceBar from "../../components/InvoiceBar";
+import Modal from "../../components/Modal";
+import MuiSearchbar from "../../components/MuiSearchbar";
+import { ControlledInput } from "../../components/styled-component/Global";
+import {
+  Center,
+  Container,
+  Main,
+  Top,
+} from "../../components/styled-component/invoices";
+import useGetter from "../../hooks/useGetter";
+import { deleteRequest } from "../../lib/axios/axiosClient";
+import styles from "../../styles/Home.module.css";
+import {
+  convertDateFormat,
+  sortDataByDate,
+  sortMultipleData,
+} from "../../utils/utils";
 
-import type { NextPage } from "next";
-interface Props {
-  invoices: Invoice[];
-}
+import Layout from "../../components/Layout";
+import { NextPageWithLayout } from "./_app";
 
-const invoices: NextPage<Props> = () => {
+const invoices: NextPageWithLayout = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { data, isError, isLoading } = useGetter(
@@ -44,11 +70,10 @@ const invoices: NextPage<Props> = () => {
   const { mutate } = useSWRConfig();
 
   const [optionModal, setOptionModal] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<Invoice[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [startDate, setstartDate] = useState<Date>(new Date());
   const [endDate, setendDate] = useState<Date>(new Date());
-  const [sbd, setSBD] = useState<boolean>(false);
+  const [sdb, setSdb] = useState<boolean>(false);
   const [dateSort, setDateSort] = useState<boolean>(false);
   const [dueDateSort, setDueDateSort] = useState<boolean>(false);
   const [sorted, setSorted] = useState<Invoice[]>([]);
@@ -61,21 +86,25 @@ const invoices: NextPage<Props> = () => {
     message: "",
   });
 
-  const { theme } = useTheme();
-
   useEffect(() => {
+    if (!(status === "authenticated") && !session && !(status === "loading")) {
+      router.push("/auth/login");
+    }
+  }, [session, status]);
+
+  useMemo(() => {
     if (startDate && endDate !== undefined && dateSort) {
       const sortedData: Invoice[] = sortDataByDate(
         invoices,
-        convertDateFormat(startDate.toString(),  "yyyy-mm-dd")!,
+        convertDateFormat(startDate.toString(), "yyyy-mm-dd")!,
         convertDateFormat(endDate.toString(), "yyyy-mm-dd")!,
         "invoiceDate"
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dateSort, sbd]);
+  }, [startDate, endDate, dateSort]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (startDate && endDate !== undefined && dueDateSort) {
       const sortedData: Invoice[] = sortDataByDate(
         invoices,
@@ -85,7 +114,7 @@ const invoices: NextPage<Props> = () => {
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dueDateSort, sbd]);
+  }, [startDate, endDate, dueDateSort]);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
@@ -99,24 +128,18 @@ const invoices: NextPage<Props> = () => {
     setter();
   }, [data]);
 
-  const {} = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth/login");
-    },
-  });
-
   const deleteInvoice = async (id: string) => {
     try {
       const deleteInvoice = await deleteRequest(
         `api/user/invoice/invoices/?invoice_id=${id}`
       );
-      if (deleteInvoice)
+      if (deleteInvoice) {
         setInformUser({
           ...informUser,
           deletealert: true,
           message: `deleted invoice -${id}`,
         });
+      }
       mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
@@ -148,110 +171,88 @@ const invoices: NextPage<Props> = () => {
     });
   };
 
-  const handleCategoryFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    const fValue = invoices.filter((inv) => inv.status === value);
-    setSorted(fValue);
-  };
-
-  /**const handleOrder= (e: React.ChangeEvent<HTMLSelectElement>) => {
-    let value = Number(e.target.value)
-    if (value = 1)  invoices.sort(({invoiceDate}, {}) => {})
-    setSorted(fvalue)
-  } */
-
   /**
    * handles all the feature icons
    */
   const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
-      icon: (
-        <Sort
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <Sort />,
       tip: "Sort and Order",
       func() {
         setIsFiltering(!isFiltering);
+        if (sdb === true) setSdb(!sdb);
       },
     },
     {
-      icon: (
-        <ImportExportSharp
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <Restore />,
+      tip: "Reset",
+      func() {
+        setSorted([]);
+      },
+    },
+    {
+      icon: <ImportExportSharp />,
       tip: "Import Excel File",
     },
     {
-      icon: (
-        <CreateOutlined
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <CreateOutlined />,
       tip: "New Invoice",
       func: () => openOModal(),
     },
     {
-      icon: (
-        <DateRange
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
-      tip: "Sort data by date",
-      func: () => setSBD(!sbd),
-    },
-    {
-      icon: (
-        <LocalActivity
-          sx={{
-            color: "#555",
-            ":hover": {
-              color: theme === "light" ? "#2124b1" : "#FFA500",
-            },
-          }}
-        />
-      ),
+      icon: <LocalActivity />,
       tip: "Activity Log",
     },
   ];
 
+  const handleCategoryFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (sorted.length > 1) {
+      const fValue = sorted.filter((inv) => inv.status === value);
+      setSorted(fValue);
+    } else {
+      const fValue = invoices.filter((inv) => inv.status === value);
+      setSorted(fValue);
+    }
+  };
+
   const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (Number(e.target.value) ===  1) {
-      const sortedInvoices = invoices.map(obj => { return {...obj, invoiceDate: new Date(obj.invoiceDate), }})
-      .sort((a: any,b: any) => b.invoiceDate - a.invoiceDate)
-      setSorted(sortedInvoices)
+    if (Number(e.target.value) === 1) {
+      if (sorted.length > 0) {
+        const sortedInvoices = sorted
+          .map((obj) => {
+            return { ...obj, invoiceDate: new Date(obj.invoiceDate) };
+          })
+          .sort((a: any, b: any) => b.invoiceDate - a.invoiceDate);
+        setSorted(sortedInvoices);
+      } else {
+        const sortedInvoices = invoices
+          .map((obj) => {
+            return { ...obj, invoiceDate: new Date(obj.invoiceDate) };
+          })
+          .sort((a: any, b: any) => b.invoiceDate - a.invoiceDate);
+        setSorted(sortedInvoices);
+      }
+    } else if (Number(e.target.value) === 2) {
+      if (sorted.length > 0) {
+        const sortedInvoices = sorted
+          .map((obj) => {
+            return { ...obj, invoiceDate: new Date(obj.invoiceDate) };
+          })
+          .sort((a: any, b: any) => a.invoiceDate - b.invoiceDate);
+        setSorted(sortedInvoices);
+      } else {
+        const sortedInvoices = invoices
+          .map((obj) => {
+            return { ...obj, invoiceDate: new Date(obj.invoiceDate) };
+          })
+          .sort((a: any, b: any) => a.invoiceDate - b.invoiceDate);
+        setSorted(sortedInvoices);
+      }
+    } else {
+      setSorted([]);
     }
-    else if (Number(e.target.value) ===  2) {
-      const sortedInvoices = invoices.map(obj => { return {...obj, invoiceDate: new Date(obj.invoiceDate), }})
-      .sort((a: any,b: any) => a.invoiceDate - b.invoiceDate)
-      setSorted(sortedInvoices)
-    }
-    else {
-      setSorted([])
-    }
-  }
-  
+  };
 
   const renderFSort: React.ReactNode = [
     <>
@@ -277,51 +278,20 @@ const invoices: NextPage<Props> = () => {
 
   const renderDateSort: React.ReactNode = [
     <>
-    <ButtonComponent
-      innerText="reset"
-      onClick={() => {
-        setSorted([]); 
-        setstartDate(new Date())
-        setendDate(new Date())
-        /**setDateSort(false); 
-        setDueDateSort(false); 
-        setIsFiltering(false) */
-      }}
-      />
-
       <CustomIconBtn
-        icon={
-          <DateRange
-            sx={{
-              color: "#555",
-              ":hover": {
-                color: theme === "light" ? "#2124b1" : "#FFA500",
-              },
-            }}
-          />
-        }
-        toolTip="Filter by date created"
-        handleClick={() => setDateSort(!dateSort)}
+        id="topicon"
+        icon={<DateRange />}
+        toolTip="Filter by date"
+        handleClick={() => {
+          setSdb(!sdb);
+          setDateSort(true);
+        }}
       />
-      <CustomIconBtn
-        icon={
-          <DateRange
-            sx={{
-              color: "#555",
-              ":hover": {
-                color: theme === "light" ? "#2124b1" : "#FFA500",
-              },
-            }}
-          />
-        }
-        toolTip="Filter by due date"
-        handleClick={() => setDueDateSort(!dueDateSort)}
-      />
-    </>
-  ]
+    </>,
+  ];
 
   return (
-    <Layout>
+    <>
       <Container>
         <Top>
           <Typography>Invoices</Typography>
@@ -337,11 +307,11 @@ const invoices: NextPage<Props> = () => {
                 )
               }
             />
-            <motion.div layout animate>
+            <motion.div transition={{ type: "spring", bounce: 0.25 }}>
               {isFiltering && renderFSort}
-              {sbd && renderDateSort}
+              {isFiltering && renderDateSort}
             </motion.div>
-            <span>
+            <span id="topicon">
               {topIcons.map((k, idx) => {
                 return (
                   <Tooltip title={k.tip} key={idx}>
@@ -354,39 +324,84 @@ const invoices: NextPage<Props> = () => {
             </span>
           </div>
         </Top>
-        {dateSort || dueDateSort ? (
+        {sdb ? (
           <motion.div
             layout
             animate
             style={{
               display: "flex",
-              marginTop: "3.4rem",
-              padding: ".8rem 0px",
-              width: "50%",
-              transition: ".2s",
-              background: "#fff",
+              padding: "0.8rem 0px",
+              width: "100%",
+              transition: "all 0.2s ease 0s",
+              background: "rgb(255, 255, 255)",
               justifyContent: "space-evenly",
             }}
           >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              <input
+                type="checkbox"
+                name="Date Created"
+                checked={true && dueDateSort === true ? false : true}
+                onClick={() => {
+                  if (dueDateSort === true) {
+                    setDueDateSort(false);
+                    setDateSort(true);
+                  } else {
+                    setDateSort(true);
+                  }
+                }}
+              />
+              <FormLabel>Date Created</FormLabel>
+              <input
+                type="checkbox"
+                name="Due Date"
+                checked={true && dateSort === true ? false : true}
+                onClick={() => {
+                  if (dateSort === true) {
+                    setDateSort(false);
+                    setDueDateSort(true);
+                  } else {
+                    setDueDateSort(true);
+                  }
+                }}
+              />
+              <FormLabel>Due Date</FormLabel>
+            </div>
             <FormControl>
               <FormLabel>Start Date</FormLabel>
-              <ControlledInput as={DatePicker} selected={startDate} onChange={(date:Date) => setstartDate(date)}/>
+              <ControlledInput
+                as={DatePicker}
+                selected={startDate}
+                onChange={(date: Date) => setstartDate(date)}
+              />
               <FormHelperText></FormHelperText>
             </FormControl>
             <FormControl>
               <FormLabel>End Date</FormLabel>
-              <ControlledInput as={DatePicker} selected={endDate} onChange={(date:Date) => setendDate(date)}/>
+              <ControlledInput
+                as={DatePicker}
+                selected={endDate}
+                onChange={(date: Date) => setendDate(date)}
+              />
               <FormHelperText></FormHelperText>
             </FormControl>
           </motion.div>
         ) : null}
-        <Main as={motion.div} layout gtc={isLoading || invoices.length < 1 ? "100%" : "0px 0px 0px"}>
-          {isLoading ? (
+        <Main as={motion.div}>
+          {(router.pathname === "/invoices" && 
+          Array.isArray(data) &&
+          data.length >= 1 && 
+          status === "loading") ||
+          status === "unauthenticated" ? (
             <Center>
-              <CustomLoader />
-              <Typography variant="body1" color="initial">
-                Fetching Your Invoice
-              </Typography>
+              <CustomLoader text="Fetching Invoices" />
             </Center>
           ) : sorted.length > 0 ? (
             sorted.map((inv, idx) => {
@@ -400,11 +415,14 @@ const invoices: NextPage<Props> = () => {
                   invtitle={inv.invoiceTitle}
                   name={inv.title}
                   invId={inv._id}
+                  CurrencyText={inv.currency_symbol}
                   status={dispStats(inv.status!)}
                 />
               );
             })
-          ) : invoices.length < 1 && !isLoading ? (
+          ) : Array.isArray(data) &&
+            data.length < 1 &&
+            status === "authenticated" ? (
             <Center>
               <Create width={"200"} height={"200"} />
               <Typography variant="body1" color="initial">
@@ -424,6 +442,7 @@ const invoices: NextPage<Props> = () => {
                   name={inv.title}
                   invId={inv._id}
                   status={dispStats(inv.status!)}
+                  CurrencyText={inv.currency_symbol}
                 />
               );
             })
@@ -456,8 +475,12 @@ const invoices: NextPage<Props> = () => {
         verticalPosition="bottom"
         horizontalPosition="center"
       />
-    </Layout>
+    </>
   );
 };
 
 export default invoices;
+
+invoices.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};

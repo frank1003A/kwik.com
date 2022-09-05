@@ -67,3 +67,11 @@ a:hover {
 p {
   font-family: 'Roboto';
 }
+
+#topicon  svg {
+  color: var(--textcolor)
+}
+
+#topicon svg:hover {
+  color: var(--primarycolor)
+}

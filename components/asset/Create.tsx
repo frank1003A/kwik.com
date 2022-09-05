@@ -23,7 +23,7 @@ const Create = ({width, height}: Props) => {
         width={!width ? "300" : width }
         height={height ? "300" : height }
         viewBox="0 0 900 600"
-        fill="none"
+        fill="transparent"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path fill="transparent" d="M0 0h900v600H0z" />

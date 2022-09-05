@@ -9,6 +9,10 @@ export const Container = styled.div`
   align-items: flex-start;
   flex-direction: column;
 
+  @media (max-width: 500px) {
+      width: none;
+    }
+
   #chipFont {
     margin: 0;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -20,14 +24,12 @@ export const Container = styled.div`
   }
 `;
 export const Top = styled.section`
-  right: 0;
-  left: 250px;
   display: flex;
   padding: 0.5rem 3rem;
   background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
-  position: fixed;
+  width: 100%;
   z-index: 100;
   justify-content: space-between;
 
@@ -56,22 +58,20 @@ export const Top = styled.section`
     justify-content: center;
   }
 `;
-export const Main = styled.section<{
-  /**@alias `grid-template-colums` */
-  gtc?: string
-  }>`
-    width: 100%;
+export const Main = styled.section`
+        width: 100%;
     min-height: 100vh;
     background: var(--bg);
-    display: grid;
-    margin: 6rem 0 6rem 0;
-    grid-template-columns: ${(props) => props.gtc ? props.gtc : '0px 0px 0px'} ;
-    grid-row-gap: 3rem;
-    padding: 0 2rem;
+    row-gap: 2.5rem;
+    display: flex;
+    flex-direction: row;
+    padding: 2rem 3rem;
     justify-items: center;
-    align-content: center;
-    align-items: center;
-    justify-content: space-around;
+    -webkit-box-align: center;
+    align-items: flex-start;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    flex-wrap: wrap;
 
   span {
     margin: 0;
@@ -88,6 +88,7 @@ export const Main = styled.section<{
     right: 0px !important;
     top: auto !important;
     gap: 1rem;
+    grid-template-columns: 100%;
     justify-content: center;
   }
 `;

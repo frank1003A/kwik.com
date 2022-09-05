@@ -51,8 +51,6 @@ export interface Invoice {
   totalLabel: string
   total: string 
   currency_symbol: string
-  currency: string
-
   notesLabel: string
   notes: string
   termLabel: string

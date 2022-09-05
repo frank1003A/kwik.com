@@ -7,7 +7,7 @@ import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 
 import ButtonComponent from "../../../components/Button";
@@ -15,7 +15,6 @@ import { countryList } from "../../../components/Data/countryList";
 import { initialInvoice } from "../../../components/Data/initialData";
 import { Invoice, InvoiceItems, STATUS } from "../../../components/Data/types";
 import InvoiceMain from "../../../components/InvoiceMain";
-import Layout from "../../../components/Layout";
 import Modals from "../../../components/Modal";
 import {
   Header,
@@ -28,14 +27,18 @@ import { patchRequest } from "../../../lib/axios/axiosClient";
 import styles from "../../../styles/Invoice.module.css";
 
 import {
+  EditAttributes,
+  ModeEdit,
+  PanoramaFishEye,
   PhotoFilter,
   Redo,
-  RemoveCircleRounded
+  RemoveCircleRounded,
+  ViewComfy
 } from "@mui/icons-material";
 import axios, { AxiosRequestConfig } from "axios";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
-import { CompactPicker } from "react-color";
+import { BlockPicker, CompactPicker } from "react-color";
 import Editorbar from "../../../components/Editorbar";
 import SettingsComponent from "../../../components/InvoiceSettings";
 import useGetter from "../../../hooks/useGetter";
@@ -44,51 +47,67 @@ import { motion } from "framer-motion";
 import ControlledAccordions from "../../../components/Accordion";
 import CustomLoader from "../../../components/asset/CustomLoader";
 import CustomSnackbar from "../../../components/CustomSnackbar";
+import Layout from "../../../components/Layout";
+import { NextPageWithLayout } from "../_app";
+import { useTheme } from "next-themes";
+import CustomIconBtn from "../../../components/CustomIconBtn";
 
-/**Google Translate Data Response Type */
-interface languageResponse {
-  data?: {
-    languages: {
-      language: string;
-    }[];
-  };
-}
 
-const EditInvoice: NextPage = () => {
-  const { query } = useRouter();
-
-  const router = useRouter();
-  const { status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth/login");
-    },
-  });
-
-  const { data, isError, isLoading } = useGetter(
-    `/api/user/invoice/invoice/?invoice_id=${query.invoice_id}`
-  );
-
-  const [editPdf, seteditPdf] = useState<boolean>(false);
-  const [opensuccess, setOpensuccess] = useState<boolean>(false);
-  const [opensaved, setOpenSaved] = useState<boolean>(false);
-  const [taxRate, setTaxRate] = useState<number>();
-  const [currency, setCurrency] = useState<string>("");
-  const [showEditComp, setShowEditComp] = useState<boolean>(false);
-  const [edcActive, setEdcActive] = useState<boolean>(false);
-  const [invComp, setInvComp] = useState<boolean>(false);
-  const [languages, setLanguages] = useState<languageResponse>({});
-  const [sModal, setSModal] = useState<boolean>(false);
-  const [test, setTest] = useState<boolean>(false);
-  const [toggleDisplay, setToggleDisplay] = useState<{
-    headerdisplay: "" | "none";
+/**Invoice Section */
+interface SectionToggleProps {
+  headerdisplay: "" | "none";
     divider: "" | "none";
     cs: "" | "none";
     logo: "" | "none";
     tt: "" | "none";
     nt: "" | "none";
     tc: "" | "none";
-  }>({
+}
+
+const EditInvoice: NextPageWithLayout = () => {
+  /**retrieves queries from use router hook */
+  const { query } = useRouter();
+
+  const router = useRouter();
+
+  /**protects route */
+  const { } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace("/auth/login");
+    },
+  });
+
+  /**custom hook using swr */
+  const { data, isError, isLoading } = useGetter(
+    `/api/user/invoice/invoice/?invoice_id=${query.invoice_id}`
+  );
+
+  const { theme } = useTheme()
+
+  const [editPdf, seteditPdf] = useState<boolean>(false);
+  
+  /***Modals */
+  const [opensuccess, setOpensuccess] = useState<boolean>(false);
+  const [opensaved, setOpenSaved] = useState<boolean>(false);
+  const [sModal, setSModal] = useState<boolean>(false);
+
+  /**Invoice Changes */
+  const [taxRate, setTaxRate] = useState<number>();
+  const [currency, setCurrency] = useState<string>("");
+
+  /**next-theme */
+  const [mounted, setMounted] = useState<boolean>(false)
+
+  /**mode toggleer*/
+  const [invComp, setInvComp] = useState<boolean>(false)
+  const [edcActive, setEdcActive] = useState<boolean>(false)
+  const [showEditComp, setShowEditComp] = useState<boolean>(false)
+
+  const [test, setTest] = useState<boolean>(false);
+
+  /**toggle invoice section view */
+  const [toggleDisplay, setToggleDisplay] = useState<SectionToggleProps>({
     headerdisplay: "",
     divider: "",
     cs: "",
@@ -97,6 +116,25 @@ const EditInvoice: NextPage = () => {
     nt: "",
     tc: "",
   });
+
+  const handleActiveSideComponent = (): void => {
+    if (invComp === true) {
+      setInvComp(false);
+      setEdcActive(true);
+    }
+    if (edcActive === true) {
+      setEdcActive(false);
+      setInvComp(true);
+    }
+  };
+
+  useEffect(() => {
+    setMounted(true)
+  },[])
+
+  useEffect(() => {
+    setInvComp(true);
+  }, []);
 
   /**
    * edtable true means the core input element is disabled.
@@ -150,7 +188,7 @@ const EditInvoice: NextPage = () => {
           headerChildren={
             <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>
                   remove all{" "}
                 </Typography>
                 <button
@@ -166,7 +204,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>logo </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>logo </Typography>
                 <button
                   title="logo-remove"
                   onClick={() =>
@@ -177,7 +215,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>title </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>title </Typography>
                 <button
                   title="title-remove"
                   onClick={() =>
@@ -188,7 +226,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>reset </Typography>
                 <button
                   title="none-remove"
                   onClick={() =>
@@ -203,7 +241,7 @@ const EditInvoice: NextPage = () => {
           lineChildren={
             <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>
                   Divider{" "}
                 </Typography>
                 <button
@@ -216,7 +254,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>reset </Typography>
                 <button
                   title="none-remove"
                   onClick={() =>
@@ -231,7 +269,7 @@ const EditInvoice: NextPage = () => {
           companyChildren={
             <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>
                   remove section{" "}
                 </Typography>
                 <button
@@ -244,7 +282,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>reset </Typography>
                 <button
                   title="none-remove"
                   onClick={() => setToggleDisplay({ ...toggleDisplay, cs: "" })}
@@ -257,7 +295,7 @@ const EditInvoice: NextPage = () => {
           notesChildren={
             <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>
                   remove section{" "}
                 </Typography>
                 <button
@@ -269,7 +307,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>reset </Typography>
                 <button
                   title="none-remove"
                   onClick={() => setToggleDisplay({ ...toggleDisplay, nt: "" })}
@@ -282,7 +320,7 @@ const EditInvoice: NextPage = () => {
           tandcChildren={
             <div className={styles["acctext"]}>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>
                   remove section{" "}
                 </Typography>
                 <button
@@ -294,7 +332,7 @@ const EditInvoice: NextPage = () => {
                 </button>
               </div>
               <div className={styles["compStyle"]}>
-                <Typography sx={{ color: "text.secondary" }}>reset </Typography>
+                <Typography sx={{ color: mounted && theme === "dark" ? "#FFFFF":  "text.secondary" }}>reset </Typography>
                 <button
                   title="none-remove"
                   onClick={() => setToggleDisplay({ ...toggleDisplay, tc: "" })}
@@ -331,58 +369,89 @@ const EditInvoice: NextPage = () => {
   });
 
   const handleItemInput = (
-    e: Event | React.SyntheticEvent<any, Event>,
+    e: (Event | React.SyntheticEvent<any, Event>) | string,
     index: number,
     name: keyof InvoiceItems
   ): void => {
-    e.preventDefault();
-    const { value } = e.currentTarget;
-    let MInvoice: Invoice = { ...InvoiceRepo };
-    let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
+    if (typeof e !== "string") {
+      e.preventDefault();
+      const { value } = e.currentTarget;
+      let MInvoice: Invoice = { ...InvoiceRepo };
+      let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
 
-    const items = Items.map((itm, idx) => {
-      if (index === idx) {
-        const invItems: InvoiceItems = { ...itm };
-        if (name === "_id" && name !== undefined && typeof value === "number") {
-          throw new Error(
-            "An attempt has been made to mutate an Id field which is not allowed"
-          );
-        } else if (
-          name === "quantity" &&
-          name !== undefined &&
-          typeof value === "string"
-        ) {
-          invItems[name] = Number(value);
-        } else if (name == "description" && typeof value === "string") {
-          invItems[name] = value;
-        } else if (name == "rate" && typeof value === "string") {
-          invItems[name] = value;
+      const items = Items.map((itm, idx) => {
+        if (index === idx) {
+          const invItems: InvoiceItems = { ...itm };
+          if (
+            name !== "_id" &&
+            name !== "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = value;
+          } else if (
+            name === "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = Number(value);
+          }
+
+          if (invItems.quantity && invItems.rate) {
+            invItems.amount = (
+              invItems.quantity * Number(invItems.rate)
+            ).toString();
+          }
+
+          return invItems;
         }
+        return itm;
+      });
+      MInvoice.invoiceitems = items;
+      getSubTotal(MInvoice);
+      getTxRate(MInvoice);
+      getTotal(MInvoice);
+      setInvoiceRepo(MInvoice);
+    }
+    else if (typeof e === "string") {
+      const value = e
+      let MInvoice: Invoice = { ...InvoiceRepo };
+      let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
 
-        if (invItems.quantity && invItems.rate) {
-          invItems.amount = (
-            invItems.quantity * Number(invItems.rate)
-          ).toString();
+      const items = Items.map((itm, idx) => {
+        if (index === idx) {
+          const invItems: InvoiceItems = { ...itm };
+          if (
+            name !== "_id" &&
+            name !== "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = value;
+          } else if (
+            name === "quantity" &&
+            name !== undefined &&
+            typeof value === "string"
+          ) {
+            invItems[name] = Number(value);
+          }
+
+          if (invItems.quantity && invItems.rate) {
+            invItems.amount = (
+              invItems.quantity * Number(invItems.rate)
+            ).toString();
+          }
+
+          return invItems;
         }
-
-        return invItems;
-      }
-      return itm;
-    });
-
-    //set mutable Invoice
-    MInvoice.invoiceitems = items;
-
-    //getSubtotal
-    getSubTotal(MInvoice);
-
-    //taxRate
-    getTxRate(MInvoice);
-
-    //getTotal
-    getTotal(MInvoice);
-
-    setInvoiceRepo(MInvoice); //setter
+        return itm;
+      });
+      MInvoice.invoiceitems = items;
+      getSubTotal(MInvoice);
+      getTxRate(MInvoice);
+      getTotal(MInvoice);
+      setInvoiceRepo(MInvoice);
+    }
   };
 
   const handleDetailInput = (
@@ -495,6 +564,19 @@ const EditInvoice: NextPage = () => {
     }
   };
 
+  const handleTxRateChange = () => {
+    const inv: Invoice = { ...InvoiceRepo };
+    getTxRate(inv);
+    getSubTotal(inv);
+    getTotal(inv);
+    setInvoiceRepo(inv);
+  };
+
+  useEffect(() => {
+    /**Handle User Rate */
+    handleTxRateChange();
+  }, [taxRate]);
+
   const getTotal = (inv: Invoice): void => {
     const total =
       Number(inv.subTotal) + (Number(inv.tax) !== 0 ? Number(inv.tax) : 0);
@@ -552,107 +634,6 @@ const EditInvoice: NextPage = () => {
     });
   };
 
-  /**get all google translate anguages */
-  const options: AxiosRequestConfig = {
-    method: "GET",
-    url: "https://google-translate1.p.rapidapi.com/language/translate/v2/languages",
-    headers: {
-      "Accept-Encoding": "application/gzip",
-      "X-RapidAPI-Key": "6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c",
-      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
-    },
-  };
-
-  useEffect(() => {
-    axios
-      .request(options)
-      .then(function (response) {
-        setLanguages(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  }, []);
-
-  /**detect current language 
-
-  const encodeParamsTranslate = new URLSearchParams();
-  encodeParamsTranslate.append("q", `${InvoiceRepo.notes}`);
-
-  const detectoption: AxiosRequestConfig = {
-    method: "POST",
-    url: "https://google-translate1.p.rapidapi.com/language/translate/v2/detect",
-    headers: {
-      "content-type": "application/x-www-form-urlencoded",
-      "Accept-Encoding": "application/gzip",
-      "X-RapidAPI-Key": '6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c',
-      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
-    },
-    data: encodeParamsTranslate,
-  };
-
-  useEffect(() => {
-    axios
-      .request(detectoption)
-      .then(function (response) {
-        console.log('detectedLanguage:', response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  }, []);
-
-
-  /**
-   * Translate current language 
-   */
-
-  const encodeParamsTranslate = new URLSearchParams();
-
-  const translateLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    /**translate and assign to variables */
-    const noteslabel = encodeParamsTranslate.append(
-      "q",
-      `${InvoiceRepo.notesLabel}`
-    );
-    //encodeParamsTranslate.append("q",  `${InvoiceRepo.notes}`);
-    encodeParamsTranslate.append("target", e.target.value);
-    encodeParamsTranslate.append("source", "en");
-
-    /**
-    * /**Assign traslation to invoice 
-   let inv: Invoice = {...InvoiceRepo}
-   if (noteslabel !== undefined) inv.notes = noteslabel
-
-   /** 
-   if (typeof noteslabel === "string")
-   setInvoiceRepo({...InvoiceRepo, notesLabel: noteslabel})
-    */
-  };
-
-  const optionsTranslate: AxiosRequestConfig = {
-    method: "POST",
-    url: "https://google-translate1.p.rapidapi.com/language/translate/v2",
-    headers: {
-      "content-type": "application/x-www-form-urlencoded",
-      "Accept-Encoding": "application/gzip",
-      "X-RapidAPI-Key": "6ed9e81ad4msh3da10810ad91da8p165683jsn7c4331c2158c",
-      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
-    },
-    data: encodeParamsTranslate,
-  };
-
-  useEffect(() => {
-    axios
-      .request(optionsTranslate)
-      .then(function (response) {
-        console.log("translated", response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  }, [languages]);
-
   const handleEditable = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: boolean = e.target.checked;
     /**
@@ -674,7 +655,7 @@ const EditInvoice: NextPage = () => {
     <>
       {isLoading ? (
         <motion.div
-          layout
+          
           style={{
             width: "100%",
             height: "100vh",
@@ -691,10 +672,9 @@ const EditInvoice: NextPage = () => {
           </Typography>
         </motion.div>
       ) : (
-        <Layout>
+        <>
           <Container>
             <div className={styles.fileAndEditor}>
-              <div className={styles.lseditor}>{dispInvComponents}</div>
               <Editorbar
                 saveText="UPDATE"
                 updateDisabled={editable === false ? false : true}
@@ -702,16 +682,6 @@ const EditInvoice: NextPage = () => {
                 handleSave={() => updateInvoice()}
                 handleVat={() => handleShowSettingsModal()}
                 status={dispStats(InvoiceRepo.status!)}
-                exportPDF={async () => {
-                  const { exportComponentAsPDF } = await import(
-                    "react-component-export-image"
-                  );
-                  exportComponentAsPDF(componentRef, {
-                    pdfOptions: {
-                      orientation: "p",
-                    },
-                  });
-                }}
                 exportJPEG={async () => {
                   const { exportComponentAsPNG } = await import(
                     "react-component-export-image"
@@ -725,28 +695,20 @@ const EditInvoice: NextPage = () => {
                   });
                 }}
                 editController={
-                  <FormControlLabel
-                    label={`EDIT`}
-                    sx={{
-                      margin: "0",
-                      fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                      fontWeight: "500",
-                      textTransform: "capitalize",
-                      color: "#555",
-                      fontSize: "0.875rem",
-                      lineHeight: "1.5",
-                      letterSpacing: "0.00938em",
+                    <>
+                    <CustomIconBtn
+                    toolTip="Toggle Editable Mode"
+                    icon={editable === true ? <ModeEdit/> : <PanoramaFishEye/>}
+                    handleClick={() =>{
+                      setEditable(!editable)
+                      if (editable === true) {
+                        handleOpenNotifyEdit();
+                      }
                     }}
-                    labelPlacement="end"
-                    control={
-                      <Checkbox
-                        color="primary"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          handleEditable(e)
-                        }
-                      />
-                    }
-                  />
+                    id="topicon"
+                    />
+                    <Typography>{editable === true ? "Read-Only" : "Editable" }</Typography>
+                    </>
                 }
               />
               <div className={styles.editorFlex}>
@@ -781,14 +743,41 @@ const EditInvoice: NextPage = () => {
                   notes={toggleDisplay.nt}
                 ></InvoiceMain>
                 <PropertyEditor>
-                  <Header>
-                    <PhotoFilter />
-                    <Typography variant="subtitle1" color="#555">
-                      Page Design
-                    </Typography>
+                <Header>
+                    <div className={styles["edcToggler"]}>
+                <button
+                  className={
+                    edcActive === true
+                      ? styles["edcBtnActive"]
+                      : styles["edcBtn"]
+                  }
+                  onClick={() => {
+                    handleActiveSideComponent();
+                    setShowEditComp(true);
+                  }}
+                >
+                  Edit Component
+                </button>
+                <button
+                  className={
+                    invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
+                  }
+                  onClick={() => {
+                    handleActiveSideComponent();
+                    setShowEditComp(false);
+                  }}
+                >
+                  Edit Invoice
+                </button>
+              </div>
                   </Header>
-                  <PropertiesContainer>
-                    <Property>
+                  <PropertiesContainer as={motion.div} layout animate>
+                    {
+                      showEditComp ? (
+                        <div>{dispInvComponents}</div>
+                      ) : (
+                        <>
+                        <Property>
                       <Typography variant="overline" color="#555">
                         Font Family
                       </Typography>
@@ -822,6 +811,7 @@ const EditInvoice: NextPage = () => {
                           setInvoiceRepo({
                             ...InvoiceRepo,
                             pageStyles: {
+                              ...InvoiceRepo.pageStyles,
                               background: color.hex,
                             },
                           })
@@ -844,32 +834,9 @@ const EditInvoice: NextPage = () => {
                         }
                       />
                     </Property>
-                    <Property>
-                      <Typography variant="overline" color="#555">
-                        Language
-                      </Typography>
-                      <div style={{ width: "230px", padding: "0px 2px" }}>
-                        <select
-                          name="font"
-                          title="font-Change"
-                          onChange={(e) =>
-                            setInvoiceRepo({
-                              ...InvoiceRepo,
-                              styles: {
-                                ...InvoiceRepo.styles,
-                                fontLanguageOverride: e.target.value,
-                              },
-                            })
-                          }
-                        >
-                          {languages.data?.languages.map((l) => {
-                            return (
-                              <option value={l.language}>{l.language}</option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </Property>
+                        </>
+                      )
+                    }
                   </PropertiesContainer>
                 </PropertyEditor>
               </div>
@@ -926,6 +893,18 @@ const EditInvoice: NextPage = () => {
                   setTaxRate(Number(e.target.value))
                 }
                 currentTaxRate={taxRate}
+                handleStatusChange={(
+                  e: React.ChangeEvent<HTMLSelectElement>
+                ) => {
+                  updateInvoiceStatus(
+                    "status",
+                    e.target.value as STATUS["status"]
+                  );
+                }}
+                handleCurrency={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setInvoiceRepo({ ...InvoiceRepo, currency_symbol: e.target.value });
+                }}
+                handleCloseBtn={handleCloseSettingsModal}
                 data={InvoiceRepo}
               />
             </Modals>
@@ -946,18 +925,28 @@ const EditInvoice: NextPage = () => {
                 }}
               >
                 <Image src="/print2.svg" height={300} width={300} />
-                Invoice Saved
+                <Typography variant="subtitle2" color="GrayText">
+                  Thank You for using Kwik Invoice Generator
+                </Typography>
               </div>
               <ButtonComponent innerText={"Continue"} />
             </Modals>
           </Container>
-        </Layout>
+        </>
       )}
     </>
   );
 };
 
 export default EditInvoice;
+
+EditInvoice.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  )
+}
 
 /**<div className={styles["edcToggler"]}>
                 <button

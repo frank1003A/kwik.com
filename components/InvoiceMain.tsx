@@ -37,7 +37,7 @@ interface Props {
     name: keyof Invoice
   ) => void;
   handleItemInput: (
-    e: Event | SyntheticEvent<any, Event>,
+    e: Event | SyntheticEvent<any, Event> | string,
     index: number,
     name: keyof InvoiceItems
   ) => void;

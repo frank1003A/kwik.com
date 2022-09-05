@@ -10,10 +10,12 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 import { createGlobalStyle } from 'styled-components';
+import { ReactElement, ReactNode, useState } from 'react'
+import type { NextPage } from 'next'
+import type { AppProps } from 'next/app'
 
 import { store } from '../redux/store';
-
-import type { AppProps } from "next/app";
+import Loading from '../../components/asset/Loading';
 // Your themeing variables
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -39,21 +41,35 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  return (
-    <>
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWithLayout) {
+
+  // Use the layout defined at the page level, if available
+  const getLayout = Component.getLayout ?? ((page) => page)
+    return (
+      <>
+      <Loading/>
       <GlobalStyle />
-      <SessionProvider session={session}>
-        <DndProvider backend={HTML5Backend}>
-          <ThemeProvider enableSystem={false}>
-            <Provider store={store}>
-              <Component {...pageProps} />
-            </Provider>
-          </ThemeProvider>
-        </DndProvider>
-      </SessionProvider>
-    </>
-  );
+        <SessionProvider session={session}>
+          <DndProvider backend={HTML5Backend}>
+            <ThemeProvider enableSystem={false}>
+              <Provider store={store}>
+              {getLayout(
+                   <Component {...pageProps} />
+              )}
+              </Provider>
+            </ThemeProvider>
+          </DndProvider>
+        </SessionProvider>
+      </>
+    )
 }
 
 export default MyApp;

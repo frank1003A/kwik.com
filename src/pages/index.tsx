@@ -1,58 +1,43 @@
-import { Typography } from '@mui/material';
-import { motion } from 'framer-motion';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import CustomLoader from '../../components/asset/CustomLoader';
-import Dashboard from '../../components/Dashboard';
-import Layout from '../../components/Layout';
-import { Container } from '../../components/styled-component/Global';
+import { Typography } from "@mui/material";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import CustomLoader from "../../components/asset/CustomLoader";
+import Dashboard from "../../components/Dashboard";
+import { Container } from "../../components/styled-component/Global";
+import { ReactElement, useEffect, useState } from "react";
+import Layout from "../../components/Layout";
+import { NextPageWithLayout } from "./_app";
 
-import type { NextPage } from "next";
-import { useMemo } from 'react';
-
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const router = useRouter();
 
-  const { status, data } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth/login");
-    },
-  });
+  const { data, status } = useSession();
+
+  useEffect(() => {
+    if (!(status === "authenticated") && !(data) && !(status === "loading")){
+      router.push("/auth/login")
+    }
+  }, [data, status]);
 
   return (
     <>
-    {
-      (status === "loading" || !status) && data !== null ? (
-        <motion.div
-          layout
-          style={{
-            width: "100%",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            columnGap: 10,
-          }}
-        >
-          <CustomLoader />
-          <Typography>Please wait...</Typography>
-        </motion.div>
-      ): 
-      (
-        <Layout>
-          <Container>
-            <Dashboard />
-          </Container>
-        </Layout>
-      )
-    }
+      {(router.pathname === "/" && status === "loading" || status === "unauthenticated") ? (
+        <CustomLoader text="Please wait..."/>
+      ) : (
+        <Container>
+          <Dashboard />
+        </Container>
+      )}
     </>
-  )
+  );
 };
 
 export default Home;
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
 
 /**const dispLoader = (): JSX.Element => {
     if (status === "loading") {

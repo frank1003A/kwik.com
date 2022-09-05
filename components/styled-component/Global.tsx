@@ -8,8 +8,8 @@ export const Container = styled.div`
   align-items: flex-start;
   flex-direction: column;
 
-  @media (max-width: 500px) {
-    padding: 1.5rem !important;
+  @media (max-width: 800px) {
+    padding: 0px !important;
   }
 
 `;
@@ -21,8 +21,9 @@ export const VhContainer = styled.div`
   background: var(--bg);
   align-items: flex-start;
   flex-direction: column;
-  @media (max-width: 500px) {
-    padding: 1.5rem !important;
+  @media (max-width: 800px) {
+    padding: 0px !important;
+    width: 100% !important;
   }
 `;
 //#CCCCCC light grey
@@ -83,7 +84,7 @@ export const UserBadge = styled.div`
     color: var(--sw);
     height: 40px;
     padding: 0px 25px;
-    width: 200px;
+    width:min-content;
     display: flex;
     text-transform: lowercase;
     border-radius: 50px;
@@ -124,15 +125,33 @@ export const CustomColor = styled.span`
     }
 `;
 
+export const CustomSelect = styled.select`
+    padding: 10px 8px;
+    background: #eee;
+    width: inherit;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-weight: 400;
+    color: #555;
+    line-height: 1.5;
+
+    &:focus-within {
+      border: none;
+    }
+
+    &:focus-within {
+      border: 1px solid var(--bg);
+    }
+`;
+
 export const Top = styled.div`
-  right: 0;
-  left: 250px;
   display: flex;
-  padding: .5rem 3rem;
-  background: var(var(--bg));
+  padding: 0.5rem 3rem;
+  background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
-  position: fixed;
+  width: 100%;
   z-index: 100;
   justify-content: space-between;
   div {
@@ -144,14 +163,13 @@ export const Top = styled.div`
       padding: 0px 0.6rem;
       box-shadow: 0 0 10px rgb(0 0 0 / 15%);
     }
-    input[type="date"]{
-      border: none;
-      border-radius: 4px;
-      width: 15px;
-      height: inherit;
-      padding: 0px 0.6rem;
-      box-shadow: 0 0 10px rgb(0 0 0 / 15%);
-    }
+  }
+
+  @media (max-width: 1500px) {
+    left: 0px !important;
+    right: 0px !important;
+    top: auto !important;
+    padding: 10px 2rem;
   }
 `;
 
@@ -167,7 +185,7 @@ export const List = styled.div`
     flex-wrap: nowrap;
     justify-content: space-evenly;
 
-    @media (max-width: 500px) {
+    @media (max-width: 800px) {
       padding: 1rem 3rem;
     }
     
@@ -175,7 +193,7 @@ export const List = styled.div`
       color: var(--fg)
     }
 
-  @media (max-width: 500px) {
-    padding: 0px !important;
+  @media (max-width: 1000px) {
+    padding: 0px 1rem !important;
   }
 `;

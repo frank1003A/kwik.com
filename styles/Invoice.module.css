@@ -120,7 +120,7 @@
   justify-content: flex-end;
   margin-bottom: 2rem;
   /* margin-top: 1rem; */
-  width: 50%;
+  /*width: 50%;*/
   align-items: flex-end;
 }
 
@@ -340,10 +340,13 @@
   justify-content: flex-start;
   flex-direction: column;
   align-items: flex-start;
+  color: var(--textcolor);
 }
 
 .accxtra{
   box-shadow: none !important;
+  background: var(--card);
+  color: var(--textcolor);
 }
 
 .acctext .compStyle {
@@ -358,7 +361,11 @@
 }
 
 .acctext .compStyle:hover {
-  background: #eee;
+  background: var(--sbedge);
+}
+
+.acctext .compStyle button svg {
+  color: var(--primarycolor);
 }
 
 .acctext button {
@@ -378,11 +385,12 @@
 .edcToggler {
   display: flex;
   justify-content: space-between;
-  border: 1px solid #fff;
+  border: 1px solid var(--primarybg);
   border-radius: 4px;
-  margin: 1rem;
+  margin: .2rem;
+  gap: .5rem;
   padding: .2rem;
-  background: #fff;
+  background: var(--invoicebg);
   align-items: center;
   transition: ease-in-out 0.8s;
 }
@@ -397,12 +405,12 @@
 }
 
 .edcToggler .edcBtn:hover {
-  background: #2124b1;
+  background: var(--primarycolor);
   color: #fff;
 }
 
 .edcToggler .edcBtnActive {
-  background: #2124b1;
+  background: var(--primarycolor);
   color: #fff;
   border: none;
   border-radius: 4px;

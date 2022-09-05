@@ -12,10 +12,9 @@ import { GitHub, LinkedIn } from "@mui/icons-material";
 
 interface Props {
   children: ReactNode;
-  fname?: string;
 }
 
-export default function Layout({ children, fname }: Props) {
+export default function Layout({ children }: Props) {
   const { data: session, status } = useSession();
 
   return (
@@ -26,7 +25,6 @@ export default function Layout({ children, fname }: Props) {
         <link rel="icon" href="/kwikifavicon.ico" />
       </Head>
       <Topbar
-        name={fname}
         userEmail={status === "authenticated" ? session?.user?.email! : ""}
         handleSignOut={() => signOut()}
       />

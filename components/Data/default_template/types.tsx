@@ -61,7 +61,7 @@ export interface TableProps {
       cur: string, 
       itemArr: typeof initialInvoiceItems[],
       removeItem: (id: number | string | string[]) => void,
-      handleItemInput: (e: Event | SyntheticEvent<any, Event>, index: number, name: keyof InvoiceItems) => void,
+      handleItemInput: (e: Event | SyntheticEvent<any, Event> | string, index: number, name: keyof InvoiceItems) => void,
       invoice: typeof initialInvoice,
       contentEditable?: boolean,
       ref?: LegacyRef<HTMLInputElement>,

@@ -1,27 +1,34 @@
 import styled from "styled-components";
 
 export const FlexContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  padding: 0px 1rem;
+      width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 `;
 
 export const List = styled.div`
-      width: 100%;
+        width: 100%;
     height: 100%;
     display: grid;
     grid-template-columns: 100%;
-    padding: 0px 5rem;
+    padding: 2rem 5rem;
     gap: 1rem;
-    margin-top: 5rem;
     justify-content: space-evenly;
     align-items: center;
 
-  @media (max-width: 500px) {
-    padding: 0px !important;
+  @media (max-width: 800px) {
+    padding: 0px 0px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
   }
 `;
 
@@ -36,14 +43,18 @@ export const Controls = styled.div`
 `;
 
 export const Card = styled.div`
-  border-radius: 8px;
-  padding: 1rem;
-  //width: 250px;
-  //height: 200px;
-  background: var(--cd);
-  box-shadow: var(--card-box-shadow);
+     border-radius: 8px;
+    padding: 1rem;
+    background: var(--cd);
+    box-shadow: var(--card-box-shadow);
+    font-size: .9rem;
+    text-align: center;
 
-  @media (max-width: 500px) {
+    svg {
+      color: var(--sw)
+    }
+
+  @media (max-width: 1000px) {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -51,16 +62,16 @@ export const Card = styled.div`
 `;
 
 export const Top = styled.div`
-  right: 0;
-  left: 250px;
-  display: flex;
-  padding: 0.5rem 3rem;
-  background: var(--bg);
-  border-bottom: 1px solid #2221;
-  align-items: center;
-  position: fixed;
-  z-index: 100;
-  justify-content: space-between;
+     display: flex;
+    width: 100%;
+    padding: 0.5rem 3rem;
+    background: var(--bg);
+    border-bottom: 1px solid #2221;
+    -webkit-box-align: center;
+    align-items: center;
+    z-index: 100;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
   div {
     display: flex;
     gap: 1rem;
@@ -72,10 +83,11 @@ export const Top = styled.div`
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 1500px) {
     left: 0px !important;
     right: 0px !important;
     top: auto !important;
+    padding: 10px 2rem;
   }
 `;
 

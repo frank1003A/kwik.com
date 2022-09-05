@@ -1,7 +1,7 @@
 import { CheckCircleSharp, Delete } from '@mui/icons-material';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
-import { Modal } from '@mui/material';
+import { Modal, Typography} from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -13,12 +13,15 @@ import Toolbar from '@mui/material/Toolbar';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import Link from 'next/link';
 import * as React from 'react';
 import Avatar from 'react-avatar';
 
 import useCurrentUser from '../hooks/useCurrentUser';
+import Create from './asset/Create';
+import MainLogo from './asset/MainLogo';
 import LeftAnchor from './LeftAnchor';
-import { UserBadge } from './styled-component/Global';
+import { Center, UserBadge } from './styled-component/Global';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,8 +65,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface Props {
   bg?: string,
-  userEmail: string,
-  handleSignOut: () => void,
+  userEmail?: string,
+  handleSignOut?: () => void,
   name?: string,
 }
 
@@ -228,11 +231,17 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
               },
               justifyContent: "center",
               alignItems: "center",
-              width: 250,
+              width: 300,
             }}
           >
-            <UserBadge><CheckCircleSharp fill="green"/> {userEmail}</UserBadge>
-            <IconButton
+           <UserBadge>
+              <CheckCircleSharp fill="green"/>
+              <Typography variant="subtitle1">
+              {userEmail}
+              </Typography>
+              </UserBadge>
+
+              <IconButton
               size="large"
               edge="end"
               aria-label="account of current user"
@@ -272,24 +281,27 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
        aria-describedby="modal-modal-description"
       >
         <motion.div style={style} layout>
-          <div>
+          <div style={{display:"flex"}}>
             <IconButton aria-label="" onClick={() => setSearchModal(false)}>
-              <Delete/>
+              <Delete color='info'/>
             </IconButton>
-          </div>
-        <Search>
+          <Search ref={inputRef}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search templates…"
               inputProps={{ "aria-label": "search" }}
-              ref={inputRef}
             />
           </Search>
-          <div>
-              <p>Search For anything</p>
-            </div>
+          </div>
+          <Center style={{background: 'transparent'}}>
+            <Create/>
+            <Typography variant="h6" color="Highlight">
+              We Currently use one template..
+              <Link href="http://localhost:3000/invoice/create">use default</Link>
+            </Typography>
+          </Center>
         </motion.div>
       </Modal>
     </Box>

@@ -43,7 +43,6 @@ export const initialInvoice: Invoice = {
   totalLabel: 'TOTAL',
   total: '',
   currency_symbol: '$',
-  currency: '',
   notesLabel: 'Notes',
   notes: 'It was great doing business with you.',
   termLabel: 'Terms & Conditions',
