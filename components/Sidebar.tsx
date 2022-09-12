@@ -153,8 +153,9 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             </Typography>
             <Divider />
             <Create />
-            <div className={styles["card"]}>
-              <Link href="http://localhost:3000/invoice/create">
+            <div className={styles["card"]} onClick={() => setOptionModal(false)}>
+              <Link href="http://localhost:3000/invoice/create"
+              >
                 <Typography>Create Invoice</Typography>
               </Link>
             </div>

@@ -267,23 +267,6 @@ const CreateInvoice: NextPageWithLayout = () => {
     }
   };
 
-  /**if (name === "_id" && name !== undefined && typeof value === "number") {
-          throw new Error(
-            "An attempt has been made to mutate an Id field which is not allowed"
-          );
-        } else if (
-          name === "quantity" &&
-          name !== undefined &&
-          typeof value === "string"
-        ) {
-          invItems[name] = Number(value);
-        } else if (name == "description" && typeof value === "string") {
-          invItems[name] = value;
-        } else if (name == "rate" && typeof value === "string") {
-          invItems[name] = value;
-        }
- */
-
   const handleDetailInput = (
     e: Event | SyntheticEvent<any, Event>,
     name: keyof Invoice
@@ -597,12 +580,6 @@ const CreateInvoice: NextPageWithLayout = () => {
     inv.total = total.toString();
   };
 
-  /**const removeJSXElement = (elementid: string) => {
-    const element = document.getElementById(elementid) as HTMLElement;
-    element.style.display = "none";
-    element.style.transition = "0.5s fade-out";
-  }; */
-
   const handleInvoicePost = async (): Promise<void> => {
     try {
       const { _id, ...InvoiceToPost } = InvoiceRepo;
@@ -611,11 +588,14 @@ const CreateInvoice: NextPageWithLayout = () => {
         InvoiceToPost
       );
       if (InvoicePost.data) setOpensuccess(true);
+      /**Generate new Id so user cannot save a new invoice with the same Id */
+      setInvoiceRepo({...InvoiceRepo, invoiceTitle: `invoice#${nanoid(5)}`});
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
+  const pageRef = useRef<HTMLDivElement | null>(null)
   return (
     <>
       {isLoading ||
@@ -633,14 +613,11 @@ const CreateInvoice: NextPageWithLayout = () => {
             gap: 20,
           }}
         >
-          <CustomLoader />
-          <Typography>
-            Please wait while we get things set up for you...
-          </Typography>
+          <CustomLoader text="Please wait while we get things set up for you..." />
         </motion.div>
       ) : (
         <>
-          <Container>
+          <Container ref={pageRef}>
             <div className={styles.fileAndEditor}>
               <Editorbar
                 saveText="SAVE"
@@ -812,7 +789,7 @@ const CreateInvoice: NextPageWithLayout = () => {
                   Thank You for using Kwik Invoice Generator
                 </Typography>
               </div>
-              <ButtonComponent innerText={"Continue"} />
+              <ButtonComponent innerText={"Continue"} onClick={() => setOpenSaved(false)}/>
             </Modals>
 
             <Modals

@@ -13,8 +13,31 @@ interface view {
   status: string
 }
 
-const Views: FC = () => {
-  const views: view[] = [
+interface Props {
+  data: ChartData<"bar", number[], string>
+}
+
+const Views: FC<Props> = ({data}) => {
+
+  const statusChip = (currentStatus: string) => {
+    if (currentStatus === "complete")
+      return <Chip variant="outlined" color="success" label="complete" />;
+    if (currentStatus === "Incomplete")
+      return <Chip variant="outlined" color="error" label="Incomplete" />;
+  };
+  return (
+    <div>
+      <div className={styles.table}>
+        <BarChart data={data}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Views;
+
+/** const views: view[] = [
     {
       invoice: 1,
       type: "Invoice",
@@ -69,22 +92,4 @@ const Views: FC = () => {
       borderColor: 'none',
       categoryPercentage: 5
     }],
-  })
-
-  const statusChip = (currentStatus: string) => {
-    if (currentStatus === "complete")
-      return <Chip variant="outlined" color="success" label="complete" />;
-    if (currentStatus === "Incomplete")
-      return <Chip variant="outlined" color="error" label="Incomplete" />;
-  };
-  return (
-    <div>
-      <div className={styles.table}>
-        <BarChart data={data}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default Views;
+  }) */

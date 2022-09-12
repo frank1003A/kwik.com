@@ -3,27 +3,34 @@ import { Analytics } from "@mui/icons-material";
 import Image from "next/image";
 import { Typography } from "@mui/material";
 import styles from '../styles/Home.module.css'
+import CustomLoader from "./asset/CustomLoader";
 
 interface Props {
   amount: number,
   chart: JSX.Element,
-  quat: string
+  quat: string,
+  icon: JSX.Element,
+  describeData: string
 }
 
-const CustomCard:FC<Props> = ({amount, chart, quat}) => {
+const CustomCard:FC<Props> = ({amount, chart, quat, icon, describeData}) => {
 
   return (
     <div className={styles['cardContainer']}>
-      <div className={styles['topContainer']}>
-        <Analytics />
+      {
+        !(amount || chart || quat) ? (<CustomLoader/>) :
+        (
+          <>
+          <div className={styles['topContainer']}>
+        {icon}
       </div>
       <div className={styles['middleContainer']}>
         <div className={styles['centralContainer']}>
           <Typography fontWeight={500} fontSize={"1rem"}>
-            Total Sales
+            {describeData}
           </Typography>
           <Typography variant="h4" fontWeight={800} fontSize={"1.5rem"}>
-            NGN {amount}
+            No: {amount}
           </Typography>
         </div>
         <div style={{width: 80, height: 80}}>
@@ -35,6 +42,9 @@ const CustomCard:FC<Props> = ({amount, chart, quat}) => {
           {quat}
         </Typography>
       </div>
+          </>
+        )
+      }
     </div>
   );
 };

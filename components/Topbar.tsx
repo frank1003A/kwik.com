@@ -1,89 +1,97 @@
-import { CheckCircleSharp, Delete } from '@mui/icons-material';
-import MoreIcon from '@mui/icons-material/MoreVert';
-import SearchIcon from '@mui/icons-material/Search';
-import { Modal, Typography} from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { alpha, styled } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
-import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
-import Link from 'next/link';
-import * as React from 'react';
-import Avatar from 'react-avatar';
+import { CheckCircleSharp, Delete } from "@mui/icons-material";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from "@mui/icons-material/Search";
+import { Modal, Typography } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { alpha, styled } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import Link from "next/link";
+import Router from "next/router";
+import * as React from "react";
+import Avatar from "react-avatar";
+import { CircleLoader, RingLoader } from "react-spinners";
 
-import useCurrentUser from '../hooks/useCurrentUser';
-import Create from './asset/Create';
-import MainLogo from './asset/MainLogo';
-import LeftAnchor from './LeftAnchor';
-import { Center, UserBadge } from './styled-component/Global';
+import useCurrentUser from "../hooks/useCurrentUser";
+import Create from "./asset/Create";
+import CustomLoader from "./asset/CustomLoader";
+import MainLogo from "./asset/MainLogo";
+import ButtonComponent from "./Button";
+import LeftAnchor from "./LeftAnchor";
+import { Center, UserBadge } from "./styled-component/Global";
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
+  "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
-    width: 'auto',
+    width: "auto",
   },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
-  '& .MuiInputBase-input': {
+  "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "20ch",
     },
   },
 }));
 
 interface Props {
-  bg?: string,
-  userEmail?: string,
-  handleSignOut?: () => void,
-  name?: string,
+  bg?: string;
+  userEmail?: string;
+  handleSignOut?: () => void;
+  name?: string;
 }
 
-export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}: Props) {
-  
-  const { user } = useCurrentUser()
+export default function PrimarySearchAppBar({
+  bg,
+  userEmail,
+  handleSignOut,
+  name,
+}: Props) {
+  const { user } = useCurrentUser();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
-  const [openDrawer, setOpenDrawer] = React.useState<boolean>(false)
-  const [mounted, setMounted] = React.useState<boolean>(false)
-  const [searchModal, setSearchModal] = React.useState<boolean>(false)
-  const inputRef = React.useRef<HTMLInputElement | null>(null)
+  const [openDrawer, setOpenDrawer] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
+  const [searchModal, setSearchModal] = React.useState<boolean>(false);
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
-    if (searchModal === true) inputRef.current?.focus()
-  }, [searchModal])
+    if (searchModal === true) inputRef.current?.focus();
+  }, [searchModal]);
 
   const style: React.CSSProperties = {
     position: "absolute",
@@ -98,25 +106,27 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
   };
 
   const handleOpenSearchModal = (
-    e: React.FocusEvent<HTMLInputElement | 
-    HTMLTextAreaElement, Element>) => {
-   if (e.bubbles === true) {
-    setSearchModal(true) 
-    e.bubbles = false}
-  }
-  const handleCloseSearchModal = (e: React.FocusEvent<HTMLInputElement | 
-    HTMLTextAreaElement, Element>) => {
-      setSearchModal(false)
-}
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+  ) => {
+    if (e.bubbles === true) {
+      setSearchModal(true);
+      e.bubbles = false;
+    }
+  };
+  const handleCloseSearchModal = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+  ) => {
+    setSearchModal(false);
+  };
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  const { theme } = useTheme()
+  const { theme } = useTheme();
 
-  const handleOpenDrawer = ( ) => {
-    setOpenDrawer(!openDrawer)
-  }
+  const handleOpenDrawer = () => {
+    setOpenDrawer(!openDrawer);
+  };
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -138,19 +148,19 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const menuId = 'primary-search-account-menu';
+  const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       id={menuId}
       keepMounted
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
@@ -159,19 +169,19 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
     </Menu>
   );
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       id={mobileMenuId}
       keepMounted
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
@@ -184,11 +194,11 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
           aria-haspopup="true"
           color="inherit"
         >
-          <Avatar 
-          name={user.fullname}
-          color={mounted && theme === "dark" ?  "#FFA500" : "#2124B1"}
-          round="50%"
-          size="40px"
+          <Avatar
+            name={user.fullname}
+            color={mounted && theme === "dark" ? "#FFA500" : "#2124B1"}
+            round="50%"
+            size="40px"
           />
         </IconButton>
         <p>Profile</p>
@@ -205,12 +215,17 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
           background: mounted && theme === "dark" ? "#27272f" : "white",
           color: mounted && theme === "dark" ? "#fff" : "#2124B1",
           boxShadow: 0,
-        }}  
+        }}
       >
         <Toolbar>
-        <LeftAnchor anchor={'left'} open={false} />
-          <Image src={"/kwik_logo.png"} alt="Kwik Logo" width={128} height={30} />
-          <Search sx={{background: "transparent"}}>
+          <LeftAnchor anchor={"left"} open={false} />
+          <Image
+            src={"/kwik_logo.png"}
+            alt="Kwik Logo"
+            width={128}
+            height={30}
+          />
+          <Search sx={{ background: "transparent" }}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -223,41 +238,55 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box
-            sx={{
-              display: {
-                xs: "none",
-                md: "flex",
-              },
-              justifyContent: "center",
-              alignItems: "center",
-              width: 300,
-            }}
-          >
-           <UserBadge>
-              <CheckCircleSharp fill="green"/>
-              <Typography variant="subtitle1">
-              {userEmail}
-              </Typography>
+          {!userEmail ? (
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "flex",
+                },
+                justifyContent: "center",
+                alignItems: "center",
+                width: 300,
+              }}
+            >
+              <CustomLoader />
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "flex",
+                },
+                justifyContent: "center",
+                alignItems: "center",
+                width: 300,
+              }}
+            >
+              <UserBadge>
+                <CheckCircleSharp fill="green" />
+                <Typography variant="subtitle1">{userEmail}</Typography>
               </UserBadge>
 
               <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <Avatar
-                name= {user.fullname}
-                color={mounted && theme === "dark" ?  "#FFA500" : "#2124B1"}
-                round="50%"
-                size="40px"
-              />
-            </IconButton>
-          </Box>
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <Avatar
+                  name={user.fullname}
+                  color={mounted && theme === "dark" ? "#FFA500" : "#2124B1"}
+                  round="50%"
+                  size="40px"
+                />
+              </IconButton>
+            </Box>
+          )}
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -274,41 +303,45 @@ export default function PrimarySearchAppBar({bg, userEmail, handleSignOut, name}
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      <Modal 
-       open={searchModal}
-       onClose={handleCloseSearchModal}
-       aria-labelledby="modal-modal-title"
-       aria-describedby="modal-modal-description"
+      <Modal
+        open={searchModal}
+        onClose={handleCloseSearchModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         <motion.div style={style} layout>
-          <div style={{display:"flex"}}>
+          <div style={{ display: "flex" }}>
             <IconButton aria-label="" onClick={() => setSearchModal(false)}>
-              <Delete color='info'/>
+              <Delete color="info" />
             </IconButton>
-          <Search ref={inputRef}>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search templates…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+            <Search ref={inputRef}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search templates…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
           </div>
-          <Center style={{background: 'transparent'}}>
-            <Create/>
+          <Center style={{ background: "transparent" }}>
+            <Create />
             <Typography variant="h6" color="Highlight">
               We Currently use one template..
-              <Link href="http://localhost:3000/invoice/create">use default</Link>
             </Typography>
+            <ButtonComponent
+              innerText="Create Invoice"
+              onClick={() => {
+                setSearchModal(false);
+                Router.push("http://localhost:3000/invoice/create");
+              }}
+            />
           </Center>
         </motion.div>
       </Modal>
     </Box>
   );
 }
-
-
 
 /**
 

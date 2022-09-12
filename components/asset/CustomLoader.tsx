@@ -3,12 +3,15 @@ import SquareLoader from 'react-spinners/SquareLoader'
 import {useTheme} from "next-themes"
 import { motion } from 'framer-motion'
 import { Typography } from '@mui/material'
+import { BarLoader } from 'react-spinners'
 
 interface Props {
-  text?: string 
+  text?: string ,
+  /**loader type */
+  loadAnimation?: JSX.Element
 }
 
-const CustomLoader = ({text}: Props) => {
+const CustomLoader = ({text, loadAnimation}: Props) => {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState<boolean>(false)
 
@@ -29,7 +32,11 @@ const CustomLoader = ({text}: Props) => {
             columnGap: 10,
           }}
         >
-          <SquareLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
+          {!loadAnimation ? (
+            <BarLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
+          ): (
+            loadAnimation
+          )}
           <Typography>{text}</Typography>
         </motion.div>
   )

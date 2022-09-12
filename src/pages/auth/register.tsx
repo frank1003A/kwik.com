@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../../styles/Login.module.css";
 import { Typography, TextField } from "@mui/material";
 import Image from "next/image";
@@ -16,6 +16,7 @@ import {motion} from 'framer-motion'
 
 const register: NextPage = () => {
   const [userState, setUserState] = useState<user>(initialUserData);
+  const [isRegistered, setIsRegistered] = useState<boolean>(false)
   const [informUser, setInformUser] = useState<{
     registeralert: boolean;
     message: string;
@@ -26,7 +27,7 @@ const register: NextPage = () => {
 
   const router = useRouter();
 
-  const handlePostUser = async (): Promise<void> => {
+  const handleRegisterUser = async (): Promise<void> => {
     try {
       const userData = await postRequest("api/user/user", userState);
       if (userData.data) {
@@ -36,13 +37,13 @@ const register: NextPage = () => {
           message: "Your account has successfully been created",
         });
       }
-      if (userData.status === 200) router.replace("/auth/login");
+      setIsRegistered(true)
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  const handleControls = (): boolean => {
+  const handleButtonControl = (): boolean => {
     let stat = false;
     if (!(userState.email && userState.fullname && userState.password)) {
       stat = true;
@@ -50,6 +51,10 @@ const register: NextPage = () => {
     return stat;
   };
 
+  useEffect(() => {
+    if (isRegistered && informUser.registeralert) router.replace("/auth/login")
+  }, [isRegistered])
+  
   return (
     <motion.div className={styles["signup-container"]}
     initial={{width: "0%"}}
@@ -122,10 +127,10 @@ const register: NextPage = () => {
             <Link href="#">Terms & Condition</Link>
           </div>
           <ButtonComponent
-            onClick={handlePostUser}
+            onClick={handleRegisterUser}
             innerText="Sign Up"
             className={styles["loginbtn"]}
-            btnDisabled={handleControls()}
+            btnDisabled={handleButtonControl()}
           />
         </div>
         <div className={styles["frmout"]}>

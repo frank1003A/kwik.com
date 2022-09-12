@@ -200,8 +200,8 @@ const clients: NextPageWithLayout = () => {
           savealert: true,
           message: "new Client added",
         });
+        mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
       }
-      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -217,8 +217,8 @@ const clients: NextPageWithLayout = () => {
             deletealert: true,
             message: `client - ${id} - has been removed from database`,
           });
+          mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
         }
-      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -316,12 +316,7 @@ const clients: NextPageWithLayout = () => {
   };
 
   const renderClients = () => {
-    return (status === "loading" || status === "unauthenticated") 
-    ? 
-    (<Center>
-      <CustomLoader text="Fetching Clients"/>
-    </Center>) : (
-      [
+    return [
         clients.map((cli) => {
           return (
             <Card as={motion.div} layout>
@@ -385,7 +380,6 @@ const clients: NextPageWithLayout = () => {
           );
         }),
       ]
-    );
   };
 
   const inputRef = useRef<HTMLDivElement | null>(null);
@@ -512,10 +506,20 @@ const clients: NextPageWithLayout = () => {
         ) : (
           <React.Fragment>
             <FlexContainer>
-              <List>
-                {sorted.length > 0 ? renderSortedClients() : renderClients()
+              {
+                (status === "loading") && (!data)
+                ? 
+                (<Center>
+                  <CustomLoader text="Fetching Clients"/>
+                </Center>) :
+                <List>
+                {sorted.length > 0 ? 
+                renderSortedClients() 
+                :  
+                renderClients()
               }
               </List>
+              }
             </FlexContainer>
           </React.Fragment>
         )}

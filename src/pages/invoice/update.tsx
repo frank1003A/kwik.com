@@ -666,10 +666,7 @@ const EditInvoice: NextPageWithLayout = () => {
             gap: 20,
           }}
         >
-          <CustomLoader />
-          <Typography>
-            Please wait while we get things set up for you...
-          </Typography>
+          <CustomLoader text="Please wait while we get things set up for you..." />
         </motion.div>
       ) : (
         <>

@@ -10,7 +10,7 @@ export const Container = styled.div`
   flex-direction: column;
 
   @media (max-width: 500px) {
-      width: none;
+      width: 100%;
     }
 
   #chipFont {
@@ -25,7 +25,7 @@ export const Container = styled.div`
 `;
 export const Top = styled.section`
   display: flex;
-  padding: 0.5rem 3rem;
+  padding: 0.5rem 2rem;
   background: var(--bg);
   border-bottom: 1px solid #2221;
   align-items: center;
@@ -37,7 +37,7 @@ export const Top = styled.section`
     display: flex;
     gap: 1rem;
     @media (max-width: 500px) {
-      display: none;
+      //display: none;
     }
     select {
       border: none;
@@ -54,8 +54,10 @@ export const Top = styled.section`
     left: 0px !important;
     right: 0px !important;
     top: auto !important;
-    gap: 1rem;
+    gap: .2rem;
+    width: max-content;
     justify-content: center;
+    align-items: center;
   }
 `;
 export const Main = styled.section`

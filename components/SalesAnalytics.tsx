@@ -3,7 +3,15 @@ import { Typography } from "@mui/material";
 import { ShoppingCartRounded } from "@mui/icons-material";
 import styles from "../styles/Home.module.css";
 
-const SalesAnalytics: FC = () => {
+interface Props {
+  icon: JSX.Element,
+  mainText: string,
+  btmText: string,
+  sales: number,
+  percentGD: string
+}
+
+const SalesAnalytics: FC<Props> = ({icon, mainText, btmText, sales, percentGD }) => {
   const swatch = {
     display: "flex",
     fontSize: "x-small",
@@ -19,17 +27,17 @@ const SalesAnalytics: FC = () => {
     <>
       <div className={styles["salesana"]}>
         <div style={swatch}>
-          <ShoppingCartRounded />
+          {icon}
         </div>
         <div className={styles["salesdesc"]}>
-          <Typography>ONLINE ORDERS</Typography>
-          <span>Last 24 Hours</span>
+          <Typography>{mainText.toUpperCase()}</Typography>
+          <span>{btmText}</span>
         </div>
         <div className={styles["salesper"]}>
-          <Typography>+24%</Typography>
+          <Typography>{percentGD}</Typography>
         </div>
         <div className={styles["salesamt"]}>
-          <Typography>1100</Typography>
+          <Typography>{sales}</Typography>
         </div>
       </div>
     </>

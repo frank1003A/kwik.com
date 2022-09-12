@@ -228,8 +228,8 @@ const products: NextPageWithLayout = () => {
           savealert: true,
           message: `New Product Added`,
         });
+        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
-      mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -246,8 +246,8 @@ const products: NextPageWithLayout = () => {
           deletealert: true,
           message: `product - ${id} - has been permanently deleted`,
         });
+        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
-      mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -267,8 +267,8 @@ const products: NextPageWithLayout = () => {
           savealert: true,
           message: `Updated Product - ${id}`,
         });
+        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
-      mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error);
     }
@@ -356,85 +356,79 @@ const products: NextPageWithLayout = () => {
 
   /**Controlled Renders */
   const renderProducts = () => {
-    return status === "loading" || status === "unauthenticated" ? (
-      <Center>
-        <CustomLoader text="Fetching Products" />
-      </Center>
-    ) : (
-      [
-        products.map((cli, index) => {
-          return (
-            <Card as={motion.div}>
-              <Row>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: ".5rem",
-                  }}
-                >
-                  <Tooltip title="Select Product">
-                    <Checkbox
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleProductSelect(e, cli)
-                      }
-                    />
-                  </Tooltip>
-                  <Typography>{cli.description}</Typography>
-                </div>
-                <Typography
-                  style={{
-                    margin: "0",
-                    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                    fontWeight: "400",
-                    fontSize: "1rem",
-                    lineHeight: "1.5",
-                    letterSpacing: "0.00938em",
-                  }}
-                >
-                  <NumberFormat
-                    thousandSeparator={true}
-                    displayType="text"
-                    prefix={"NGN"}
-                    value={cli.rate}
-                  />
-                </Typography>
-                <Typography>{cli.type}</Typography>
-                <Typography>{cli.qty}</Typography>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: ".5rem",
-                  }}
-                >
-                  <CustomIconBtn
-                    handleClick={() => {
-                      handleUpdateModal();
-                      updateField(cli);
-                    }}
-                    toolTip="Update"
-                    icon={<Edit />}
-                    id="topicon"
-                  />
-
-                  <CustomIconBtn
-                    handleClick={() =>
-                      handleDelete(cli._id ? cli._id.toString() : "")
+    return [
+      products.map((cli, index) => {
+        return (
+          <Card as={motion.div}>
+            <Row>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: ".5rem",
+                }}
+              >
+                <Tooltip title="Select Product">
+                  <Checkbox
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleProductSelect(e, cli)
                     }
-                    toolTip="Delete"
-                    icon={<Clear />}
-                    id="topicon"
                   />
-                </div>
-              </Row>
-            </Card>
-          );
-        }),
-      ]
-    );
+                </Tooltip>
+                <Typography>{cli.description}</Typography>
+              </div>
+              <Typography
+                style={{
+                  margin: "0",
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontWeight: "400",
+                  fontSize: "1rem",
+                  lineHeight: "1.5",
+                  letterSpacing: "0.00938em",
+                }}
+              >
+                <NumberFormat
+                  thousandSeparator={true}
+                  displayType="text"
+                  prefix={"NGN"}
+                  value={cli.rate}
+                />
+              </Typography>
+              <Typography>{cli.type}</Typography>
+              <Typography>{cli.qty}</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: ".5rem",
+                }}
+              >
+                <CustomIconBtn
+                  handleClick={() => {
+                    handleUpdateModal();
+                    updateField(cli);
+                  }}
+                  toolTip="Update"
+                  icon={<Edit />}
+                  id="topicon"
+                />
+
+                <CustomIconBtn
+                  handleClick={() =>
+                    handleDelete(cli._id ? cli._id.toString() : "")
+                  }
+                  toolTip="Delete"
+                  icon={<Clear />}
+                  id="topicon"
+                />
+              </div>
+            </Row>
+          </Card>
+        );
+      }),
+    ];
   };
 
   const inputRef = useRef<HTMLDivElement | null>(null);
@@ -563,9 +557,17 @@ const products: NextPageWithLayout = () => {
         ) : (
           <React.Fragment>
             <FlexContainer>
-              <List>
-                {sorted.length > 0 ? renderSortedProducts() : renderProducts()}
-              </List>
+              {router.pathname === '/products' && !data ? (
+                <Center>
+                  <CustomLoader text="Fetching Products" />
+                </Center>
+              ) : (
+                <List>
+                  {sorted.length > 0
+                    ? renderSortedProducts()
+                    : renderProducts()}
+                </List>
+              )}
             </FlexContainer>
           </React.Fragment>
         )}

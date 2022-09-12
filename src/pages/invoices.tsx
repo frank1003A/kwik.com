@@ -139,8 +139,8 @@ const invoices: NextPageWithLayout = () => {
           deletealert: true,
           message: `deleted invoice -${id}`,
         });
+        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
       }
-      mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -301,7 +301,7 @@ const invoices: NextPageWithLayout = () => {
                 setSorted(
                   sortMultipleData<Invoice>(
                     invoices,
-                    ["clientName", "title", "invoiceDueDate", "status"],
+                    ["clientName", "title", "invoiceDueDate", "status", "invoiceTitle"],
                     e.target.value
                   )
                 )
@@ -395,11 +395,8 @@ const invoices: NextPageWithLayout = () => {
           </motion.div>
         ) : null}
         <Main as={motion.div}>
-          {(router.pathname === "/invoices" && 
-          Array.isArray(data) &&
-          data.length >= 1 && 
-          status === "loading") ||
-          status === "unauthenticated" ? (
+          {(status === "loading") ||
+            status === "authenticated" && !data ? (
             <Center>
               <CustomLoader text="Fetching Invoices" />
             </Center>
