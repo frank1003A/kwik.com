@@ -1,4 +1,4 @@
-import { PhotoFilter, Redo, RemoveCircleRounded } from "@mui/icons-material";
+import { DataObject, PhotoFilter, Redo, RemoveCircleRounded } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
 import { motion } from "framer-motion";
@@ -7,8 +7,22 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
-import { BlockPicker, ChromePicker, CompactPicker, CustomPicker, HuePicker, SwatchesPicker, TwitterPicker } from "react-color";
+import React, {
+  ReactElement,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  BlockPicker,
+  ChromePicker,
+  CompactPicker,
+  CustomPicker,
+  HuePicker,
+  SwatchesPicker,
+  TwitterPicker,
+} from "react-color";
 import { useSelector } from "react-redux";
 import { useReactToPrint } from "react-to-print";
 
@@ -40,7 +54,8 @@ import { RootState } from "../../redux/store";
 import type { NextPage } from "next";
 import { NextPageWithLayout } from "../_app";
 import Layout from "../../../components/Layout";
-
+import products from "../../../model/products";
+import useGetter from "../../../hooks/useGetter";
 
 const CreateInvoice: NextPageWithLayout = () => {
   const router = useRouter();
@@ -51,7 +66,6 @@ const CreateInvoice: NextPageWithLayout = () => {
     },
   });
 
-  const { theme } = useTheme();
   const { user, isLoading, status } = useCurrentUser();
 
   const [editPdf, seteditPdf] = useState<boolean>(false);
@@ -65,10 +79,16 @@ const CreateInvoice: NextPageWithLayout = () => {
   const [sModal, setSModal] = useState<boolean>(false);
   const [clipboard, setClipboard] = useState<boolean>(false);
   /** */
-  const [invComp, setInvComp] = useState<boolean>(false)
-  const [edcActive, setEdcActive] = useState<boolean>(false)
-  const [showEditComp, setShowEditComp] = useState<boolean>(false)
-
+  const [invComp, setInvComp] = useState<boolean>(false);
+  const [edcActive, setEdcActive] = useState<boolean>(false);
+  const [showEditComp, setShowEditComp] = useState<boolean>(false);
+  const [bindAlert, setBindAlert] = useState<{
+    alert: boolean;
+    message: string;
+  }>({
+    alert: false,
+    message: "",
+  });
 
   const [toggleDisplay, setToggleDisplay] = useState<{
     headerdisplay: "" | "none";
@@ -90,6 +110,7 @@ const CreateInvoice: NextPageWithLayout = () => {
 
   const SelectedProducts = useSelector((state: RootState) => state.product);
   const SelectedClient = useSelector((state: RootState) => state.client);
+  const bindSet = useSelector((state: RootState) => state.product.bind);
   const dispatch = useAppDispatch();
 
   const handleActiveSideComponent = (): void => {
@@ -139,7 +160,7 @@ const CreateInvoice: NextPageWithLayout = () => {
       return somedata;
     });
     setInvoiceRepo({ ...InvoiceRepo, invoiceitems: resInv.invoiceitems });
-    dispatch(clearProducts());
+    //dispatch(clearProducts());
   };
 
   /**
@@ -225,9 +246,8 @@ const CreateInvoice: NextPageWithLayout = () => {
       getTxRate(MInvoice);
       getTotal(MInvoice);
       setInvoiceRepo(MInvoice);
-    }
-    else if (typeof e === "string") {
-      const value = e
+    } else if (typeof e === "string") {
+      const value = e;
       let MInvoice: Invoice = { ...InvoiceRepo };
       let Items: InvoiceItems[] = [...InvoiceRepo.invoiceitems];
 
@@ -589,13 +609,13 @@ const CreateInvoice: NextPageWithLayout = () => {
       );
       if (InvoicePost.data) setOpensuccess(true);
       /**Generate new Id so user cannot save a new invoice with the same Id */
-      setInvoiceRepo({...InvoiceRepo, invoiceTitle: `invoice#${nanoid(5)}`});
+      setInvoiceRepo({ ...InvoiceRepo, invoiceTitle: `invoice#${nanoid(5)}` });
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  const pageRef = useRef<HTMLDivElement | null>(null)
+  const pageRef = useRef<HTMLDivElement | null>(null);
   return (
     <>
       {isLoading ||
@@ -664,98 +684,98 @@ const CreateInvoice: NextPageWithLayout = () => {
                 <PropertyEditor>
                   <Header>
                     <div className={styles["edcToggler"]}>
-                <button
-                  className={
-                    edcActive === true
-                      ? styles["edcBtnActive"]
-                      : styles["edcBtn"]
-                  }
-                  onClick={() => {
-                    handleActiveSideComponent();
-                    setShowEditComp(true);
-                  }}
-                >
-                  Edit Component
-                </button>
-                <button
-                  className={
-                    invComp === true ? styles["edcBtnActive"] : styles["edcBtn"]
-                  }
-                  onClick={() => {
-                    handleActiveSideComponent();
-                    setShowEditComp(false);
-                  }}
-                >
-                  Edit Invoice
-                </button>
-              </div>
+                      <button
+                        className={
+                          edcActive === true
+                            ? styles["edcBtnActive"]
+                            : styles["edcBtn"]
+                        }
+                        onClick={() => {
+                          handleActiveSideComponent();
+                          setShowEditComp(true);
+                        }}
+                      >
+                        Edit Component
+                      </button>
+                      <button
+                        className={
+                          invComp === true
+                            ? styles["edcBtnActive"]
+                            : styles["edcBtn"]
+                        }
+                        onClick={() => {
+                          handleActiveSideComponent();
+                          setShowEditComp(false);
+                        }}
+                      >
+                        Edit Invoice
+                      </button>
+                    </div>
                   </Header>
                   <PropertiesContainer as={motion.div} layout animate>
-                    {
-                      showEditComp ? (
-                        <div>{dispInvComponents}</div>
-                      ) : (
-                        <>
+                    {showEditComp ? (
+                      <div>{dispInvComponents}</div> 
+                    )  : (
+                      <>
                         <Property>
-                      <Typography variant="overline" color="#555">
-                        Font Family
-                      </Typography>
-                      <select
-                        name="font"
-                        title="font-Change"
-                        onChange={(e) =>
-                          setInvoiceRepo({
-                            ...InvoiceRepo,
-                            styles: {
-                              ...InvoiceRepo.styles,
-                              fontFamily: e.target.value,
-                            },
-                          })
-                        }
-                        color={"#555"}
-                      >
-                        <option value="sans-serif">sans-serif</option>
-                        <option value="monospace">monospace</option>
-                        <option value="fantasy">fantasy</option>
-                        <option value="cursive">cursive</option>
-                        <option value="sans-serif">Roboto</option>
-                      </select>
-                    </Property>
-                    <Property>
-                      <Typography variant="overline" color="#555">
-                        Background Color
-                      </Typography>
-                      <CompactPicker
-                        onChange={(color) =>
-                          setInvoiceRepo({
-                            ...InvoiceRepo,
-                            pageStyles: {
-                              ...InvoiceRepo.pageStyles,
-                              background: color.hex,
-                            },
-                          })
-                        }
-                      />
-                    </Property>
-                    <Property>
-                      <Typography variant="overline" color="#555">
-                        Font Color
-                      </Typography>
-                      <CompactPicker
-                        onChange={(color) =>
-                          setInvoiceRepo({
-                            ...InvoiceRepo,
-                            styles: {
-                              ...InvoiceRepo.styles,
-                              color: color.hex,
-                            },
-                          })
-                        }
-                      />
-                    </Property>
-                        </>
-                      )
-                    }
+                          <Typography variant="overline" color="#555">
+                            Font Family
+                          </Typography>
+                          <select
+                            name="font"
+                            title="font-Change"
+                            onChange={(e) =>
+                              setInvoiceRepo({
+                                ...InvoiceRepo,
+                                styles: {
+                                  ...InvoiceRepo.styles,
+                                  fontFamily: e.target.value,
+                                },
+                              })
+                            }
+                            color={"#555"}
+                          >
+                            <option value="sans-serif">sans-serif</option>
+                            <option value="monospace">monospace</option>
+                            <option value="fantasy">fantasy</option>
+                            <option value="cursive">cursive</option>
+                            <option value="sans-serif">Roboto</option>
+                          </select>
+                        </Property>
+                        <Property>
+                          <Typography variant="overline" color="#555">
+                            Background Color
+                          </Typography>
+                          <CompactPicker
+                            onChange={(color) =>
+                              setInvoiceRepo({
+                                ...InvoiceRepo,
+                                pageStyles: {
+                                  ...InvoiceRepo.pageStyles,
+                                  background: color.hex,
+                                },
+                              })
+                            }
+                          />
+                        </Property>
+                        <Property>
+                          <Typography variant="overline" color="#555">
+                            Font Color
+                          </Typography>
+                          <CompactPicker
+                            onChange={(color) =>
+                              setInvoiceRepo({
+                                ...InvoiceRepo,
+                                styles: {
+                                  ...InvoiceRepo.styles,
+                                  color: color.hex,
+                                },
+                              })
+                            }
+                          />
+                        </Property>
+                      </>
+                    )}
                   </PropertiesContainer>
                 </PropertyEditor>
               </div>
@@ -789,7 +809,10 @@ const CreateInvoice: NextPageWithLayout = () => {
                   Thank You for using Kwik Invoice Generator
                 </Typography>
               </div>
-              <ButtonComponent innerText={"Continue"} onClick={() => setOpenSaved(false)}/>
+              <ButtonComponent
+                innerText={"Continue"}
+                onClick={() => setOpenSaved(false)}
+              />
             </Modals>
 
             <Modals
@@ -811,7 +834,10 @@ const CreateInvoice: NextPageWithLayout = () => {
                   );
                 }}
                 handleCurrency={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setInvoiceRepo({ ...InvoiceRepo, currency_symbol: e.target.value });
+                  setInvoiceRepo({
+                    ...InvoiceRepo,
+                    currency_symbol: e.target.value,
+                  });
                 }}
                 handleCloseBtn={handleCloseSettingsModal}
                 data={InvoiceRepo}
@@ -843,6 +869,13 @@ const CreateInvoice: NextPageWithLayout = () => {
                 />
               </div>
             </Modals>
+            <CustomSnackbar
+              openAlert={bindAlert.alert}
+              closeAlert={() => setBindAlert({ ...bindAlert, alert: false })}
+              outputText={bindAlert.message}
+              verticalPosition="bottom"
+              horizontalPosition="left"
+            />
           </Container>
         </>
       )}
@@ -853,9 +886,5 @@ const CreateInvoice: NextPageWithLayout = () => {
 export default CreateInvoice;
 
 CreateInvoice.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>
-      {page}
-    </Layout>
-  )
-}
+  return <Layout>{page}</Layout>;
+};

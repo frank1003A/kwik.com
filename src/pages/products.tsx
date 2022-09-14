@@ -1,12 +1,16 @@
 import {
   AddCircle,
+  Check,
+  CheckCircle,
   Clear,
   Edit,
   ImportExportSharp,
   LocalActivity,
+  MarkChatRead,
   Receipt,
   ReceiptLong,
   Restore,
+  ShareSharp,
   Sort,
 } from "@mui/icons-material";
 import {
@@ -43,6 +47,7 @@ import MuiSearchbar from "../../components/MuiSearchbar";
 import {
   ControlledInput,
   Form,
+  UserBadge,
   VhContainer,
 } from "../../components/styled-component/Global";
 import {
@@ -62,7 +67,7 @@ import {
 import productsClass from "../../model/products";
 import { sortMultipleData } from "../../utils/utils";
 import { useAppDispatch } from "../redux/hooks";
-import { updateProducts, updateProductSelected } from "../redux/productSlice";
+import { createBind, updateProducts, updateProductSelected } from "../redux/productSlice";
 import { RootState } from "../redux/store";
 import { NextPageWithLayout } from "./_app";
 import NumberFormat from "react-number-format";
@@ -99,6 +104,7 @@ const products: NextPageWithLayout = () => {
   const [isSortingF, setSortingF] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [updated, setUpdated] = useState<boolean>(false);
+  const [bind, setBind] = useState<boolean>(false);
   const [informUser, setInformUser] = useState<{
     savealert: boolean;
     updatealert: boolean;
@@ -157,6 +163,17 @@ const products: NextPageWithLayout = () => {
       );
     }
   };
+
+   /**Bind selected product to invoice */
+  const handleDataBind = () => {
+    if (bind === true) {
+      // update bind context state
+      dispatch(createBind({
+        bindData: bind,
+      }))
+    }
+  }
+  
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | string,
@@ -504,6 +521,11 @@ const products: NextPageWithLayout = () => {
     },
   ];
 
+  useEffect(() => {
+    console.log(bind)
+  }, [bind])
+  
+
   return (
     <>
       <VhContainer>
@@ -731,7 +753,7 @@ const products: NextPageWithLayout = () => {
           >
             <div
               style={{
-                height: selectedProducts.product.length > 0 ? "35vh" : "",
+                height: selectedProducts.product.length > 0 ? "25vh" : "",
                 display: "flex",
                 gap: ".5rem",
                 overflow: "auto",
