@@ -34,7 +34,7 @@ import {
   TitleContainerProps,
 } from "./types";
 import { motion } from "framer-motion";
-import NumberFormat from "react-number-format";
+import { default as NumberFormat } from 'react-number-format';
 
 /**Default Template Invoice Logo Container */
 export const LogoContainer: FC<LogoProps> = ({
