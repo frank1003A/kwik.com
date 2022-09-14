@@ -13,7 +13,10 @@ import useGetter from "../hooks/useGetter";
 import { useSession } from "next-auth/react";
 import {
   Analytics,
+  BarChart,
+  Dashboard,
   GifBoxSharp,
+  Money,
   Receipt,
   VerifiedUser,
 } from "@mui/icons-material";
@@ -81,14 +84,29 @@ const dashboard: FC<Props> = ({
             <Typography>Recent Views</Typography>
           </div>
           <div className={styles["tablecont"]}>
-            <Views data={bardata} />
+            {
+              bardata.labels?.length === undefined ? (
+                <span style={{fontSize: "200px"}}>
+                <BarChart/>
+                </span>
+              ) : (
+                <>
+                 <Views data={bardata} />
+                </>
+              )
+            }
           </div>
         </div>
         <div className={styles["salesAnalytics"]}>
           <div className={styles["dheader"]}>
             <Typography>Sales Analytics</Typography>
           </div>
-          {salesdata.map(dta => {
+          {salesdata.length < 1 ? (
+            <>
+            <Money/>
+            </>
+          ):
+          (salesdata.map(dta => {
             return (
               <SalesAnalytics
               icon={dta.icon}
@@ -98,7 +116,8 @@ const dashboard: FC<Props> = ({
               sales={dta.sales}
               />
             )
-          })}
+          }))
+          }
           <Button
             innerText="Add Product"
             className={styles["addpcont"]}
