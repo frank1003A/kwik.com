@@ -70,7 +70,7 @@ import { useAppDispatch } from "../redux/hooks";
 import { createBind, updateProducts, updateProductSelected } from "../redux/productSlice";
 import { RootState } from "../redux/store";
 import { NextPageWithLayout } from "./_app";
-import NumberFormat from "react-number-format";
+import { default as NumberFormat } from 'react-number-format';
 import CustomIconBtn from "../../components/CustomIconBtn";
 import CustomForm from "../../components/asset/CustomForm";
 
