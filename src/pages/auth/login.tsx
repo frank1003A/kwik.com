@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -81,7 +80,7 @@ const Login: NextPage = () => {
           </Typography>
           <ButtonComponent
             innerText="Sign in with Google"
-            icon={<Image src="/google_32.png" width="20" height="20" />}
+            icon={<img src="/google_32.png" width="20" height="20" />}
             className={styles["googlebtn"]}
           />
           <div className={styles["flex-row"]}>
@@ -142,7 +141,7 @@ const Login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <Image src="/leftsvg.png" height={300} />
+        <img src="/leftsvg.png" height={300} />
       </section>
 
       <CustomSnackbar
@@ -158,14 +157,3 @@ const Login: NextPage = () => {
 
 export default Login;
 
-/**<div>
-          <button onClick={() => setTheme("light")}>{theme! === 'dark' ? <WbCloudy /> : <WbSunny />}</button>
-        </div> */
-
-/**
-          <div className={styles["logocont"]}>
-            <Image src={"/kwik_favicon.png"} width={30} height={30} />
-          </div> */
-//<input type="password" placeholder="min. 8 characters" />
-
-// <Image src={'/templateview.svg'} width={1000} height={1000} />

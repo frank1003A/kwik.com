@@ -17,7 +17,6 @@ import {
   Twitter,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -126,7 +125,7 @@ const Landingpage = () => {
                 No credit card needed. Cancel anytime.
               </p>
             </motion.div>
-            <Image src="/leftsvg.png" width={650} />
+            <img src="/leftsvg.png" width={650} />
           </div>
         </div>
       </section>
@@ -302,7 +301,7 @@ const Landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <Image
+              <img
                 src=""
                 loading="lazy"
                 alt=""
@@ -320,7 +319,7 @@ const Landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <Image
+              <img
                 src=""
                 loading="lazy"
                 alt=""
@@ -338,7 +337,7 @@ const Landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <Image
+              <img
                 src=""
                 loading="lazy"
                 alt=""
@@ -368,7 +367,7 @@ const Landingpage = () => {
               </h2>
             </div>
             <div className={styles["big-ui-feature-main"]}>
-              <Image src="/hss.png" width={750} />
+              <img src="/hss.png" width={750} />
               <div
                 id={
                   styles[
@@ -385,7 +384,7 @@ const Landingpage = () => {
                   }
                   className={styles["big-feature-side-item"]}
                 >
-                  <Image
+                  <img
                     src=""
                     loading="lazy"
                     alt=""
@@ -404,7 +403,7 @@ const Landingpage = () => {
                   }
                   className={styles["big-feature-side-item"]}
                 >
-                  <Image
+                  <img
                     src="https://assets.website-files.com/62c067dd72561e44087fc9ea/62c4c82e0cfd8db3cd599f25_big-feature-icon.svg"
                     loading="lazy"
                     alt=""

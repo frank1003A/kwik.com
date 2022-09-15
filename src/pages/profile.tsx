@@ -15,7 +15,6 @@ import useCurrentUser from '../../hooks/useCurrentUser';
 import { deleteRequest, patchRequest } from '../../lib/axios/axiosClient';
 import user from '../../model/user';
 import styles from '../../styles/Home.module.css';
-import Image from 'next/image';
 import { NextPageWithLayout } from './_app';
 import { nanoid } from 'nanoid';
 
@@ -156,7 +155,7 @@ const Settings: NextPageWithLayout = () => {
         </motion.div>
         <div className={styles.cardD}>
           <span className={styles.imgcont}>
-          <Image
+          <img
           style={{width: '100%',height: '100%'}}
           src={user.buisness_logo!}
           alt="buisness_logo"

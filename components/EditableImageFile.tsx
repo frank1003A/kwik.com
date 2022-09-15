@@ -1,7 +1,6 @@
 import React, {useState, useRef} from 'react'
 import Slider from 'rc-slider'
 import useOnClickOutside from '../hooks/useOnClickOutside'
-import Image from  "next/image"
 import styles from '../styles/Invoice.module.css'
 import 'rc-slider/assets/index.css'
 
@@ -84,7 +83,7 @@ const EditableFileImage = ({ className, placeholder, value, width, onChangeImage
         </button>
       ) : (
         <>
-          <Image
+          <img
             src={value}
             id="imagefile"
             className={styles["image__img"]}
