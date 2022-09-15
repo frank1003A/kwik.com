@@ -17,6 +17,7 @@ import user from '../../model/user';
 import styles from '../../styles/Home.module.css';
 import Image from 'next/image';
 import { NextPageWithLayout } from './_app';
+import { nanoid } from 'nanoid';
 
 const Settings: NextPageWithLayout = () => {
   const router = useRouter();
@@ -112,7 +113,7 @@ const Settings: NextPageWithLayout = () => {
   }
 
   const renderDisclaimer: ReactNode = [
-    <span className={styles.cardD}>
+    <span className={styles.cardD} key={nanoid(3)}>
       <Typography variant="h6" color="initial">
         Please be informed that deleting this account will also: 
       </Typography>
