@@ -22,7 +22,7 @@ import { motion } from "framer-motion";
 import { convertDateFormat } from "../utils/utils";
 import CustomIconBtn from "./CustomIconBtn";
 import { useTheme } from "next-themes";
-import NumberFormat from "react-number-format";
+import {NumericFormat} from "react-number-format";
 
 interface Props {
   name: string;
@@ -85,7 +85,7 @@ const InvoiceBar: FC<Props> = ({
           <div className={styles.invamt}>
             <Column>
               {/**<span>{!CurrencyText ? "NGN": CurrencyText}</span> */}
-              <NumberFormat
+              <NumericFormat
                 thousandSeparator={true}
                 displayType="text"
                 prefix={!CurrencyText ? "NGN": CurrencyText}
