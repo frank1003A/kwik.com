@@ -1,9 +1,8 @@
-import React, {FC} from 'react'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import Topbar from './Topbar'
-import Sidebar from './Sidebar'
-import InvoiceMain from './InvoiceMain'
+import React, { FC } from 'react';
+
+import styles from '../styles/Home.module.css';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 
 interface Props {
     children: React.ReactChild[]

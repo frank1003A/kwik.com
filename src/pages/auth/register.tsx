@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import styles from "../../../styles/Login.module.css";
-import { Typography, TextField } from "@mui/material";
-import Image from "next/image";
-import Link from "next/link";
-import ButtonComponent from "../../../components/Button";
-import Head from "next/head";
-import { NextPage } from "next";
-import user from "../../../model/user";
-import { postRequest } from "../../../lib/axios/axiosClient";
-import { initialUserData } from "../../../components/Data/initialData";
-import MainLogo from "../../../components/asset/MainLogo";
-import CustomSnackbar from "../../../components/CustomSnackbar";
-import { useRouter } from "next/router";
-import {motion} from 'framer-motion'
+import { Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+
+import ButtonComponent from '../../../components/Button';
+import CustomSnackbar from '../../../components/CustomSnackbar';
+import { initialUserData } from '../../../components/Data/initialData';
+import { postRequest } from '../../../lib/axios/axiosClient';
+import user from '../../../model/user';
+import styles from '../../../styles/Login.module.css';
 
 const register: NextPage = () => {
   const [userState, setUserState] = useState<user>(initialUserData);

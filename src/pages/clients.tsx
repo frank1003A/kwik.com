@@ -1,84 +1,46 @@
+import { Clear, Edit, ImportContacts, ImportExport, PersonAdd, Receipt, Restore, Sort } from '@mui/icons-material';
 import {
-  Bookmark,
-  Clear,
-  Edit,
-  Filter1,
-  ImportContacts,
-  ImportExport,
-  KeyboardOptionKeyOutlined,
-  PersonAdd,
-  Receipt,
-  Restore,
-  Sort,
-} from "@mui/icons-material";
-import {
-  FormControl,
-  FormLabel,
-  FormHelperText,
   Divider,
+  FormControl,
   FormGroup,
+  FormHelperText,
+  FormLabel,
   IconButton,
   StepLabel,
-  Typography,
-  Button,
-  Paper,
   Tooltip,
-  Select,
-} from "@mui/material";
-import styles from "../../styles/Home.module.css";
-import { motion } from "framer-motion";
-import { NextPage } from "next";
-import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, {
-  ChangeEvent,
-  ReactElement,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import Avatar from "react-avatar";
-import { useSelector } from "react-redux";
-import { useSWRConfig } from "swr";
+  Typography,
+} from '@mui/material';
+import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { ChangeEvent, ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import Avatar from 'react-avatar';
+import { useSelector } from 'react-redux';
+import { useSWRConfig } from 'swr';
 
-import AlertDialogSlide from "../../components/AlertDialog";
-import ClientIcon from "../../components/asset/ClientIcon";
-import CustomLoader from "../../components/asset/CustomLoader";
-import ButtonComponent from "../../components/Button";
-import CustomSnackbar from "../../components/CustomSnackbar";
-import { initialClientData } from "../../components/Data/initialData";
-import Layout from "../../components/Layout";
-import ModalComponent from "../../components/Modal";
-import MuiSearchbar from "../../components/MuiSearchbar";
-import {
-  Card,
-  Center,
-  FlexContainer,
-  List,
-  Row,
-  Top,
-} from "../../components/styled-component/clients/Global";
-import {
-  ControlledInput,
-  Form,
-  VhContainer,
-} from "../../components/styled-component/Global";
-import useGetter from "../../hooks/useGetter";
-import {
-  deleteRequest,
-  patchRequest,
-  postRequest,
-} from "../../lib/axios/axiosClient";
-import clientClass from "../../model/clients";
-import { sortData, sortMultipleData } from "../../utils/utils";
-import { updateClient } from "../redux/clientSlice";
-import { useAppDispatch } from "../redux/hooks";
-import { RootState } from "../redux/store";
-import { NextPageWithLayout } from "./_app";
-import CustomIconBtn from "../../components/CustomIconBtn";
+import AlertDialogSlide from '../../components/AlertDialog';
+import ClientIcon from '../../components/asset/ClientIcon';
+import CustomLoader from '../../components/asset/CustomLoader';
+import ButtonComponent from '../../components/Button';
+import CustomIconBtn from '../../components/CustomIconBtn';
+import CustomSnackbar from '../../components/CustomSnackbar';
+import { initialClientData } from '../../components/Data/initialData';
+import Layout from '../../components/Layout';
+import ModalComponent from '../../components/Modal';
+import MuiSearchbar from '../../components/MuiSearchbar';
+import { Card, Center, FlexContainer, List, Row, Top } from '../../components/styled-component/clients/Global';
+import { ControlledInput, Form, VhContainer } from '../../components/styled-component/Global';
+import useGetter from '../../hooks/useGetter';
+import { deleteRequest, patchRequest, postRequest } from '../../lib/axios/axiosClient';
+import clientClass from '../../model/clients';
+import styles from '../../styles/Home.module.css';
+import { sortMultipleData } from '../../utils/utils';
+import { updateClient } from '../redux/clientSlice';
+import { useAppDispatch } from '../redux/hooks';
+import { RootState } from '../redux/store';
+import { NextPageWithLayout } from './_app';
 
 const clients: NextPageWithLayout = () => {
   const { data: session, status } = useSession();

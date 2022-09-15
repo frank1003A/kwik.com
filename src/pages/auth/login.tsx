@@ -1,21 +1,17 @@
-import React, { useEffect, useState } from "react";
-import styles from "../../../styles/Login.module.css";
-import { Typography } from "@mui/material";
-import Image from "next/image";
-import Link from "next/link";
-import Head from "next/head";
-import ButtonComponent from "../../../components/Button";
-import GoogleIcon from "@mui/icons-material/Google";
-import PasswordEmojifier from "../../../components/PasswordEmojifier";
-import { useRouter } from "next/dist/client/router";
-import type { NextPage } from "next";
-import { signIn, useSession } from "next-auth/react";
-import { motion } from "framer-motion";
-import MainLogo from "../../../components/asset/MainLogo";
-import { useTheme } from "next-themes";
-import { WbCloudy, WbSunny } from "@mui/icons-material";
-import CustomSnackbar from "../../../components/CustomSnackbar";
+import { Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/dist/client/router';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
+import ButtonComponent from '../../../components/Button';
+import CustomSnackbar from '../../../components/CustomSnackbar';
+import styles from '../../../styles/Login.module.css';
+
+import type { NextPage } from "next";
 const login: NextPage = () => {
   const router = useRouter();
 
