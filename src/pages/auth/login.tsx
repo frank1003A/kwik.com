@@ -50,7 +50,8 @@ const login: NextPage = () => {
       });
       router.replace("/");
     }
-    if (res?.error) setError(res.error);
+    if (res?.status === 401) setError("Network Error 🤦‍♀️")
+    else if (res?.error) setError(res.error);
   };
 
   const handleContrl = (): boolean => {
@@ -145,7 +146,7 @@ const login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <MainLogo />
+        <img src="/leftsvg.png" height={300} />
       </section>
 
       <CustomSnackbar

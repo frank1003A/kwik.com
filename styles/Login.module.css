@@ -12,7 +12,9 @@
 
 section#imgandtext {
     width: 50%;
-    background: var(--primarybackground);
+    background: var(--primarycolor);
+    background-image: url("../public/bg-tree.png");
+    background-repeat: no-repeat;
     padding: 0px;
     display: flex;
     align-items: center;

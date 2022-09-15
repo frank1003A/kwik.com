@@ -142,7 +142,7 @@ const register: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <MainLogo />
+      <img src="/leftsvg.png" height={300} />
       </section>
       <CustomSnackbar
         openAlert={informUser.registeralert}

@@ -70,7 +70,7 @@ import { useAppDispatch } from "../redux/hooks";
 import { createBind, updateProducts, updateProductSelected } from "../redux/productSlice";
 import { RootState } from "../redux/store";
 import { NextPageWithLayout } from "./_app";
-import { default as NumberFormat } from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 import CustomIconBtn from "../../components/CustomIconBtn";
 import CustomForm from "../../components/asset/CustomForm";
 
@@ -322,7 +322,7 @@ const products: NextPageWithLayout = () => {
                 </Tooltip>
                 <Typography>{cli.description}</Typography>
               </div>
-              <NumberFormat
+              <NumericFormat
                 thousandSeparator={true}
                 displayType="text"
                 prefix={"NGN"}
@@ -405,7 +405,7 @@ const products: NextPageWithLayout = () => {
                   letterSpacing: "0.00938em",
                 }}
               >
-                <NumberFormat
+                <NumericFormat
                   thousandSeparator={true}
                   displayType="text"
                   prefix={"NGN"}
@@ -623,7 +623,7 @@ const products: NextPageWithLayout = () => {
 
               <CustomForm topLabel="Rate of Product" bottomText="Number">
                 <ControlledInput
-                  as={NumberFormat}
+                  as={NumericFormat}
                   thousandSeparator={true}
                   prefix={"#"}
                   displayType="input"
@@ -692,7 +692,7 @@ const products: NextPageWithLayout = () => {
 
               <CustomForm topLabel="Rate of Product" bottomText="Number">
                 <ControlledInput
-                  as={NumberFormat}
+                  as={NumericFormat}
                   thousandSeparator={true}
                   prefix={"#"}
                   displayType="input"

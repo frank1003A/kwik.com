@@ -34,7 +34,7 @@ import {
   TitleContainerProps,
 } from "./types";
 import { motion } from "framer-motion";
-import { default as NumberFormat } from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 
 /**Default Template Invoice Logo Container */
 export const LogoContainer: FC<LogoProps> = ({
@@ -384,7 +384,7 @@ export const InvoiceTable: FC<TableProps> = ({
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <NumberFormat
+                  <NumericFormat
                     thousandSeparator={true}
                     prefix={invoice.currency_symbol}
                     className={styles.tableInput}
@@ -400,7 +400,7 @@ export const InvoiceTable: FC<TableProps> = ({
                   />
                 </TableCell>
                 <TableCell align="center" style={customStyle}>
-                  <NumberFormat
+                  <NumericFormat
                     thousandSeparator={true}
                     displayType="text"
                     prefix={invoice.currency_symbol}
@@ -467,7 +467,7 @@ export const TotalContainer: FC<TotalContainerProps> = ({
         />
 
         {/**Sub Total*/}
-        <NumberFormat
+        <NumericFormat
           thousandSeparator={true}
           displayType="text"
           prefix={invoice.currency_symbol}
@@ -493,7 +493,7 @@ export const TotalContainer: FC<TotalContainerProps> = ({
         </Typography>
 
         {/**Actual Tax*/}
-        <NumberFormat
+        <NumericFormat
           thousandSeparator={true}
           style={customStyle}
           displayType="text"
@@ -518,7 +518,7 @@ export const TotalContainer: FC<TotalContainerProps> = ({
         />
 
         {/**Total */}
-        <NumberFormat
+        <NumericFormat
           thousandSeparator={true}
           displayType="text"
           style={{ fontWeight: 800, fontSize: "x-large", ...customStyle }}
