@@ -3,7 +3,7 @@ import { Divider, FormControl, FormLabel, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 
 import CustomLoader from '../../components/asset/CustomLoader';
 import ButtonComponent from '../../components/Button';
@@ -111,7 +111,7 @@ const Settings: NextPageWithLayout = () => {
      }
   }
 
-  const renderDisclaimer = [
+  const renderDisclaimer: ReactNode = [
     <span className={styles.cardD}>
       <Typography variant="h6" color="initial">
         Please be informed that deleting this account will also: 

@@ -74,6 +74,7 @@ import { NumericFormat } from 'react-number-format';
 import CustomIconBtn from "../../components/CustomIconBtn";
 import CustomForm from "../../components/asset/CustomForm";
 import { NumberFormatValues, OnValueChange } from "react-number-format/types/types";
+import { nanoid } from "nanoid";
 
 const Products: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
@@ -467,20 +468,22 @@ const Products: NextPageWithLayout = () => {
   };
 
   const renderFSort: React.ReactNode = [
-    <select onChange={handleNewOldSort}>
-      <option value={0} key={0}>Sort By</option>
-      <option value={1} key={1}>Newest</option>
-      <option value={2} key={2}>Oldest</option>
+    <select onChange={handleNewOldSort} key={nanoid(3)}>
+      <option value={0}>Sort By</option>
+      <option value={1}>Newest</option>
+      <option value={2}>Oldest</option>
     </select>,
   ];
 
-  const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
+  const topIcons: {id: number, icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
+      id: 1,
       icon: <Sort />,
       tip: "Sort Product Data",
       func: () => setSortingF(!isSortingF),
     },
     {
+      id: 2,
       icon: <Restore />,
       tip: "Reset",
       func() {
@@ -488,20 +491,24 @@ const Products: NextPageWithLayout = () => {
       },
     },
     {
+      id: 3,
       icon: <ImportExportSharp />,
       tip: "Import Excel File",
     },
     {
+      id: 4,
       icon: <AddCircle />,
       tip: "New Product",
       func: handleOpenModal,
     },
     {
+      id: 5,
       icon: <ReceiptLong />,
       tip: "Create Invoice for Products",
       func: handleOpenSFModal,
     },
     {
+      id: 6,
       icon: <LocalActivity />,
       tip: "Activity Log",
     },
@@ -531,7 +538,7 @@ const Products: NextPageWithLayout = () => {
             <span id="topicon">
               {topIcons.map((key) => {
                 return (
-                  <Tooltip title={key.tip}>
+                  <Tooltip title={key.tip} key={key.id}>
                     <IconButton aria-label="" onClick={key.func}>
                       {key.icon}
                     </IconButton>
@@ -747,6 +754,7 @@ const Products: NextPageWithLayout = () => {
               {selectedProducts.product?.map((pr) => {
                 return (
                   <motion.div
+                  key={pr._id?.toString()}
                     style={{
                       width: "100%",
                       borderRadius: "8px",

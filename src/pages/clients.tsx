@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { motion } from 'framer-motion';
+import { nanoid } from 'nanoid';
 import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -415,10 +416,10 @@ const Clients: NextPageWithLayout = () => {
   //onChange={handleNewOldSort}
 
   const renderFSort: React.ReactNode = [
-    <select onChange={handleNewOldSort}>
-      <option value={0} key={0}>Sort By</option>
-      <option value={1} key={1}>Newest</option>
-      <option value={2} key={2}>Oldest</option>
+    <select onChange={handleNewOldSort} key={nanoid(3)}>
+      <option value={0} >Sort By</option>
+      <option value={1}>Newest</option>
+      <option value={2}>Oldest</option>
     </select>,
   ];
 
