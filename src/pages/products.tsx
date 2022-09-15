@@ -73,8 +73,9 @@ import { NextPageWithLayout } from "./_app";
 import { NumericFormat } from 'react-number-format';
 import CustomIconBtn from "../../components/CustomIconBtn";
 import CustomForm from "../../components/asset/CustomForm";
+import { NumberFormatValues, OnValueChange } from "react-number-format/types/types";
 
-const products: NextPageWithLayout = () => {
+const Products: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
   /**Get request with swr */
   const { data, isError, isLoading } = useGetter(
@@ -97,14 +98,9 @@ const products: NextPageWithLayout = () => {
   const [singleProduct, setSProduct] = useState<productsClass>({
     ...initialProductData,
   });
-  const [dialogResponse, setDialogResponse] = useState<boolean>(false);
-  const [updateValue, setUpdateValue] = useState<string[]>([]);
-  const [inProps, setIProp] = useState<boolean>(false);
   const [sorted, setSorted] = useState<productsClass[]>([]);
   const [isSortingF, setSortingF] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [updated, setUpdated] = useState<boolean>(false);
-  const [bind, setBind] = useState<boolean>(false);
   const [informUser, setInformUser] = useState<{
     savealert: boolean;
     updatealert: boolean;
@@ -163,16 +159,6 @@ const products: NextPageWithLayout = () => {
       );
     }
   };
-
-   /**Bind selected product to invoice */
-  const handleDataBind = () => {
-    if (bind === true) {
-      // update bind context state
-      dispatch(createBind({
-        bindData: bind,
-      }))
-    }
-  }
   
 
   const handleChange = (
@@ -303,7 +289,7 @@ const products: NextPageWithLayout = () => {
     return [
       sorted.map((cli, index) => {
         return (
-          <Card as={motion.div}>
+          <Card as={motion.div} key={cli._id?.toString()}>
             <Row>
               <div
                 style={{
@@ -376,7 +362,7 @@ const products: NextPageWithLayout = () => {
     return [
       products.map((cli, index) => {
         return (
-          <Card as={motion.div}>
+          <Card as={motion.div} key={cli._id?.toString()}>
             <Row>
               <div
                 style={{
@@ -482,9 +468,9 @@ const products: NextPageWithLayout = () => {
 
   const renderFSort: React.ReactNode = [
     <select onChange={handleNewOldSort}>
-      <option value={0}>Sort By</option>
-      <option value={1}>Newest</option>
-      <option value={2}>Oldest</option>
+      <option value={0} key={0}>Sort By</option>
+      <option value={1} key={1}>Newest</option>
+      <option value={2} key={2}>Oldest</option>
     </select>,
   ];
 
@@ -520,11 +506,6 @@ const products: NextPageWithLayout = () => {
       tip: "Activity Log",
     },
   ];
-
-  useEffect(() => {
-    console.log(bind)
-  }, [bind])
-  
 
   return (
     <>
@@ -628,8 +609,9 @@ const products: NextPageWithLayout = () => {
                   prefix={"#"}
                   displayType="input"
                   placeholder="rate"
-                  onValueChange={({ value }) => handleChange(value, "rate")}
-                  renderText={(value) => value}
+                  
+                  onValueChange={(value: NumberFormatValues) => handleChange(value.value, "rate")}
+                  renderText={(formattedValue: string) => formattedValue}
                 />
               </CustomForm>
 
@@ -698,8 +680,8 @@ const products: NextPageWithLayout = () => {
                   displayType="input"
                   value={singleProduct.rate}
                   placeholder="rate"
-                  onValueChange={({ value }) => handleChange(value, "rate")}
-                  renderText={(value) => value}
+                  onValueChange={(value: NumberFormatValues) => handleChange(value.value, "rate")}
+                  renderText={(formattedValue: string) => formattedValue}
                 />
               </CustomForm>
 
@@ -865,8 +847,8 @@ const products: NextPageWithLayout = () => {
   );
 };
 
-export default products;
+export default Products;
 
-products.getLayout = function getLayout(page: ReactElement) {
+Products.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };

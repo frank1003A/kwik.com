@@ -56,6 +56,7 @@ import { NextPageWithLayout } from "../_app";
 import Layout from "../../../components/Layout";
 import products from "../../../model/products";
 import useGetter from "../../../hooks/useGetter";
+import { useCallback } from "react";
 
 const CreateInvoice: NextPageWithLayout = () => {
   const router = useRouter();
@@ -139,7 +140,7 @@ const CreateInvoice: NextPageWithLayout = () => {
         invoiceTitle: `invoice#${nanoid(5)}`,
       });
     }
-  }, [user, status]);
+  }, [user, status, InvoiceRepo]);
 
   /**
    * we need to pass the products selected from products page
@@ -166,22 +167,22 @@ const CreateInvoice: NextPageWithLayout = () => {
   /**
    * likewise we pass the client selected from client page
    */
-  const handleClientTransfer = () => {
+  const handleClientTransfer = useCallback(() => {
     const { fullname } = SelectedClient.client;
     setInvoiceRepo({
       ...InvoiceRepo,
       clientName: fullname as string,
     });
-  };
+  }, [])
 
   useEffect(() => {
     /**Transfer products and client data to invoice - if any */
     if (SelectedProducts.product.length > 0) handleOpenClipboard();
-  }, []);
+  }, [SelectedProducts.product.length]);
 
   useEffect(() => {
-    if (SelectedClient.client.fullname) handleClientTransfer();
-  }, [SelectedClient.client]);
+    if (SelectedClient.client) handleClientTransfer();
+  }, [SelectedClient.client, handleClientTransfer]);
 
   const handlesucClose = (
     event: Event | SyntheticEvent<any, Event>,
@@ -592,6 +593,7 @@ const CreateInvoice: NextPageWithLayout = () => {
   useEffect(() => {
     /**Handle User Rate */
     handleTxRateChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taxRate]);
 
   const getTotal = (inv: Invoice): void => {
@@ -804,7 +806,7 @@ const CreateInvoice: NextPageWithLayout = () => {
                   marginBottom: "1rem",
                 }}
               >
-                <Image src="/print2.svg" height={300} width={300} />
+                <Image src="/print2.svg" height={300} width={300}alt="image: after_print_image" />
                 <Typography variant="subtitle2" color="GrayText">
                   Thank You for using Kwik Invoice Generator
                 </Typography>

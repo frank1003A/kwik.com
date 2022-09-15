@@ -1,18 +1,9 @@
-import React, { FC, ReactNode } from "react";
-import btnStyles from "../styles/Button.module.css";
-import styles from "../styles/Invoice.module.css";
-import ButtonComponent from "./Button";
-import {
-  Print,
-  Save,
-  Edit,
-  EditAttributes,
-  PictureAsPdf,
-  Percent,
-  Settings,
-  Image,
-} from "@mui/icons-material";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Image, Print, Save, Settings } from '@mui/icons-material';
+import React, { FC, ReactNode } from 'react';
+
+import btnStyles from '../styles/Button.module.css';
+import styles from '../styles/Invoice.module.css';
+import ButtonComponent from './Button';
 
 interface Props {
   handlePrint?: () => void;

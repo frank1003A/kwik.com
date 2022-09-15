@@ -14,7 +14,7 @@ import { postRequest } from '../../../lib/axios/axiosClient';
 import user from '../../../model/user';
 import styles from '../../../styles/Login.module.css';
 
-const register: NextPage = () => {
+const Register: NextPage = () => {
   const [userState, setUserState] = useState<user>(initialUserData);
   const [isRegistered, setIsRegistered] = useState<boolean>(false)
   const [informUser, setInformUser] = useState<{
@@ -53,7 +53,7 @@ const register: NextPage = () => {
 
   useEffect(() => {
     if (isRegistered && informUser.registeralert) router.replace("/auth/login")
-  }, [isRegistered])
+  }, [isRegistered, informUser.registeralert, router])
   
   return (
     <motion.div className={styles["signup-container"]}
@@ -142,7 +142,7 @@ const register: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-      <img src="/leftsvg.png" height={300} />
+      <Image src="/leftsvg.png" height={300} />
       </section>
       <CustomSnackbar
         openAlert={informUser.registeralert}
@@ -157,4 +157,4 @@ const register: NextPage = () => {
   );
 };
 
-export default register;
+export default Register;

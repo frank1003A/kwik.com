@@ -42,7 +42,7 @@ import { useAppDispatch } from '../redux/hooks';
 import { RootState } from '../redux/store';
 import { NextPageWithLayout } from './_app';
 
-const clients: NextPageWithLayout = () => {
+const Clients: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
   const { data, isError, isLoading } = useGetter(
     `/api/user/client/clients/?user_id=${session?.user?.id}`
@@ -122,7 +122,7 @@ const clients: NextPageWithLayout = () => {
   useEffect(() => {
     if (data !== undefined) setClients(data);
     if (isError) console.log(isError);
-  }, [data]);
+  }, [data, isError]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -216,13 +216,13 @@ const clients: NextPageWithLayout = () => {
     if (!(status === "authenticated") && !(session) && !(status === "loading")){
       router.push("/auth/login")
     }
-  }, [session, status]);
+  }, [session, status, router]);
 
   const renderSortedClients = () => {
     return [
       sorted.map((cli) => {
         return (
-          <Card as={motion.div} layout>
+          <Card as={motion.div} layout key={cli._id?.toString()}>
             <Row>
               <div
                 style={{
@@ -281,7 +281,7 @@ const clients: NextPageWithLayout = () => {
     return [
         clients.map((cli) => {
           return (
-            <Card as={motion.div} layout>
+            <Card as={motion.div} layout key={cli._id?.toString()}>
               <Row>
                 <div
                   style={{
@@ -356,8 +356,9 @@ const clients: NextPageWithLayout = () => {
     };
   }, []);
 
-  const topIcons: { icon: JSX.Element; tip: string; func?: () => void }[] = [
+  const topIcons: {id: number, icon: JSX.Element; tip: string; func?: () => void }[] = [
     {
+      id: 1,
       icon: (
         <Sort/>
       ),
@@ -365,6 +366,7 @@ const clients: NextPageWithLayout = () => {
       func: () => setSortingF(!isSortingF),
     },
     {
+      id: 2,
       icon: (
         <Restore/>
       ),
@@ -374,12 +376,14 @@ const clients: NextPageWithLayout = () => {
       },
     },
     {
+      id: 3,
       icon: (
         <ImportContacts/>
       ),
       tip: "Import Excel File",
     },
     {
+      id: 4,
       icon: (
         <PersonAdd/>
       ),
@@ -387,6 +391,7 @@ const clients: NextPageWithLayout = () => {
       func: handleOpenModal,
     },
     {
+      id: 5,
       icon: (
         <ImportExport/>
       ),
@@ -411,9 +416,9 @@ const clients: NextPageWithLayout = () => {
 
   const renderFSort: React.ReactNode = [
     <select onChange={handleNewOldSort}>
-      <option value={0}>Sort By</option>
-      <option value={1}>Newest</option>
-      <option value={2}>Oldest</option>
+      <option value={0} key={0}>Sort By</option>
+      <option value={1} key={1}>Newest</option>
+      <option value={2} key={2}>Oldest</option>
     </select>,
   ];
 
@@ -441,7 +446,7 @@ const clients: NextPageWithLayout = () => {
             <span id={"topicon"}>
               {topIcons.map((key) => {
                 return (
-                  <Tooltip title={key.tip}>
+                  <Tooltip title={key.tip} key={key.id}>
                     <IconButton aria-label="" onClick={key.func}>
                       {key.icon}
                     </IconButton>
@@ -724,9 +729,9 @@ const clients: NextPageWithLayout = () => {
   );
 };
 
-export default clients;
+export default Clients;
 
-clients.getLayout = function getLayout(page: ReactElement) {
+Clients.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout>
       {page}

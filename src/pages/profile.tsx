@@ -1,29 +1,22 @@
-import { PersonRemove, VerifiedUser } from "@mui/icons-material";
-import { Divider, FormControl, FormLabel, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import { NextPage } from "next";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
-import styles from "../../styles/Home.module.css"
-import CustomLoader from "../../components/asset/CustomLoader";
-import ButtonComponent from "../../components/Button";
-import CustomIconBtn from "../../components/CustomIconBtn";
-import Layout from "../../components/Layout";
-import {
-  Center,
-  Container,
-  ControlledInput,
-  List,
-  Top,
-  UserBadge,
-} from "../../components/styled-component/Global";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import { deleteRequest, patchRequest } from "../../lib/axios/axiosClient";
-import user from "../../model/user";
-import { NextPageWithLayout } from "./_app";
-import CustomSnackbar from "../../components/CustomSnackbar";
-import { signOut } from "next-auth/react"
+import { PersonRemove, VerifiedUser } from '@mui/icons-material';
+import { Divider, FormControl, FormLabel, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+
+import CustomLoader from '../../components/asset/CustomLoader';
+import ButtonComponent from '../../components/Button';
+import CustomIconBtn from '../../components/CustomIconBtn';
+import CustomSnackbar from '../../components/CustomSnackbar';
+import Layout from '../../components/Layout';
+import { Center, Container, ControlledInput, List, Top, UserBadge } from '../../components/styled-component/Global';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import { deleteRequest, patchRequest } from '../../lib/axios/axiosClient';
+import user from '../../model/user';
+import styles from '../../styles/Home.module.css';
+import Image from 'next/image';
+import { NextPageWithLayout } from './_app';
 
 const Settings: NextPageWithLayout = () => {
   const router = useRouter();
@@ -162,9 +155,10 @@ const Settings: NextPageWithLayout = () => {
         </motion.div>
         <div className={styles.cardD}>
           <span className={styles.imgcont}>
-          <img
+          <Image
           style={{width: '100%',height: '100%'}}
-          src={user.buisness_logo}
+          src={user.buisness_logo!}
+          alt="buisness_logo"
           />
           </span>
         </div>

@@ -12,11 +12,14 @@ import {
   GiteSharp,
   GitHub,
   Instagram,
+  LinkedIn,
   Person,
   Twitter,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Head from "next/head";
+import Link from "next/link";
 
 //mini icon component
 
@@ -29,8 +32,8 @@ const MuiIcons = ({ icon, className }: Props) => {
   return <span className={className}>{icon}</span>;
 };
 
-//<img src="/kwik_logo.png" alt="" />
-const landingpage = () => {
+//<Image src="/kwik_logo.png" alt="" />
+const Landingpage = () => {
   const router = useRouter();
 
   const cardVariants: Variants = {
@@ -93,10 +96,7 @@ const landingpage = () => {
       <section className={styles["hero-header"]}>
         <div className={styles["container"]}>
           <div className={styles["grid"]}>
-            <motion.div
-              id={styles["left"]}
-              
-            >
+            <motion.div id={styles["left"]}>
               <div className={styles["subtitle"]}>Welcome to Kwik.com</div>
               <h1 className={styles["display-heading-1"]}>
                 General Purpose
@@ -126,7 +126,7 @@ const landingpage = () => {
                 No credit card needed. Cancel anytime.
               </p>
             </motion.div>
-            <img src="/leftsvg.png" width={650} />
+            <Image src="/leftsvg.png" width={650} />
           </div>
         </div>
       </section>
@@ -154,7 +154,7 @@ const landingpage = () => {
             </div>
             <div id={styles["left"]} className="how-it-works-right">
               <motion.div
-              animate={{x: "10%"}}
+                animate={{ x: "10%" }}
                 className={styles["feature-item-box"]}
               >
                 <MuiIcons icon={<Email />} className="feature-item-icon" />
@@ -302,7 +302,12 @@ const landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <img src="" loading="lazy" alt="" className="feature-item-icon" />
+              <Image
+                src=""
+                loading="lazy"
+                alt=""
+                className="feature-item-icon"
+              />
               <h4 className={styles["h4"]}>Effieciency</h4>
               <p className={styles["p"]}>
                 Kwik has been optimized to be fast in delivery due to its'
@@ -315,7 +320,12 @@ const landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <img src="" loading="lazy" alt="" className="feature-item-icon" />
+              <Image
+                src=""
+                loading="lazy"
+                alt=""
+                className="feature-item-icon"
+              />
               <h4 className={styles["h4"]}>User Friendly</h4>
               <p className={styles["p"]}>
                 Kwik has a very intuitive and user friendly interface, which
@@ -328,7 +338,12 @@ const landingpage = () => {
               }
               className={styles["feature-item-box"]}
             >
-              <img src="" loading="lazy" alt="" className="feature-item-icon" />
+              <Image
+                src=""
+                loading="lazy"
+                alt=""
+                className="feature-item-icon"
+              />
               <h4 className={styles["h4"]}>Minimal</h4>
               <p className={styles["p"]}>
                 If you are looking for a compact invoice generator, Kwik is the
@@ -353,7 +368,7 @@ const landingpage = () => {
               </h2>
             </div>
             <div className={styles["big-ui-feature-main"]}>
-              <img src="/hss.png" width={750} />
+              <Image src="/hss.png" width={750} />
               <div
                 id={
                   styles[
@@ -370,7 +385,7 @@ const landingpage = () => {
                   }
                   className={styles["big-feature-side-item"]}
                 >
-                  <img
+                  <Image
                     src=""
                     loading="lazy"
                     alt=""
@@ -389,7 +404,7 @@ const landingpage = () => {
                   }
                   className={styles["big-feature-side-item"]}
                 >
-                  <img
+                  <Image
                     src="https://assets.website-files.com/62c067dd72561e44087fc9ea/62c4c82e0cfd8db3cd599f25_big-feature-icon.svg"
                     loading="lazy"
                     alt=""
@@ -419,30 +434,52 @@ const landingpage = () => {
               </div>
               <p>Efficiency and simplicity at its' finest.</p>
               <div className={styles["footer-social-links"]}>
-                <a
-                  href="#"
-                  className={styles["footer-social-link-button w-inline-block"]}
-                >
-                  <Facebook />
-                </a>
-                <a
-                  href="#"
-                  className={styles["footer-social-link-button w-inline-block"]}
-                >
-                  <Instagram />
-                </a>
-                <a
-                  href="#"
-                  className={styles["footer-social-link-button w-inline-block"]}
-                >
-                  <EmailOutlined />
-                </a>
-                <a
-                  href="#"
-                  className={styles["footer-social-link-button w-inline-block"]}
-                >
-                  <GiteSharp />
-                </a>
+                <Link href="#">
+                  <a
+                    className={
+                      styles["footer-social-link-button w-inline-block"]
+                    }
+                  >
+                    <Facebook />
+                  </a>
+                </Link>
+                <Link href="#">
+                  <a
+                    className={
+                      styles["footer-social-link-button w-inline-block"]
+                    }
+                  >
+                    <Instagram />
+                  </a>
+                </Link>
+                <Link href="#">
+                  <a
+                    className={
+                      styles["footer-social-link-button w-inline-block"]
+                    }
+                  >
+                    <EmailOutlined />
+                  </a>
+                </Link>
+                <Link href="#">
+                  <a
+                    href="#"
+                    className={
+                      styles["footer-social-link-button w-inline-block"]
+                    }
+                  >
+                    <EmailOutlined />
+                  </a>
+                </Link>
+                <Link href="#">
+                  <a
+                    className={
+                      styles["footer-social-link-button w-inline-block"]
+                    }
+                  >
+                    <GiteSharp />
+                  </a>
+                </Link>
               </div>
             </div>
             <div className={styles["footer-top-links"]}>
@@ -455,30 +492,33 @@ const landingpage = () => {
                 className={styles["footer-top-links-column"]}
               >
                 <div className={styles["footer-top-links-title"]}>Hilights</div>
-                <a
-                  id={
-                    styles[
-                      "w-node-_61cf71b8-e0d5-34a3-4c17-9ecad9f647a5-9a7fc9e8"
-                    ]
-                  }
-                  href="/"
-                  aria-current="page"
-                  className={styles["footer-top-link w--current"]}
-                >
-                  Home
-                </a>
-                <a href="/features" className={styles["footer-top-link"]}>
-                  Features
-                </a>
-                <a href="/pricing" className={styles["footer-top-link"]}>
-                  Comments
-                </a>
-                <a href="/about" className={styles["footer-top-link"]}>
-                  Customer Satisafction
-                </a>
-                <a href="/blog" className={styles["footer-top-link"]}>
-                  Blog
-                </a>
+                <Link href="#">
+                  <a
+                    id={
+                      styles[
+                        "w-node-_61cf71b8-e0d5-34a3-4c17-9ecad9f647a5-9a7fc9e8"
+                      ]
+                    }
+                    aria-current="page"
+                    className={styles["footer-top-link w--current"]}
+                  >
+                    Home
+                  </a>
+                </Link>
+                <Link href="/features">
+                  <a className={styles["footer-top-link"]}>Features</a>
+                </Link>
+                <Link href="/pricing">
+                  <a className={styles["footer-top-link"]}>Comments</a>
+                </Link>
+                <Link href="/about">
+                  <a className={styles["footer-top-link"]}>
+                    Customer Satisafction
+                  </a>
+                </Link>
+                <Link href="/blog">
+                  <a className={styles["footer-top-link"]}>Blog</a>
+                </Link>
               </div>
 
               <div
@@ -486,15 +526,15 @@ const landingpage = () => {
                 className={styles["footer-top-links-column"]}
               >
                 <div className={styles["footer-top-links-title"]}>Extra</div>
-                <a href="/styleguide" className={styles["footer-top-link"]}>
-                  Style Guide
-                </a>
-                <a href="/licenses" className={styles["footer-top-link"]}>
-                  Licenses
-                </a>
-                <a href="/changelog" className={styles["footer-top-link"]}>
-                  Changelog
-                </a>
+                <Link href="/styleguide">
+                  <a className={styles["footer-top-link"]}>Style Guide</a>
+                </Link>
+                <Link href="/licenses">
+                  <a className={styles["footer-top-link"]}>Licenses</a>
+                </Link>
+                <Link href="/changelog">
+                  <a className={styles["footer-top-link"]}>Changelog</a>
+                </Link>
               </div>
             </div>
           </div>
@@ -505,24 +545,28 @@ const landingpage = () => {
         <div className={styles["container"]}>
           <div className={styles["footer-bottom-container"]}>
             <div>
-              © Designed by{" "}
-              <a
-                href="https://webflow.com/templates/designers/wan-studio"
+              © Designed by{" "}<GitHub />
+             <Link href="https://github.com/frank1003A">
+             <a
                 target="_blank"
+                rel="noreferrer"
                 className="text-link"
               >
                 Ezene Frank
               </a>
+             </Link>
             </div>
             <div>
-              Powered by{" "}
-              <a
-                href="http://webflow.com"
+            <LinkedIn />
+             <Link href="https://www.linkedin.com/in/frank-ezene-454679171/">
+             <a
                 target="_blank"
+                rel="noreferrer"
                 className="text-link"
               >
                 Protek
               </a>
+             </Link>
             </div>
           </div>
         </div>
@@ -531,7 +575,7 @@ const landingpage = () => {
   );
 };
 
-export default landingpage;
+export default Landingpage;
 
 /****
  import React from 'react'

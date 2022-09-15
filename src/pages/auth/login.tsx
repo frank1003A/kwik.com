@@ -12,7 +12,7 @@ import CustomSnackbar from '../../../components/CustomSnackbar';
 import styles from '../../../styles/Login.module.css';
 
 import type { NextPage } from "next";
-const login: NextPage = () => {
+const Login: NextPage = () => {
   const router = useRouter();
 
   const { data, status } = useSession();
@@ -60,11 +60,11 @@ const login: NextPage = () => {
     if (status === "authenticated") {
       router.push("/")
     }
-  }, [])
+  }, [router, status])
   
 
   return (
-    <motion.div className={styles["login-container"]}
+    <motion.div className={styles["Login-container"]}
     initial={{width: "0%"}}
     animate={{width: "100%"}}
     exit={{x: 0, transition: {duration: 3}}}
@@ -142,7 +142,7 @@ const login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <img src="/leftsvg.png" height={300} />
+        <Image src="/leftsvg.png" height={300} />
       </section>
 
       <CustomSnackbar
@@ -156,7 +156,7 @@ const login: NextPage = () => {
   );
 };
 
-export default login;
+export default Login;
 
 /**<div>
           <button onClick={() => setTheme("light")}>{theme! === 'dark' ? <WbCloudy /> : <WbSunny />}</button>

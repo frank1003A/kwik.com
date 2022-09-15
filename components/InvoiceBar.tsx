@@ -1,28 +1,16 @@
-import React, { FC } from "react";
-import styles from "../styles/Home.module.css";
-import { DefaultTheme } from "styled-components";
-import styled from "styled-components";
-import { IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SpeedDial from "./SpeedDial";
-import { NextURL } from "next/dist/server/web/next-url";
-import { ObjectId } from "mongodb";
-import Avatar from "react-avatar";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import {
-  Clear,
-  Create,
-  Delete,
-  DeleteSweepRounded,
-  Print,
-  Share,
-} from "@mui/icons-material";
-import { motion } from "framer-motion";
-import { convertDateFormat } from "../utils/utils";
-import CustomIconBtn from "./CustomIconBtn";
-import { useTheme } from "next-themes";
-import {NumericFormat} from "react-number-format";
+import { Clear, Create, Share } from '@mui/icons-material';
+import { Tooltip, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { ObjectId } from 'mongodb';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import React, { FC } from 'react';
+import { NumericFormat } from 'react-number-format';
+import styled from 'styled-components';
+
+import styles from '../styles/Home.module.css';
+import { convertDateFormat } from '../utils/utils';
+import CustomIconBtn from './CustomIconBtn';
 
 interface Props {
   name: string;
@@ -112,6 +100,7 @@ const InvoiceBar: FC<Props> = ({
                   pathname: "http://localhost:3000/invoice/update",
                   query: { invoice_id: invId?.toString() },
                 }}
+                passHref
               >
                 <Tooltip title="Update">
                   <Create />

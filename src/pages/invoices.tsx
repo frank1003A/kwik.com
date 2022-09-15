@@ -61,7 +61,7 @@ import {
 import Layout from "../../components/Layout";
 import { NextPageWithLayout } from "./_app";
 
-const invoices: NextPageWithLayout = () => {
+const Invoices: NextPageWithLayout = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { data, isError, isLoading } = useGetter(
@@ -90,7 +90,7 @@ const invoices: NextPageWithLayout = () => {
     if (!(status === "authenticated") && !session && !(status === "loading")) {
       router.push("/auth/login");
     }
-  }, [session, status]);
+  }, [session, status, router]);
 
   useMemo(() => {
     if (startDate && endDate !== undefined && dateSort) {
@@ -102,7 +102,7 @@ const invoices: NextPageWithLayout = () => {
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dateSort]);
+  }, [startDate, endDate, dateSort, invoices]);
 
   useMemo(() => {
     if (startDate && endDate !== undefined && dueDateSort) {
@@ -114,7 +114,7 @@ const invoices: NextPageWithLayout = () => {
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dueDateSort]);
+  }, [startDate, endDate, dueDateSort, invoices]);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);
@@ -126,6 +126,7 @@ const invoices: NextPageWithLayout = () => {
 
   useEffect(() => {
     setter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const deleteInvoice = async (id: string) => {
@@ -476,8 +477,8 @@ const invoices: NextPageWithLayout = () => {
   );
 };
 
-export default invoices;
+export default Invoices;
 
-invoices.getLayout = function getLayout(page: ReactElement) {
+Invoices.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };

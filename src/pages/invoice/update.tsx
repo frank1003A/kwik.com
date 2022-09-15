@@ -161,6 +161,7 @@ const EditInvoice: NextPageWithLayout = () => {
 
   useEffect(() => {
     setter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleShowSettingsModal = () => setSModal(true);
@@ -575,6 +576,7 @@ const EditInvoice: NextPageWithLayout = () => {
   useEffect(() => {
     /**Handle User Rate */
     handleTxRateChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taxRate]);
 
   const getTotal = (inv: Invoice): void => {
@@ -921,7 +923,7 @@ const EditInvoice: NextPageWithLayout = () => {
                   marginBottom: "1rem",
                 }}
               >
-                <Image src="/print2.svg" height={300} width={300} />
+                <Image src="/print2.svg" height={300} width={300} alt="image: after_print_image" />
                 <Typography variant="subtitle2" color="GrayText">
                   Thank You for using Kwik Invoice Generator
                 </Typography>

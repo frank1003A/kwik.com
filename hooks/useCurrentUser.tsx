@@ -15,7 +15,7 @@ const useCurrentUser = () => {
   useEffect(() => {
     if (data !== undefined && status === "authenticated") setCurrentUser(data);
     if (isError) console.log(isError);
-  },[data, status])
+  },[data, status, isError, user])
 
   return { user, setCurrentUser, isLoading, isError, status, session };
 };

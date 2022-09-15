@@ -48,7 +48,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
       </div>
 
       <div className={styles.nav}>
-        <Link href={"/"}>
+        <Link href={"/"} passHref>
           <div
             className={
               router.pathname == "/"
@@ -63,7 +63,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </div>
         </Link>
 
-        <Link href={"/invoices"}>
+        <Link href={"/invoices"} passHref>
           <div
             className={
               router.pathname == "/invoices"
@@ -77,7 +77,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             <p>Invoices</p>
           </div>
         </Link>
-        <Link href={"/clients"}>
+        <Link href={"/clients"} passHref>
           <div
             className={
               router.pathname == "/clients"
@@ -92,7 +92,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </div>
         </Link>
 
-        <Link href={"/products"}>
+        <Link href={"/products"} passHref>
           <div
             className={
               router.pathname == "/products"
@@ -107,7 +107,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </div>
         </Link>
 
-        <Link href={"/profile"}>
+        <Link href={"/profile"} passHref>
           <div
             className={
               router.pathname == "/profile"
@@ -155,6 +155,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             <Create />
             <div className={styles["card"]} onClick={() => setOptionModal(false)}>
               <Link href="http://localhost:3000/invoice/create"
+              passHref
               >
                 <Typography>Create Invoice</Typography>
               </Link>

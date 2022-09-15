@@ -73,7 +73,7 @@ const InvoiceSettings = ({
           >
             {currencyList?.map(list => {
               return (
-                <option value={list.symbol}>{list.name}</option>
+                <option value={list.symbol} key={list.symbol}>{list.name}</option>
               )
             })}
           </CustomSelect>

@@ -99,11 +99,11 @@ const Home: NextPageWithLayout = () => {
 
   useEffect(() => {
     setSalesAna(salesAnaData);
-  }, [invoicesFromApi, invoices, products, clients]);
+  }, [invoicesFromApi, invoices, products, clients,salesAnaData]);
 
   useEffect(() => {
     setter();
-  }, [invoicesFromApi]);
+  }, [invoicesFromApi, setter]);
 
   useEffect(() => {
     if (clientsFromApi !== undefined) setClients(clientsFromApi);
@@ -132,7 +132,8 @@ const Home: NextPageWithLayout = () => {
           categoryPercentage: 5,
         },
       ],
-    });
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoices]);
 
   useEffect(() => {
@@ -146,7 +147,8 @@ const Home: NextPageWithLayout = () => {
           backgroundColor: ["#2124b1", "#FFA500", "#eee"],
         },
       ],
-    });
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoices, products, clients]);
 
   const dataa: Analytics[] = [
@@ -211,7 +213,7 @@ const Home: NextPageWithLayout = () => {
     ) {
       router.push("/auth/login");
     }
-  }, [invoicesFromApi, status]);
+  }, [invoicesFromApi, status, router]);
 
   return (
     <>

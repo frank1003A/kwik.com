@@ -55,6 +55,7 @@ const dashboard: FC<Props> = ({
           {dataa.map((dta) => {
             return (
               <CustomCard
+                key={dta.id}
                 icon={dta.icon}
                 describeData={dta.describeData}
                 amount={dta.itemNumber}
@@ -91,6 +92,7 @@ const dashboard: FC<Props> = ({
           {salesdata.map(dta => {
             return (
               <SalesAnalytics
+              key={dta.mainText}
               icon={dta.icon}
               btmText={dta.btmText}
               mainText={dta.mainText}
