@@ -34,10 +34,18 @@ export default function Layout({ children }: Props) {
         <div className={styles.footer}>
           <a href="#">Implementation by frank Ezene</a>
           <div className={styles.footInfo}>
-            <GitHub /> <a href="https://github.com/frank1003A"> frank1003a </a>
+            <GitHub /> 
+            <a href="https://github.com/frank1003A"
+            target="_blank"
+            rel="noreferrer"
+            > frank1003a </a>
           </div>
           <div className={styles.footInfo}>
-            <LinkedIn /> <a href="https://www.linkedin.com/in/frank-ezene-454679171/"> frankezene</a>
+            <LinkedIn /> <a 
+            href="https://www.linkedin.com/in/frank-ezene-454679171/"
+            target="_blank"
+            rel="noreferrer"
+            > frankezene</a>
           </div>
         </div>
       </div>

@@ -90,7 +90,8 @@ const Invoices: NextPageWithLayout = () => {
     if (!(status === "authenticated") && !session && !(status === "loading")) {
       router.push("/auth/login");
     }
-  }, [session, status, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status]);
 
   useMemo(() => {
     if (startDate && endDate !== undefined && dateSort) {
@@ -102,7 +103,8 @@ const Invoices: NextPageWithLayout = () => {
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dateSort, invoices]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, dateSort]);
 
   useMemo(() => {
     if (startDate && endDate !== undefined && dueDateSort) {
@@ -114,7 +116,8 @@ const Invoices: NextPageWithLayout = () => {
       );
       setSorted(sortedData);
     }
-  }, [startDate, endDate, dueDateSort, invoices]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, dueDateSort]);
 
   const openOModal = (): void => setOptionModal(true);
   const closeOModal = (): void => setOptionModal(false);

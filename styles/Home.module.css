@@ -222,7 +222,7 @@
 .btnCreate {
   background: var(--primarycolor);
   color: #fff ;
-  border-radius: 50px;
+  border-radius: 4px;
 }
 
 .btnCreate:hover {

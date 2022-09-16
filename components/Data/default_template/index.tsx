@@ -35,6 +35,7 @@ import {
 } from "./types";
 import { motion } from "framer-motion";
 import { NumericFormat } from 'react-number-format';
+import { NumberFormatValues } from "react-number-format/types/types";
 
 /**Default Template Invoice Logo Container */
 export const LogoContainer: FC<LogoProps> = ({
@@ -393,10 +394,9 @@ export const InvoiceTable: FC<TableProps> = ({
                     value={inv.rate}
                     disabled={!contentEditable ? false : contentEditable}
                     style={customStyle}
-                    onValueChange={({ value }) =>
-                      handleItemInput(value, i, "rate")
-                    }
-                    renderText={(value) => value}
+                    onValueChange={(value: NumberFormatValues) => 
+                      handleItemInput(value.value, i, "rate")}
+                  renderText={(formattedValue: string) => formattedValue}
                   />
                 </TableCell>
                 <TableCell align="center" style={customStyle}>

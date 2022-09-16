@@ -1,25 +1,18 @@
-import { Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import CustomLoader from "../../components/asset/CustomLoader";
-import Dashboard from "../../components/Dashboard";
-import { Container } from "../../components/styled-component/Global";
-import { ReactElement, useEffect, useState } from "react";
-import Layout from "../../components/Layout";
-import { NextPageWithLayout } from "./_app";
-import useGetter from "../../hooks/useGetter";
-import { Invoice } from "../../components/Data/types";
-import {
-  Receipt,
-  GifBoxSharp,
-  VerifiedUser,
-  Person,
-  DataArray,
-} from "@mui/icons-material";
-import { ChartData } from "chart.js";
-import products from "../../model/products";
-import clients from "../../model/clients";
+import { DataArray, GifBoxSharp, Person, Receipt } from '@mui/icons-material';
+import { ChartData } from 'chart.js';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { ReactElement, useEffect, useState } from 'react';
+
+import CustomLoader from '../../components/asset/CustomLoader';
+import Dashboard from '../../components/Dashboard';
+import { Invoice } from '../../components/Data/types';
+import Layout from '../../components/Layout';
+import { Container } from '../../components/styled-component/Global';
+import useGetter from '../../hooks/useGetter';
+import clients from '../../model/clients';
+import products from '../../model/products';
+import { NextPageWithLayout } from './_app';
 
 interface Analytics {
   id: number;
@@ -43,8 +36,7 @@ const Home: NextPageWithLayout = () => {
 
   const {
     data: invoicesFromApi,
-    isError,
-    isLoading,
+    isError
   } = useGetter(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
 
   const { data: productsFromApi } = useGetter(
@@ -99,18 +91,22 @@ const Home: NextPageWithLayout = () => {
 
   useEffect(() => {
     setSalesAna(salesAnaData);
-  }, [invoicesFromApi, invoices, products, clients,salesAnaData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoicesFromApi, invoices, products, clients]);
 
   useEffect(() => {
     setter();
-  }, [invoicesFromApi, setter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoicesFromApi]);
 
   useEffect(() => {
     if (clientsFromApi !== undefined) setClients(clientsFromApi);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsFromApi]);
 
   useEffect(() => {
     if (productsFromApi !== undefined) setProducts(productsFromApi);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productsFromApi]);
 
   useEffect(() => {
@@ -206,14 +202,10 @@ const Home: NextPageWithLayout = () => {
   });
 
   useEffect(() => {
-    if (
-      !(status === "authenticated") &&
-      !invoicesFromApi &&
-      !(status === "loading")
-    ) {
-      router.push("/auth/login");
+    if (status === "unauthenticated") {
+      router.replace("/auth/login");
     }
-  }, [invoicesFromApi, status, router]);
+  }, [status]);
 
   return (
     <>

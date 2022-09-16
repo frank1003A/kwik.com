@@ -59,11 +59,12 @@ const Login: NextPage = () => {
     if (status === "authenticated") {
       router.push("/")
     }
-  }, [router, status])
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ status])
   
 
   return (
-    <motion.div className={styles["Login-container"]}
+    <motion.div className={styles["login-container"]}
     initial={{width: "0%"}}
     animate={{width: "100%"}}
     exit={{x: 0, transition: {duration: 3}}}

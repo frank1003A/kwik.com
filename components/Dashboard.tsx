@@ -1,23 +1,15 @@
-import React, { FC, useEffect, useState } from "react";
-import CustomCard from "./CustomCard";
-import UpdateCard from "./UpdateCard";
-import SalesAnalytics from "./SalesAnalytics";
-import styles from "../styles/Home.module.css";
-import { Typography } from "@mui/material";
-import Button from "../components/Button";
-import Views from "./Views";
-import AddIcon from "@mui/icons-material/Add";
-import { ChartData } from "chart.js";
-import DougnutChart from "./Doughnut";
-import useGetter from "../hooks/useGetter";
-import { useSession } from "next-auth/react";
-import {
-  Analytics,
-  GifBoxSharp,
-  Receipt,
-  VerifiedUser,
-} from "@mui/icons-material";
-import { Invoice } from "./Data/types";
+import AddIcon from '@mui/icons-material/Add';
+import { Typography } from '@mui/material';
+import { ChartData } from 'chart.js';
+import React, { FC, useEffect, useState } from 'react';
+
+import Button from '../components/Button';
+import styles from '../styles/Home.module.css';
+import CustomCard from './CustomCard';
+import DougnutChart from './Doughnut';
+import SalesAnalytics from './SalesAnalytics';
+import UpdateCard from './UpdateCard';
+import Views from './Views';
 
 interface Analytics {
   id: number;
@@ -79,7 +71,7 @@ const dashboard: FC<Props> = ({
       <div className={styles["btmCont"]}>
         <div className={styles["tableStack"]}>
           <div className={styles["dheader"]}>
-            <Typography>Recent Views</Typography>
+            <Typography>Invoice Sales Chart</Typography>
           </div>
           <div className={styles["tablecont"]}>
             <Views data={bardata} />

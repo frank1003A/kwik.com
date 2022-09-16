@@ -140,7 +140,8 @@ const CreateInvoice: NextPageWithLayout = () => {
         invoiceTitle: `invoice#${nanoid(5)}`,
       });
     }
-  }, [user, status, InvoiceRepo]);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, status]);
 
   /**
    * we need to pass the products selected from products page
@@ -161,7 +162,7 @@ const CreateInvoice: NextPageWithLayout = () => {
       return somedata;
     });
     setInvoiceRepo({ ...InvoiceRepo, invoiceitems: resInv.invoiceitems });
-    //dispatch(clearProducts());
+    dispatch(clearProducts());
   };
 
   /**
@@ -182,6 +183,7 @@ const CreateInvoice: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (SelectedClient.client) handleClientTransfer();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SelectedClient.client, handleClientTransfer]);
 
   const handlesucClose = (

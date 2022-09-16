@@ -166,7 +166,7 @@ section#formandinputsignup {
 #formandinput .form .form-control input[type="text"] {
     padding: 15px;
     background: var(--textbox);
-    border-radius: 50px;
+    border-radius: 8px;
     width: 100%;
     font-family: Roboto, sans-serif;
     font-weight: 400;
@@ -186,7 +186,7 @@ section#formandinputsignup {
 #formandinputsignup .form .form-control input[type="text"] {
     padding: 15px;
     background: var(--textbox);
-    border-radius: 50px;
+    border-radius: 8px;
     width: 100%;
     border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
@@ -222,7 +222,7 @@ section#formandinputsignup {
 #formandinput .form .form-control input[type="password"] {
     padding: 15px;
     background: var(--textbox);
-    border-radius: 50px;
+    border-radius: 8px;
     width: 100%;
     border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
@@ -250,7 +250,7 @@ section#formandinputsignup {
 #formandinputsignup .form .form-control input[type="password"] {
     padding: 15px;
     background: var(--textbox);
-    border-radius: 50px;
+    border-radius: 8px;
     width: 100%;
     border: 1px solid var(--textbox);
     font-family: Roboto, sans-serif;
@@ -270,7 +270,7 @@ section#formandinputsignup {
 #formandinput .form  .loginbtn{
     width: 100%;
     padding: 10px;
-    border-radius: 50px !important;
+    border-radius: 4px !important;
     box-shadow: var(--box-shadow);
     background-color: var(--primarycolor) !important;
 }
@@ -278,7 +278,7 @@ section#formandinputsignup {
 #formandinputsignup .form  .loginbtn{
     width: 100%;
     padding: 10px;
-    border-radius: 50px !important;
+    border-radius: 4px !important;
     box-shadow: var(--box-shadow);
     background-color: var(--primarycolor) !important;
 }

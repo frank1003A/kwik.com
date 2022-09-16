@@ -48,8 +48,8 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
       </div>
 
       <div className={styles.nav}>
-        <Link href={"/"} passHref>
-          <div
+        <Link href={"/"} >
+          <a
             className={
               router.pathname == "/"
                 ? styles.outercontainerActive
@@ -60,11 +60,11 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               <Dashboard />
             </div>
             <p>Dashboard</p>
-          </div>
+          </a>
         </Link>
 
-        <Link href={"/invoices"} passHref>
-          <div
+        <Link href={"/invoices"} >
+          <a
             className={
               router.pathname == "/invoices"
                 ? styles.outercontainerActive
@@ -75,10 +75,10 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               <FilePresent />
             </div>
             <p>Invoices</p>
-          </div>
+          </a>
         </Link>
-        <Link href={"/clients"} passHref>
-          <div
+        <Link href={"/clients"} >
+          <a
             className={
               router.pathname == "/clients"
                 ? styles.outercontainerActive
@@ -89,11 +89,11 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               <People />
             </div>
             <p>Clients</p>
-          </div>
+          </a>
         </Link>
 
-        <Link href={"/products"} passHref>
-          <div
+        <Link href={"/products"} >
+          <a
             className={
               router.pathname == "/products"
                 ? styles.outercontainerActive
@@ -104,11 +104,11 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               <FilePresent />
             </div>
             <p>Products</p>
-          </div>
+          </a>
         </Link>
 
-        <Link href={"/profile"} passHref>
-          <div
+        <Link href={"/profile"} >
+          <a
             className={
               router.pathname == "/profile"
                 ? styles.outercontainerActive
@@ -131,7 +131,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               color="error"
               size="medium"
             />
-          </div>
+          </a>
         </Link>
       </div>
 
@@ -155,7 +155,6 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             <Create />
             <div className={styles["card"]} onClick={() => setOptionModal(false)}>
               <Link href="http://localhost:3000/invoice/create"
-              passHref
               >
                 <Typography>Create Invoice</Typography>
               </Link>
@@ -173,57 +172,3 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
 };
 
 export default Sidebar;
-
-/**<Modal OpenModal={optionModal} handleCloseModal={closeOModal} pd="">
-        <div className={styles.optionContainer}>
-          <Link href="/kwik_creator">
-            <div className={styles.option}>
-              <div className={styles["card"]}>
-                <span className={styles["AddIcon"]}>
-                  <AddCircle sx={{ fontSize: "150px" }} />
-                </span>
-                <Typography>Kwik Invoice Creator</Typography>
-              </div>
-            </div>
-          </Link>
-          <Link href="#">
-            <div className={styles.option}>
-              <div className={styles["card"]}>
-                <span className={styles["AddIcon"]}>
-                  <AddCircle sx={{ fontSize: "150px" }} />
-                </span>
-                <Typography>Kwik Default Template</Typography>
-              </div>
-            </div>
-          </Link>
-        </div>
-      </Modal> */
-
-/**
-<div className={styles.sd}>
-<SpeedDial/>
-</div> */
-
-/**<Link href={"/settings"}>
-          <div
-            className={
-              router.pathname == "/settings"
-                ? styles.outercontainerActive
-                : styles.outercontainer
-            }
-          >
-            <div className={styles.smallcontainer}>
-              <Settings />
-            </div>
-            <p>Settings</p>
-          </div>
-        </Link> */
-
-/** <div className={styles.upperContainer}>
-        <Button
-          className={styles.btnCreate}
-          innerText={"KWIK CREATE"}
-          onClick={() => openOModal()}
-          icon={<CreateRounded />}
-        />
-      </div> */
