@@ -48,3 +48,5 @@ yarn-error.log*
 
 #page files
 /src/pages/KwikCreator.tsx
+
+.vercel
