@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 export const api: AxiosInstance = axios.create({
-    baseURL: "https://kwik-mini-invoice-generator.vercel.app",
+    baseURL: "https://kwik-mini-invoice-generator-owu0nhna5-frank1003a.vercel.app",
   });
 
 api.defaults.headers.post['Content-Type'] = 'application/json';
