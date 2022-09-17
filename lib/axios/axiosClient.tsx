@@ -1,14 +1,14 @@
 import axios, { AxiosInstance } from "axios";
 
 export const api: AxiosInstance = axios.create({
-    baseURL: "https://kwik-mini-invoice-generator-owu0nhna5-frank1003a.vercel.app",
+    baseURL: "https://kwik-mini-invoice-generator.vercel.app",
   });
 
 api.defaults.headers.post['Content-Type'] = 'application/json';
 api.defaults.headers.post['Accept'] = 'application/json'
 
 //api.defaults.timeout = 2000
-
+//https://kwik-mini-invoice-generator-lvzabnf75-frank1003a.vercel.app
 
 /**@alias `getRequest` axios get request base config */
 export const getRequest = async (URL: string) => {
