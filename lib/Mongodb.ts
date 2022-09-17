@@ -1,11 +1,11 @@
 import { MongoClient } from "mongodb";
 
-if (!process.env.MONGODB_URI || !process.env.LOCAL_DB_NAME) {
+if (!process.env.MONGODB_URI) {
   throw new Error("Please add your Mongo URI to .env.local");
 }
 
 const uri: string = process.env.MONGODB_URI;
-const localUri: string = process.env.LOCAL_DB_NAME
+//const localUri: string = process.env.LOCAL_DB_NAME
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
   };
 
   if (!globalWithMongoClientPromise._mongoClientPromise) {
-    client = new MongoClient(localUri);
+    client = new MongoClient(uri);
     globalWithMongoClientPromise._mongoClientPromise = client.connect();
   }
 
