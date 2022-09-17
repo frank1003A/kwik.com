@@ -230,7 +230,7 @@ section#formandinputsignup {
 #formandinputsignup .form  .loginbtn{
     width: 100%;
     padding: 10px;
-    border-radius: 4px !important;
+    border-radius: 50px !important;
     box-shadow: var(--box-shadow);
     background-color: var(--primarycolor) !important;
 }
