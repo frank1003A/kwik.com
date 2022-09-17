@@ -5,6 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import PasswordInput from '../../../components/PasswordInput';
 
 import ButtonComponent from '../../../components/Button';
 import CustomSnackbar from '../../../components/CustomSnackbar';
@@ -45,8 +46,7 @@ const Login: NextPage = () => {
       });
       router.replace("/");
     }
-    if (res?.status === 401) setError("Network Error 🤦‍♀️")
-    else if (res?.error) setError(res.error);
+    if (res?.error) setError(res.error);
   };
 
   const handleContrl = (): boolean => {
@@ -93,6 +93,7 @@ const Login: NextPage = () => {
               Email<span>*</span>
             </Typography>
             <input
+              className={styles["input"]}
               value={userInfo.email}
               type="text"
               placeholder="mail@website.com"
@@ -105,17 +106,17 @@ const Login: NextPage = () => {
             <Typography className={styles["frmtxt"]}>
               Password<span>*</span>
             </Typography>
-            <input
-              value={userInfo.password}
-              type="password"
-              placeholder="min. 8 characters"
-              onChange={({ target }) =>
-                setUserInfo({ ...userInfo, password: target.value })
-              }
+            <PasswordInput
+            value={userInfo.password}
+            placeholder="min. 8 characters"
+            onChangeHandler={({target}) =>
+              setUserInfo({ ...userInfo, password: target.value })
+            }
             />
           </div>
           {error ? (
-            <motion.span animate={{ y: 5 }} layout>
+            <motion.span animate={{ y: 5 }} layout className={styles["error_message"]}>
+              <div/>
               <p style={{ color: "red" }}>*{error}</p>
             </motion.span>
           ) : null}

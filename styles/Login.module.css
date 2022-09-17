@@ -163,7 +163,7 @@ section#formandinputsignup {
     justify-content: center;
 }
 
-#formandinput .form .form-control input[type="text"] {
+#formandinput .form .form-control .input {
     padding: 15px;
     background: var(--textbox);
     border-radius: 8px;
@@ -173,17 +173,17 @@ section#formandinputsignup {
     border: 1px solid var(---textbox);
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-size: .9rem;
-    color: var(--fg);
+    color: var(---textcolor);
     line-height: 1.5;
     letter-spacing: 0.00938em;
 }
 
-#formandinput .form .form-control input[type="text"]:focus-visible {
+#formandinput .form .form-control .input:focus-visible {
     outline: none;
     border-color: var(--primarycolor) ;
 }
 
-#formandinputsignup .form .form-control input[type="text"] {
+#formandinputsignup .form .form-control .input {
     padding: 15px;
     background: var(--textbox);
     border-radius: 8px;
@@ -198,79 +198,31 @@ section#formandinputsignup {
     letter-spacing: 0.00938em;
 }
 
-#formandinputsignup .form .form-control input[type="text"]:focus-visible{
+#formandinputsignup .form .form-control .input:focus-visible{
     outline: none;
     border-color: var(--primarycolor) ;
 }
 
-#formandinput .form .form-control input[type="text"]:focus-visible, 
-#formandinput .form .form-control input[type="text"]:focus,
-#formandinput .form .form-control input[type="text"]:focus-within {
+#formandinput .form .form-control .input:focus-visible, 
+#formandinput .form .form-control .input:focus,
+#formandinput .form .form-control .input:focus-within {
     border: 1px solid var(--primarycolor) !important;
      background: rgba(0, 17, 255, 0.164);
      transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-#formandinputsignup .form .form-control input[type="text"]:focus-visible, 
-#formandinputsignup .form .form-control input[type="text"]:focus,
-#formandinputsignup .form .form-control input[type="text"]:focus-within {
+#formandinputsignup .form .form-control .input:focus-visible, 
+#formandinputsignup .form .form-control .input:focus,
+#formandinputsignup .form .form-control .input:focus-within {
     border: 1px solid var(--primarycolor) !important;
     background: rgba(0, 17, 255, 0.164);
     transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
-}
-
-#formandinput .form .form-control input[type="password"] {
-    padding: 15px;
-    background: var(--textbox);
-    border-radius: 8px;
-    width: 100%;
-    border: 1px solid var(--textbox);
-    font-family: Roboto, sans-serif;
-    font-weight: 400;
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-size: .9rem;
-    color: var(--fg);
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-}
-
-#formandinput .form .form-control input[type="password"]:focus-visible {
-    outline: none;
-    border-color: var(--primarycolor) ;
-}
-
-#formandinput .form .form-control input[type="password"]:focus-visible, 
-#formandinput .form .form-control input[type="password"]:focus,
-#formandinput .form .form-control input[type="password"]:focus-within {
-    border: 1px solid var(--primarycolor) !important;
-    background: rgba(0, 17, 255, 0.164);
-    transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
-}
-
-#formandinputsignup .form .form-control input[type="password"] {
-    padding: 15px;
-    background: var(--textbox);
-    border-radius: 8px;
-    width: 100%;
-    border: 1px solid var(--textbox);
-    font-family: Roboto, sans-serif;
-    font-weight: 600;
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-size: .9rem;
-    color: var(--fg);
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-}
-
-#formandinputsignup .form .form-control input[type="password"]:focus-visible {
-    outline: none;
-    border-color: var(--primarycolor) ;
 }
 
 #formandinput .form  .loginbtn{
     width: 100%;
     padding: 10px;
-    border-radius: 4px !important;
+    border-radius:50px !important;
     box-shadow: var(--box-shadow);
     background-color: var(--primarycolor) !important;
 }
@@ -467,6 +419,23 @@ justify-content: flex-start;
     font-weight: 600;
     color: #666;
 }
+
+.error_message {
+    display: flex;
+    grid-row-gap: 1rem;
+    row-gap: 1rem;
+    background: #eee;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error_message > div {
+    width: 2px;
+    height: 100%;
+    background-color: var(--primarycolor);
+    transition: 0.5s ease-in-out;
+}
+
 
 @media (max-width:900px){
     .login-container{

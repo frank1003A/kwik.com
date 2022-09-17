@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonComponent from '../../../components/Button';
 import CustomSnackbar from '../../../components/CustomSnackbar';
 import { initialUserData } from '../../../components/Data/initialData';
+import PasswordInput from '../../../components/PasswordInput';
 import { postRequest } from '../../../lib/axios/axiosClient';
 import user from '../../../model/user';
 import styles from '../../../styles/Login.module.css';
@@ -85,6 +86,7 @@ const Register: NextPage = () => {
             </Typography>
             <input
               value={userState.fullname}
+              className={styles["input"]}
               onChange={({ target }) =>
                 setUserState({ ...userState, fullname: target.value })
               }
@@ -98,6 +100,7 @@ const Register: NextPage = () => {
             </Typography>
             <input
               value={userState.email}
+              className={styles["input"]}
               onChange={({ target }) =>
                 setUserState({ ...userState, email: target.value })
               }
@@ -109,13 +112,12 @@ const Register: NextPage = () => {
             <Typography className={styles["frmtxt"]}>
               Password<span>*</span>
             </Typography>
-            <input
-              value={userState.password}
-              onChange={({ target }) =>
-                setUserState({ ...userState, password: target.value })
-              }
-              type="password"
-              placeholder="min. 8 characters"
+             <PasswordInput
+            value={userState.password as string}
+            placeholder="min. 8 characters"
+            onChangeHandler={({target}) =>
+              setUserState({ ...userState, password: target.value })
+            }
             />
           </div>
           <div className={styles["frm"]}>

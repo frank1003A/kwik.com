@@ -713,6 +713,78 @@
   letter-spacing: 0.00938em;
 }
 
+/*password-input*/
+#cover {
+  display: block;
+  overflow: hidden;
+  background: var(--textbox);
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  border: 1px solid var(--textbox);
+ 
+}
+.typcn {
+  position: relative;
+  right: 0;
+  color: #555;
+  display: flex;
+  font-size: 22px;
+  cursor: pointer;
+  border: none;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}      
+
+#cover input[type="password"]  {
+  padding: 15px;
+  background: transparent;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: .9rem;
+  border: none;
+  width: 100%;
+  color: var(--textcolor);
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+#cover input[type="text"] {
+  padding: 15px;
+  background: transparent;
+  width: 100%;
+  font-family: Roboto, sans-serif;
+  font-weight: 600;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: .9rem;
+  border: none;
+  width: 100%;
+  color: var(--fg);
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+#cover input:focus-visible {
+  outline: none !important;
+  border: none !important;
+}
+
+#cover:hover {
+  border: 1px solid var(--primarycolor) !important;
+  background: rgba(0, 17, 255, 0.164);
+  transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+#cover input[type="text"]:focus , 
+#cover input[type="text"]:focus-visible , 
+#cover input[type="text"]:focus-within  {
+  background: transparent;
+  transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
+}
+/*password-input*/
+
 @media (max-width: 1030px) {
   .dashboardCont {
     width: 100%;
