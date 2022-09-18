@@ -154,7 +154,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             <Divider />
             <Create />
             <div className={styles["card"]} onClick={() => setOptionModal(false)}>
-              <Link href="http://localhost:3000/invoice/create"
+              <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create"
               >
                 <Typography>Create Invoice</Typography>
               </Link>

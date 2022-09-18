@@ -689,7 +689,7 @@ const Clients: NextPageWithLayout = () => {
         </Typography>
         </span>
         <div className={styles["card"]}>
-          <Link href="http://localhost:3000/invoice/create">
+          <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create">
             <Typography>Create Invoice</Typography>
           </Link>
         </div>

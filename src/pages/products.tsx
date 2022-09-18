@@ -817,7 +817,7 @@ const Products: NextPageWithLayout = () => {
               innerText="Create Invoice"
               btnDisabled={selectedProducts.product.length > 0 ? false : true}
               onClick={() =>
-                router.push("http://localhost:3000/invoice/create")
+                router.push("https://kwik-mini-invoice-generator.vercel.app/invoice/create")
               }
             />
           </div>
