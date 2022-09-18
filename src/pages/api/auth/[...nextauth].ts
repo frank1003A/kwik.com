@@ -18,7 +18,6 @@ const authOptions: NextAuthOptions = {
           email: string;
           password: string;
         };
-
         const client = await clientPromise;
         const db = client.db("Kwik");
 
@@ -49,7 +48,7 @@ const authOptions: NextAuthOptions = {
 
 export default NextAuth(authOptions);
 
-/**Handles password hash match */
+/**Handles password encrption and decryption*/
 const signInUser = async(password: string, user: user) => {
   if (!user.password){
     throw new Error('invalid passowrd')

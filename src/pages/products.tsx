@@ -185,7 +185,7 @@ const Products: NextPageWithLayout = () => {
        * since sorted is a different arr, changes in the original wont affect it
        * so we need to update the sorted table to reflect the changes in the original
        */
-      if (isSearching || openUpdateModal) {
+      if (isSearching || openUpdateModal === true) {
         let fS: productsClass[] = products.filter((key) => key._id === nC._id);
         fS[0] = nC;
         setSorted(fS);
@@ -206,7 +206,7 @@ const Products: NextPageWithLayout = () => {
        * since sorted is a different arr, changes in the original wont affect it
        * so we need to update the sorted table to reflect the changes in the original
        */
-      if (isSearching || openUpdateModal) {
+      if (isSearching || openUpdateModal === true) {
         let fS: productsClass[] = products.filter((key) => key._id === nC._id);
         fS[0] = nC;
         setSorted(fS);
@@ -325,11 +325,6 @@ const Products: NextPageWithLayout = () => {
                   gap: ".5rem",
                 }}
               >
-                <IconButton>
-                  <Tooltip title="Select Product">
-                    <Receipt style={{ color: "orange" }} />
-                  </Tooltip>
-                </IconButton>
 
                 <IconButton
                   onClick={() => {
