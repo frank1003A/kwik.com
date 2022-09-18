@@ -97,7 +97,7 @@ const InvoiceBar: FC<Props> = ({
             <span>
               <Link
                 href={{
-                  pathname: "http://localhost:3000/invoice/update",
+                  pathname: "https://kwik-mini-invoice-generator.vercel.app/invoice/update",
                   query: { invoice_id: invId?.toString() },
                 }}
                 passHref
@@ -202,6 +202,3 @@ const Status = styled.div`
   line-height: 1.5;
   letter-spacing: 0.00938em;
 `;
-
-/**router.push('http://localhost:3000/invoice/update' as 'sfsfsggf', {
-            query: {invoice_id: invId?.toString()} */
