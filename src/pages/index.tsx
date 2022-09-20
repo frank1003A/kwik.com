@@ -232,5 +232,5 @@ const Home: NextPageWithLayout = () => {
 export default Home;
 
 Home.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+  return <Layout>{page}</Layout>
 };

@@ -1,7 +1,13 @@
-import { CheckCircleSharp, Delete } from "@mui/icons-material";
+import {
+  CheckCircleSharp,
+  Delete,
+  Message,
+  PersonAddRounded,
+  SupervisedUserCircle,
+} from "@mui/icons-material";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
-import { Modal, Typography } from "@mui/material";
+import { Modal, Tooltip, Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -13,19 +19,17 @@ import Toolbar from "@mui/material/Toolbar";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import Link from "next/link";
 import Router from "next/router";
 import * as React from "react";
 import Avatar from "react-avatar";
-import { CircleLoader, RingLoader } from "react-spinners";
 
 import useCurrentUser from "../hooks/useCurrentUser";
 import Create from "./asset/Create";
 import CustomLoader from "./asset/CustomLoader";
-import MainLogo from "./asset/MainLogo";
 import ButtonComponent from "./Button";
 import LeftAnchor from "./LeftAnchor";
 import { Center, UserBadge } from "./styled-component/Global";
+import styles from "../styles/Home.module.css";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -206,6 +210,24 @@ export default function PrimarySearchAppBar({
     </Menu>
   );
 
+  const topIcons: {
+    id: number;
+    icon: JSX.Element;
+    tip: string;
+    func?: () => void;
+  }[] = [
+    {
+      id: 1,
+      icon: <Message />,
+      tip: "Generated Messages",
+    },
+    {
+      id: 2,
+      icon: <SupervisedUserCircle />,
+      tip: "User Authenticate",
+    },
+  ];
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -259,23 +281,32 @@ export default function PrimarySearchAppBar({
                   xs: "none",
                   md: "flex",
                 },
-                justifyContent: "center",
+                minWidth: "450px",
+                right: "0",
+                justifyContent: "space-around",
                 alignItems: "center",
-                width: 300,
               }}
             >
+              <span id="topicon">
+                {topIcons.map((key) => {
+                  return (
+                    <Tooltip title={key.tip} key={key.id}>
+                      <IconButton aria-label="" onClick={key.func}>
+                        {key.icon}
+                      </IconButton>
+                    </Tooltip>
+                  );
+                })}
+              </span>
               <UserBadge>
-                <CheckCircleSharp fill="green" />
                 <Typography variant="subtitle1">{userEmail}</Typography>
               </UserBadge>
-
               <IconButton
                 size="large"
                 edge="end"
                 aria-label="account of current user"
                 aria-controls={menuId}
                 aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
                 color="inherit"
               >
                 <Avatar
@@ -285,6 +316,12 @@ export default function PrimarySearchAppBar({
                   size="40px"
                 />
               </IconButton>
+              |
+              <ButtonComponent
+                innerText="Sign Out"
+                className={styles["no_bg_btn"]}
+                onClick={handleSignOut}
+              />
             </Box>
           )}
           <Box sx={{ display: { xs: "flex", md: "none" } }}>

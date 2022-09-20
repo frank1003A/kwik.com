@@ -87,7 +87,8 @@ export const UserBadge = styled.div`
     width:min-content;
     display: flex;
     text-transform: lowercase;
-    border-radius: 50px;
+    border-radius: 4px;
+    //border: 1px solid var(--sw);
     font-weight: 500;
     align-items: center;
     justify-content: space-evenly;

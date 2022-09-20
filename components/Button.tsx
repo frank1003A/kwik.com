@@ -28,14 +28,14 @@ const ButtonComponent = ({
 
   return (
     <div>
-        <Button variant={!compvariant ? 'contained' : compvariant}
+        <button
         id={id}
-        className={!className ? styles.muiButton : className}
+        className={!className ? styles.muiButton : `${styles.muiButton} ${className}`}
         onClick={onClick}
-        sx={customStyle}
+        style={customStyle}
         disabled={!btnDisabled ? false : btnDisabled}
         onMouseEnter={onMouseEnter}
-        >{icon}{innerText}</Button>
+        >{icon}{innerText}</button>
     </div>
   )
 }

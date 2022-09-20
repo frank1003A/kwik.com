@@ -4,6 +4,7 @@ import {
   FilePresent,
   Message,
   People,
+  Person,
   Settings,
 } from "@mui/icons-material";
 import { Box, Chip, Divider, Typography } from "@mui/material";
@@ -40,7 +41,6 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
     >
       <div className={styles.upperContainer}>
         <Button
-          className={styles.btnCreate}
           innerText={"KWIK CREATE"}
           onClick={() => openOModal()}
           icon={<CreateRounded />}
@@ -48,7 +48,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
       </div>
 
       <div className={styles.nav}>
-        <Link href={"/"} >
+        <Link href={"/"}>
           <a
             className={
               router.pathname == "/"
@@ -63,7 +63,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </a>
         </Link>
 
-        <Link href={"/invoices"} >
+        <Link href={"/invoices"}>
           <a
             className={
               router.pathname == "/invoices"
@@ -77,7 +77,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             <p>Invoices</p>
           </a>
         </Link>
-        <Link href={"/clients"} >
+        <Link href={"/clients"}>
           <a
             className={
               router.pathname == "/clients"
@@ -92,7 +92,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </a>
         </Link>
 
-        <Link href={"/products"} >
+        <Link href={"/products"}>
           <a
             className={
               router.pathname == "/products"
@@ -107,7 +107,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
           </a>
         </Link>
 
-        <Link href={"/profile"} >
+        <Link href={"/profile"}>
           <a
             className={
               router.pathname == "/profile"
@@ -116,32 +116,20 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             }
           >
             <div className={styles.smallcontainer}>
-              <Message />
+              <Person />
             </div>
             <p>Profile</p>
-            <Chip
-              label={"2"}
-              sx={{
-                borderRadius: "4px",
-                height: "30px",
-                width: "30px",
-                fontSize: "xx-small",
-              }}
-              variant="filled"
-              color="error"
-              size="medium"
-            />
           </a>
         </Link>
       </div>
 
-      <div className={styles.upperContainer}>
-        <Button
-          className={styles.btnCreate}
-          innerText={"Customize"}
-          onClick={() => openSModal()}
-          icon={<Settings />}
-        />
+      <Divider />
+
+      <div className={styles.nav}>
+        <div className={styles.sc_white} onClick={() => openSModal()}>
+          <Settings />
+          <p>Settings</p>
+        </div>
       </div>
 
       {/**Create Invoice Modal */}
@@ -153,9 +141,11 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
             </Typography>
             <Divider />
             <Create />
-            <div className={styles["card"]} onClick={() => setOptionModal(false)}>
-              <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create"
-              >
+            <div
+              className={styles["card"]}
+              onClick={() => setOptionModal(false)}
+            >
+              <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create">
                 <Typography>Create Invoice</Typography>
               </Link>
             </div>

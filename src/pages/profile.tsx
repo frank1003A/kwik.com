@@ -128,11 +128,12 @@ const Settings: NextPageWithLayout = () => {
       gap: "1rem",
      }}>
      <ButtonComponent
-      customStyle={{background: "none"}}
+      customStyle={{background: "red"}}
       innerText="Confirm and Delete"
       onClick={() => deleteUserData()}
       />
       <ButtonComponent
+      customStyle={{background: "green"}}
       innerText="Cancel and Continue"
       onClick={() => setDeleteDialog(false)}
       />

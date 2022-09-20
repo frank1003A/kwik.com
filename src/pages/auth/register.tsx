@@ -57,8 +57,8 @@ const Register: NextPage = () => {
   
   return (
     <motion.div className={styles["signup-container"]}
-    initial={{width: "0%"}}
-    animate={{width: "100%"}}
+    initial={{width: "0%", opacity: 0}}
+    animate={{width: "100%", opacity: 1}}
     exit={{x: 0, transition: {duration: 3,easings: ["easeInOut"]}}}
     >
       <Head>

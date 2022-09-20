@@ -224,7 +224,7 @@ section#formandinputsignup {
     padding: 10px;
     border-radius:50px !important;
     box-shadow: var(--box-shadow);
-    background-color: var(--primarycolor) !important;
+    background-color: var(--primarycolor) !important
 }
 
 #formandinputsignup .form  .loginbtn{
@@ -468,7 +468,13 @@ justify-content: flex-start;
         padding: 2rem;
     }
 
-    #formandinput .frmout {
+    section#formandinputsignup {
+        width: 100%;
+        padding: 2rem;
+    }
+
+    #formandinputsignup .frmout, 
+    #formandinput .frmout{
         width: 100%;
     }
 
