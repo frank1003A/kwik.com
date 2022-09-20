@@ -30,7 +30,8 @@ const ButtonComponent = ({
     <div>
         <button
         id={id}
-        className={!className ? styles.muiButton : `${styles.muiButton} ${className}`}
+        className={!className ? styles.muiButton : 
+          className !== "no_bg_btn" ? `${styles.muiButton} ${className}` : className}
         onClick={onClick}
         style={customStyle}
         disabled={!btnDisabled ? false : btnDisabled}
