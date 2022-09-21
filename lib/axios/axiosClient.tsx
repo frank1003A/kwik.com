@@ -8,9 +8,6 @@ export const api: AxiosInstance = axios.create({
 api.defaults.headers.post['Content-Type'] = 'application/json';
 api.defaults.headers.post['Accept'] = 'application/json'
 
-//api.defaults.timeout = 2000
-//https://kwik-mini-invoice-generator-lvzabnf75-frank1003a.vercel.app
-
 /**@alias `getRequest` axios get request base config */
 export const getRequest = async (URL: string) => {
     const response = await api.get(`/${URL}`);

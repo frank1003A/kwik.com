@@ -15,6 +15,7 @@ import {
 } from "@mui/icons-material";
 import {
   Checkbox,
+  Chip,
   Divider,
   IconButton,
   Tooltip,
@@ -404,6 +405,9 @@ const Products: NextPageWithLayout = () => {
                   gap: ".5rem",
                 }}
               >
+
+                <Chip variant="filled" color="success" label="In-Stock"/>
+
                 <CustomIconBtn
                   handleClick={() => {
                     handleUpdateModal();

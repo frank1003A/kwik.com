@@ -115,17 +115,17 @@ const Landingpage = () => {
           <Link href={"#how-it-works"}>
             <a className={styles["nav-link"]}>Features</a>
           </Link>
-          <Link href={"#ts"}>
+          <Link href={"#testimonials"}>
             <a className={styles["nav-link"]}>Testimonials</a>
           </Link>
-          <Link href={"#gfs"}>
+          <Link href={"#extras"}>
             <a className={styles["nav-link"]}>Extras</a>
           </Link>
-          <Link href={"#bufs"}>
+          <Link href={"#implementation"}>
             <a className={styles["nav-link"]}>Implementation</a>
           </Link>
 
-          <Link href={"#kwikabt"}>
+          <Link href={"#about"}>
             <a className={styles["nav-link"]}>About</a>
           </Link>
 
@@ -139,7 +139,7 @@ const Landingpage = () => {
         </div>
       </motion.header>
 
-      <section className={styles["hero-header"]} id="kwikabt">
+      <section className={styles["hero-header"]} id="about">
         <div className={styles["container"]}>
           <div className={styles["grid"]}>
             <motion.div
@@ -346,7 +346,7 @@ const Landingpage = () => {
         </div>
       </div>
 
-      <div className={styles["_2-testimonials-section"]} id="ts">
+      <div className={styles["_2-testimonials-section"]} id="testimonials">
         <div className={styles["container"]}>
           <div className={styles["_2-testimonials-container"]}>
             <h2 className={styles["h2"]}>
@@ -455,7 +455,7 @@ const Landingpage = () => {
         </div>
       </div>
 
-      <section className={styles["_3-grid-feature-section"]} id="gfs">
+      <section className={styles["_3-grid-feature-section"]} id="extras">
         <div className={styles["container"]}>
           <div className={styles["_3-grid-feature-container"]}>
             <h2 className={styles["h2"]}>
@@ -527,7 +527,7 @@ const Landingpage = () => {
         </div>
       </section>
 
-      <div className={styles["big-ui-feature-section"]} id="bufs">
+      <div className={styles["big-ui-feature-section"]} id="implementation">
         <div className={styles["container"]}>
           <div className={styles["big-ui-feature-container"]}>
             <div className={styles["title-section"]}>
