@@ -34,7 +34,7 @@ import {
   TitleContainerProps,
 } from "./types";
 import { motion } from "framer-motion";
-import { NumericFormat } from 'react-number-format';
+import { NumericFormat } from "react-number-format";
 import { NumberFormatValues } from "react-number-format/types/types";
 
 /**Default Template Invoice Logo Container */
@@ -243,7 +243,7 @@ export const InvoiceDescription: FC<InvoiceDescriptionProps> = ({
         :
         {/**
          * This input is disabled because the value
-         * it will be generated at the frontend
+         * will be generated runtime
          */}
         <input
           type="text"
@@ -364,14 +364,17 @@ export const InvoiceTable: FC<TableProps> = ({
                     aria-label="minimum height"
                     className={styles.tA}
                     minRows={2}
-                    style={{ height: 28, width: 200, color: !customStyle?.color ? "#555" : customStyle.color }}
+                    style={{
+                      height: 28,
+                      width: 200,
+                      color: !customStyle?.color ? "#555" : customStyle.color,
+                    }}
                     maxLength={200}
                     placeholder="item description"
                     value={inv.description}
                     disabled={!contentEditable ? false : contentEditable}
                     onChange={(e) => handleItemInput(e, i, "description")}
                   />
-                  {/**{ width: 200, height: 28, color: "#555", ...customStyle } */}
                 </TableCell>
                 <TableCell align="center" aria-disabled>
                   <input
@@ -386,17 +389,18 @@ export const InvoiceTable: FC<TableProps> = ({
                 </TableCell>
                 <TableCell align="center">
                   <NumericFormat
-                    thousandSeparator={true}
                     prefix={invoice.currency_symbol}
                     className={styles.tableInput}
+                    thousandSeparator={true}
                     displayType="input"
-                    placeholder="1000"
+                    placeholder="rate"
                     value={inv.rate}
                     disabled={!contentEditable ? false : contentEditable}
                     style={customStyle}
-                    onValueChange={(value: NumberFormatValues) => 
-                      handleItemInput(value.value, i, "rate")}
-                  renderText={(formattedValue: string) => formattedValue}
+                    onValueChange={(value: NumberFormatValues) =>
+                      handleItemInput(value.value, i, "rate")
+                    }
+                    renderText={(formattedValue: string) => formattedValue}
                   />
                 </TableCell>
                 <TableCell align="center" style={customStyle}>
@@ -456,7 +460,6 @@ export const TotalContainer: FC<TotalContainerProps> = ({
   return (
     <div className={styles.totalInfo}>
       <div className={styles.subTotal}>
-
         {/**Sub total label*/}
         <input
           type="text"
@@ -506,7 +509,6 @@ export const TotalContainer: FC<TotalContainerProps> = ({
         />
       </div>
       <div className={styles.total}>
-
         {/**Total label*/}
         <input
           className={styles.totalText}
@@ -544,7 +546,6 @@ export const NotesContainer: FC<NotesContainerProps> = ({
 }) => {
   return (
     <div id="dfinvoicenotes" style={{ display: notes }}>
-
       {/**Notes label*/}
       <input
         type="text"
@@ -567,7 +568,11 @@ export const NotesContainer: FC<NotesContainerProps> = ({
         onChange={(e) => handleDetailInput(e, "notes")}
         value={invoice.notes}
         placeholder="It was great doing buisness with you"
-        style={{ height: 28, width: 400, color: !customStyle?.color ? "#555" : customStyle.color }}
+        style={{
+          height: 28,
+          width: 400,
+          color: !customStyle?.color ? "#555" : customStyle.color,
+        }}
         maxLength={200}
       />
     </div>
@@ -584,7 +589,6 @@ export const TandC_Container: FC<TermsAndConditionProps> = ({
 }) => {
   return (
     <div id="dfinvoicetandc" style={{ display: tanc }}>
-
       {/**Term label*/}
       <input
         type="text"
@@ -605,7 +609,11 @@ export const TandC_Container: FC<TermsAndConditionProps> = ({
         value={invoice.term}
         onChange={(e) => handleDetailInput(e, "term")}
         placeholder="please make payments by due date"
-        style={{ height: 28, width: 685, color: !customStyle?.color ? "#555" : customStyle.color }}
+        style={{
+          height: 28,
+          width: 685,
+          color: !customStyle?.color ? "#555" : customStyle.color,
+        }}
         maxLength={200}
       />
     </div>

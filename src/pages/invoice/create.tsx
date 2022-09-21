@@ -184,7 +184,7 @@ const CreateInvoice: NextPageWithLayout = () => {
   useEffect(() => {
     if (SelectedClient.client) handleClientTransfer();
      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SelectedClient.client, handleClientTransfer]);
+  }, [,SelectedClient.client, handleClientTransfer]);
 
   const handlesucClose = (
     event: Event | SyntheticEvent<any, Event>,

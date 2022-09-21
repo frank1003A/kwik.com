@@ -1,81 +1,37 @@
-import {
-  AddCircle,
-  Check,
-  CheckCircle,
-  Clear,
-  Edit,
-  ImportExportSharp,
-  LocalActivity,
-  MarkChatRead,
-  Receipt,
-  ReceiptLong,
-  Restore,
-  ShareSharp,
-  Sort,
-} from "@mui/icons-material";
-import {
-  Checkbox,
-  Chip,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { motion } from "framer-motion";
-import { NextPage } from "next";
-import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
-import { useRouter } from "next/router";
-import React, {
-  ChangeEvent,
-  ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import Avatar from "react-avatar";
-import { useSelector } from "react-redux";
-import { useSWRConfig } from "swr";
-
-import CustomLoader from "../../components/asset/CustomLoader";
-import ProductIcon from "../../components/asset/ProductIcon";
-import ButtonComponent from "../../components/Button";
-import CustomSnackbar from "../../components/CustomSnackbar";
-import { initialProductData } from "../../components/Data/initialData";
-import Layout from "../../components/Layout";
-import ModalComponent from "../../components/Modal";
-import MuiSearchbar from "../../components/MuiSearchbar";
-import {
-  ControlledInput,
-  Form,
-  UserBadge,
-  VhContainer,
-} from "../../components/styled-component/Global";
-import {
-  Card,
-  Center,
-  FlexContainer,
-  List,
-  Row,
-  Top,
-} from "../../components/styled-component/products/Global";
-import useGetter from "../../hooks/useGetter";
-import {
-  deleteRequest,
-  patchRequest,
-  postRequest,
-} from "../../lib/axios/axiosClient";
-import productsClass from "../../model/products";
-import { sortMultipleData } from "../../utils/utils";
-import { useAppDispatch } from "../redux/hooks";
-import { createBind, updateProducts, updateProductSelected } from "../redux/productSlice";
-import { RootState } from "../redux/store";
-import { NextPageWithLayout } from "./_app";
+import { AddCircle, Clear, Edit, ImportExportSharp, LocalActivity, ReceiptLong, Restore, Sort } from '@mui/icons-material';
+import { Checkbox, Chip, Divider, IconButton, Tooltip, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import { nanoid } from 'nanoid';
+import { useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import Avatar from 'react-avatar';
 import { NumericFormat } from 'react-number-format';
-import CustomIconBtn from "../../components/CustomIconBtn";
-import CustomForm from "../../components/asset/CustomForm";
-import { NumberFormatValues, OnValueChange } from "react-number-format/types/types";
-import { nanoid } from "nanoid";
+import { NumberFormatValues } from 'react-number-format/types/types';
+import { useSelector } from 'react-redux';
+import { useSWRConfig } from 'swr';
+
+import CustomForm from '../../components/asset/CustomForm';
+import CustomLoader from '../../components/asset/CustomLoader';
+import ProductIcon from '../../components/asset/ProductIcon';
+import ButtonComponent from '../../components/Button';
+import CustomIconBtn from '../../components/CustomIconBtn';
+import CustomSnackbar from '../../components/CustomSnackbar';
+import { initialProductData } from '../../components/Data/initialData';
+import Layout from '../../components/Layout';
+import ModalComponent from '../../components/Modal';
+import MuiSearchbar from '../../components/MuiSearchbar';
+import { ControlledInput, Form, VhContainer } from '../../components/styled-component/Global';
+import { Card, Center, FlexContainer, List, Row, Top } from '../../components/styled-component/products/Global';
+import useGetter from '../../hooks/useGetter';
+import { deleteRequest, patchRequest, postRequest } from '../../lib/axios/axiosClient';
+import productsClass from '../../model/products';
+import { sortMultipleData } from '../../utils/utils';
+import { useAppDispatch } from '../redux/hooks';
+import { updateProducts, updateProductSelected } from '../redux/productSlice';
+import { RootState } from '../redux/store';
+import { NextPageWithLayout } from './_app';
 
 const Products: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
@@ -615,7 +571,6 @@ const Products: NextPageWithLayout = () => {
                   prefix={"#"}
                   displayType="input"
                   placeholder="rate"
-                  
                   onValueChange={(value: NumberFormatValues) => handleChange(value.value, "rate")}
                   renderText={(formattedValue: string) => formattedValue}
                 />
