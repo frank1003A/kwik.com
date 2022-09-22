@@ -57,7 +57,7 @@ const Login: NextPage = () => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/")
+      router.push("/dashboard")
     }
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ status])
