@@ -1,37 +1,79 @@
-import { AddCircle, Clear, Edit, ImportExportSharp, LocalActivity, ReceiptLong, Restore, Sort } from '@mui/icons-material';
-import { Checkbox, Chip, Divider, IconButton, Tooltip, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
-import { nanoid } from 'nanoid';
-import { useSession } from 'next-auth/react';
-import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
-import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
-import Avatar from 'react-avatar';
-import { NumericFormat } from 'react-number-format';
-import { NumberFormatValues } from 'react-number-format/types/types';
-import { useSelector } from 'react-redux';
-import { useSWRConfig } from 'swr';
+import {
+  AddCircle,
+  Clear,
+  Edit,
+  ImportExportSharp,
+  LocalActivity,
+  ReceiptLong,
+  Restore,
+  Sort,
+} from "@mui/icons-material";
+import {
+  Checkbox,
+  Chip,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { motion } from "framer-motion";
+import { nanoid } from "nanoid";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
+import React, {
+  ChangeEvent,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Avatar from "react-avatar";
+import { NumericFormat } from "react-number-format";
+import { NumberFormatValues } from "react-number-format/types/types";
+import { useSelector } from "react-redux";
+import { useSWRConfig } from "swr";
 
-import CustomForm from '../../components/asset/CustomForm';
-import CustomLoader from '../../components/asset/CustomLoader';
-import ProductIcon from '../../components/asset/ProductIcon';
-import ButtonComponent from '../../components/Button';
-import CustomIconBtn from '../../components/CustomIconBtn';
-import CustomSnackbar from '../../components/CustomSnackbar';
-import { initialProductData } from '../../components/Data/initialData';
-import Layout from '../../components/Layout';
-import ModalComponent from '../../components/Modal';
-import MuiSearchbar from '../../components/MuiSearchbar';
-import { ControlledInput, Form, VhContainer } from '../../components/styled-component/Global';
-import { Card, Center, FlexContainer, List, Row, Top } from '../../components/styled-component/products/Global';
-import useGetter from '../../hooks/useGetter';
-import { deleteRequest, patchRequest, postRequest } from '../../lib/axios/axiosClient';
-import productsClass from '../../model/products';
-import { sortMultipleData } from '../../utils/utils';
-import { useAppDispatch } from '../redux/hooks';
-import { updateProducts, updateProductSelected } from '../redux/productSlice';
-import { RootState } from '../redux/store';
-import { NextPageWithLayout } from './_app';
+import CustomForm from "../../components/asset/CustomForm";
+import CustomLoader from "../../components/asset/CustomLoader";
+import ProductIcon from "../../components/asset/ProductIcon";
+import ButtonComponent from "../../components/Button";
+import CustomIconBtn from "../../components/CustomIconBtn";
+import CustomSnackbar from "../../components/CustomSnackbar";
+import { initialProductData } from "../../components/Data/initialData";
+import Layout from "../../components/Layout";
+import ModalComponent from "../../components/Modal";
+import MuiSearchbar from "../../components/MuiSearchbar";
+import {
+  ControlledInput,
+  Form,
+  VhContainer,
+} from "../../components/styled-component/Global";
+import {
+  Card,
+  Center,
+  FlexContainer,
+  List,
+  Row,
+  Top,
+} from "../../components/styled-component/products/Global";
+import useGetter from "../../hooks/useGetter";
+import {
+  baseRoute,
+  deleteRequest,
+  patchRequest,
+  postRequest,
+} from "../../lib/axios/axiosClient";
+import productsClass from "../../model/products";
+import { sortMultipleData } from "../../utils/utils";
+import { useAppDispatch } from "../redux/hooks";
+import {
+  updateAllProducts,
+  updateProducts,
+  updateProductSelected,
+} from "../redux/productSlice";
+import { RootState } from "../redux/store";
+import { NextPageWithLayout } from "./_app";
 
 const Products: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
@@ -83,6 +125,18 @@ const Products: NextPageWithLayout = () => {
     setter();
   }, [data]);
 
+  useEffect(() => {
+    pushAllProduct();
+  }, [data, products])
+
+  const pushAllProduct = () => {
+    dispatch(
+      updateAllProducts({
+        all_product: products,
+      })
+    );
+  };
+
   /**Modals */
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openSFModal, setOpenSFModal] = useState<boolean>(false);
@@ -117,7 +171,6 @@ const Products: NextPageWithLayout = () => {
       );
     }
   };
-  
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | string,
@@ -282,7 +335,6 @@ const Products: NextPageWithLayout = () => {
                   gap: ".5rem",
                 }}
               >
-
                 <IconButton
                   onClick={() => {
                     handleUpdateModal();
@@ -361,8 +413,7 @@ const Products: NextPageWithLayout = () => {
                   gap: ".5rem",
                 }}
               >
-
-                <Chip variant="filled" color="success" label="In-Stock"/>
+                <Chip variant="filled" color="success" label="In-Stock" />
 
                 <CustomIconBtn
                   handleClick={() => {
@@ -430,7 +481,12 @@ const Products: NextPageWithLayout = () => {
     </select>,
   ];
 
-  const topIcons: {id: number, icon: JSX.Element; tip: string; func?: () => void }[] = [
+  const topIcons: {
+    id: number;
+    icon: JSX.Element;
+    tip: string;
+    func?: () => void;
+  }[] = [
     {
       id: 1,
       icon: <Sort />,
@@ -522,7 +578,7 @@ const Products: NextPageWithLayout = () => {
         ) : (
           <React.Fragment>
             <FlexContainer>
-              {router.pathname === '/products' && !data ? (
+              {router.pathname === "/products" && !data ? (
                 <Center>
                   <CustomLoader text="Fetching Products" />
                 </Center>
@@ -571,7 +627,9 @@ const Products: NextPageWithLayout = () => {
                   prefix={"#"}
                   displayType="input"
                   placeholder="rate"
-                  onValueChange={(value: NumberFormatValues) => handleChange(value.value, "rate")}
+                  onValueChange={(value: NumberFormatValues) =>
+                    handleChange(value.value, "rate")
+                  }
                   renderText={(formattedValue: string) => formattedValue}
                 />
               </CustomForm>
@@ -641,7 +699,9 @@ const Products: NextPageWithLayout = () => {
                   displayType="input"
                   value={singleProduct.rate}
                   placeholder="rate"
-                  onValueChange={(value: NumberFormatValues) => handleChange(value.value, "rate")}
+                  onValueChange={(value: NumberFormatValues) =>
+                    handleChange(value.value, "rate")
+                  }
                   renderText={(formattedValue: string) => formattedValue}
                 />
               </CustomForm>
@@ -708,7 +768,7 @@ const Products: NextPageWithLayout = () => {
               {selectedProducts.product?.map((pr) => {
                 return (
                   <motion.div
-                  key={pr._id?.toString()}
+                    key={pr._id?.toString()}
                     style={{
                       width: "100%",
                       borderRadius: "8px",
@@ -775,9 +835,7 @@ const Products: NextPageWithLayout = () => {
             <ButtonComponent
               innerText="Create Invoice"
               btnDisabled={selectedProducts.product.length > 0 ? false : true}
-              onClick={() =>
-                router.push("https://kwik-mini-invoice-generator.vercel.app/invoice/create")
-              }
+              onClick={() => router.push(`${baseRoute}/invoice/create`)}
             />
           </div>
         </div>

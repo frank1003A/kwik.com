@@ -11,6 +11,7 @@ export interface InvoiceItems {
   quantity: number
   rate: string
   amount: string
+  editable?: boolean
 }
 
 export interface Invoice {

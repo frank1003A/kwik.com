@@ -56,7 +56,9 @@ interface Props {
   tanc?: string,
   notes?: string,
   logo?: string,
-  titlebox?: string
+  titlebox?: string,
+  itemEditable?: boolean,
+  max_number?: number
 }
 
 const invoiceMain = React.forwardRef(
@@ -88,7 +90,9 @@ const invoiceMain = React.forwardRef(
       tanc,
       notes,
       logo,
-      titlebox
+      titlebox,
+      itemEditable,
+      max_number
     }: Props,
     ref: React.LegacyRef<HTMLDivElement>
   ) => {
@@ -177,6 +181,8 @@ const invoiceMain = React.forwardRef(
               handleItemInput={handleItemInput}
               customStyle={customStyle}
               contentEditable={contentEditable}
+              itemEditable={itemEditable}
+              max_number={max_number}
             />
 
             <div className={styles.btnAndTotal}>

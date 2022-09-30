@@ -1,20 +1,22 @@
-import { Image, Print, Save, Settings } from '@mui/icons-material';
-import React, { FC, ReactNode } from 'react';
+import { GifBox, Image, Print, Save, Settings } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import React, { FC, ReactNode } from "react";
 
-import btnStyles from '../styles/Button.module.css';
-import styles from '../styles/Invoice.module.css';
-import ButtonComponent from './Button';
+import btnStyles from "../styles/Button.module.css";
+import styles from "../styles/Invoice.module.css";
+import ButtonComponent from "./Button";
 
 interface Props {
   handlePrint?: () => void;
   handleSave?: () => void;
   saveText?: string;
   status?: ReactNode;
-  editController?: JSX.Element,
-  updateDisabled?: boolean,
-  handleVat?: () => void,
-  exportPDF?: () => void,
-  exportJPEG?: () => void
+  editController?: JSX.Element;
+  updateDisabled?: boolean;
+  handleVat?: () => void;
+  exportPDF?: () => void;
+  exportJPEG?: () => void;
+  handleBP?: () => void
 }
 
 const Editorbar: FC<Props> = ({
@@ -26,24 +28,26 @@ const Editorbar: FC<Props> = ({
   updateDisabled,
   handleVat,
   exportPDF,
-  exportJPEG
+  exportJPEG,
+  handleBP
 }) => {
+  const router = useRouter()
   return (
     <div className={styles.editorContainer}>
       <ButtonComponent
         className={btnStyles.muiButtonBackground}
-        icon={<Print/>}
+        icon={<Print />}
         innerText="PRINT"
         key={1}
         onClick={handlePrint}
       />
 
-     <ButtonComponent
-      icon={<Image />}
-      className={btnStyles.muiButtonBackground}
-      innerText="JPEG"
-      onClick={exportJPEG}
-      key={3}
+      <ButtonComponent
+        icon={<Image />}
+        className={btnStyles.muiButtonBackground}
+        innerText="JPEG"
+        onClick={exportJPEG}
+        key={3}
       />
 
       <ButtonComponent
@@ -62,6 +66,18 @@ const Editorbar: FC<Props> = ({
         onClick={handleVat}
         key={5}
       />
+
+      {
+        router.pathname === "/invoice/create" ? (
+          <ButtonComponent
+        className={btnStyles.muiButtonBackground}
+        icon={<GifBox />}
+        innerText="Binded Products"
+        onClick={handleBP}
+        key={6}
+      />
+        ) : null
+      }
 
       {editController}
 

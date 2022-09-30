@@ -74,12 +74,12 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
       /**Delete user */
       let deleteUser = await db
         .collection("users")
-        .deleteOne({_id: new ObjectId(query.toString()) });
+        .deleteOne({ _id: new ObjectId(query.toString()) });
 
       /**Delete Invoices */
       let deleteInvoices = await db
         .collection("Invoices")
-        .deleteMany({ "owner": query.toString() })
+        .deleteMany({ owner: query.toString() });
 
       /**Delete Clients */
       let deleteClients = await db
@@ -93,26 +93,23 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
 
       if (deleteUser && deleteInvoices && deleteClients && deleteProducts) {
         console.log({
-          "user_id": query,
-          "user_no": deleteUser.deletedCount,
-          "invoice_no": deleteInvoices.deletedCount,
-          "client_no": deleteClients.deletedCount,
-          "product_no": deleteProducts.deletedCount
-        })
-        res
-          .status(200)
-          .json({
-            "user_id": query,
-            "user_no": deleteUser.deletedCount,
-            "invoice_no": deleteInvoices.deletedCount,
-            "client_no": deleteClients.deletedCount,
-            "product_no": deleteProducts.deletedCount
-          });
-      } 
-      else  {
+          user_id: query,
+          user_no: deleteUser.deletedCount,
+          invoice_no: deleteInvoices.deletedCount,
+          client_no: deleteClients.deletedCount,
+          product_no: deleteProducts.deletedCount,
+        });
+        res.status(200).json({
+          user_id: query,
+          user_no: deleteUser.deletedCount,
+          invoice_no: deleteInvoices.deletedCount,
+          client_no: deleteClients.deletedCount,
+          product_no: deleteProducts.deletedCount,
+        });
+      } else {
         /**Abort method if conditions are not met */
-        res.status(401).json({"error": "aborted"})
-        return
+        res.status(401).json({ error: "aborted" });
+        return;
       }
     } catch (err: any) {
       res.status(400).json({ message: err.message });

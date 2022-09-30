@@ -7,6 +7,7 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
+import { baseRoute } from "../lib/axios/axiosClient"
 
 import styles from '../styles/Home.module.css';
 import { convertDateFormat } from '../utils/utils';
@@ -97,7 +98,7 @@ const InvoiceBar: FC<Props> = ({
             <span>
               <Link
                 href={{
-                  pathname: "https://kwik-mini-invoice-generator.vercel.app/invoice/update",
+                  pathname: `${baseRoute}/invoice/update`,
                   query: { invoice_id: invId?.toString() },
                 }}
                 passHref

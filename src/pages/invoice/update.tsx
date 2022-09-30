@@ -7,7 +7,7 @@ import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { ReactElement, SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 
 import ButtonComponent from "../../../components/Button";
@@ -85,12 +85,31 @@ const EditInvoice: NextPageWithLayout = () => {
 
   const { theme } = useTheme()
 
+  /**
+   * edtable true means the core input element is disabled.
+   * function handleEditable() takes care of the core logic
+   * not the best or simple logic, but it works
+   **/
+   const [editable, setEditable] = useState<boolean>(true);
+   const [notifyEdit, setNotifyEdit] = useState<boolean>(false);
+   const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
+     data ? { ...data } : { ...initialInvoice }
+   );
+   const [informUser, setInformUser] = useState<{
+     updatealert: boolean;
+     message: string;
+   }>({
+     updatealert: false,
+     message: "",
+   });
+
   const [editPdf, seteditPdf] = useState<boolean>(false);
   
   /***Modals */
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
   const [opensaved, setOpenSaved] = useState<boolean>(false);
   const [sModal, setSModal] = useState<boolean>(false);
+  const [componentName, setComponentName] = useState<string>("")
 
   /**Invoice Changes */
   const [taxRate, setTaxRate] = useState<number>();
@@ -117,6 +136,18 @@ const EditInvoice: NextPageWithLayout = () => {
     tc: "",
   });
 
+  useEffect(() => {
+    setComponentName("Update_Invoice")
+  }, [])
+
+  useEffect(() => {
+    const invItems: InvoiceItems[] = InvoiceRepo.invoiceitems.map((inv, idx) => {
+      inv.editable = false
+      return inv
+    })
+    setInvoiceRepo({...InvoiceRepo, invoiceitems: invItems})
+  },[])
+
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
       setInvComp(false);
@@ -135,24 +166,6 @@ const EditInvoice: NextPageWithLayout = () => {
   useEffect(() => {
     setInvComp(true);
   }, []);
-
-  /**
-   * edtable true means the core input element is disabled.
-   * function handleEditable() takes care of the core logic
-   * not the best or simple logic, but it works
-   **/
-  const [editable, setEditable] = useState<boolean>(true);
-  const [notifyEdit, setNotifyEdit] = useState<boolean>(false);
-  const [InvoiceRepo, setInvoiceRepo] = useState<Invoice>(
-    data ? { ...data } : { ...initialInvoice }
-  );
-  const [informUser, setInformUser] = useState<{
-    updatealert: boolean;
-    message: string;
-  }>({
-    updatealert: false,
-    message: "",
-  });
 
   const setter = () => {
     if (data !== undefined) setInvoiceRepo(data);
@@ -387,6 +400,7 @@ const EditInvoice: NextPageWithLayout = () => {
             name !== "_id" &&
             name !== "quantity" &&
             name !== undefined &&
+            name !== "editable" &&
             typeof value === "string"
           ) {
             invItems[name] = value;
@@ -426,6 +440,7 @@ const EditInvoice: NextPageWithLayout = () => {
             name !== "_id" &&
             name !== "quantity" &&
             name !== undefined &&
+            name !== "editable" &&
             typeof value === "string"
           ) {
             invItems[name] = value;
@@ -706,7 +721,7 @@ const EditInvoice: NextPageWithLayout = () => {
                     }}
                     id="topicon"
                     />
-                    <Typography>{editable === true ? "Read-Only" : "Editable" }</Typography>
+                    <motion.animate animate layout>{editable === true ? "Read-Only" : "Editable" }</motion.animate>
                     </>
                 }
               />

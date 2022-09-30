@@ -3,7 +3,7 @@ import SquareLoader from 'react-spinners/SquareLoader'
 import {useTheme} from "next-themes"
 import { motion } from 'framer-motion'
 import { Typography } from '@mui/material'
-import { BarLoader } from 'react-spinners'
+import { BarLoader, BeatLoader } from 'react-spinners'
 
 interface Props {
   text?: string ,
@@ -33,7 +33,7 @@ const CustomLoader = ({text, loadAnimation}: Props) => {
           }}
         >
           {!loadAnimation ? (
-            <BarLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
+            <BeatLoader color={mounted && theme === "dark" ? "#FFA500" : "#2124b1"}/>
           ): (
             loadAnimation
           )}

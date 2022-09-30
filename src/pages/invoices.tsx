@@ -1,12 +1,24 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import {
+  CheckCircle,
+  CheckSharp,
   CreateOutlined,
   DateRange,
+  DateRangeTwoTone,
+  Done,
+  Drafts,
+  Forward,
   ImportExportSharp,
   LocalActivity,
+  NewReleases,
+  Pending,
   Restore,
+  SearchOff,
+  SearchRounded,
   Sort,
+  SortRounded,
+  Today,
 } from "@mui/icons-material";
 import {
   Chip,
@@ -28,6 +40,7 @@ import React, {
   ReactElement,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import DatePicker from "react-datepicker";
@@ -50,7 +63,7 @@ import {
   Top,
 } from "../../components/styled-component/invoices";
 import useGetter from "../../hooks/useGetter";
-import { deleteRequest } from "../../lib/axios/axiosClient";
+import { baseRoute, deleteRequest } from "../../lib/axios/axiosClient";
 import styles from "../../styles/Home.module.css";
 import {
   convertDateFormat,
@@ -60,6 +73,7 @@ import {
 
 import Layout from "../../components/Layout";
 import { NextPageWithLayout } from "./_app";
+import CustomizedMenus from "../../components/Dropdown";
 
 const Invoices: NextPageWithLayout = () => {
   const router = useRouter();
@@ -78,6 +92,19 @@ const Invoices: NextPageWithLayout = () => {
   const [dueDateSort, setDueDateSort] = useState<boolean>(false);
   const [sorted, setSorted] = useState<Invoice[]>([]);
   const [isFiltering, setIsFiltering] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [newOldSort, setNewOldSort] = useState<{
+    value: number;
+    text: "sort" | "latest" | "oldest";
+  }>({
+    value: 0,
+    text: "sort",
+  });
+  const [statusSort, setStatusSort] = useState<{
+    status: "status" | "draft" | "pending" | "complete";
+  }>({
+    status: "status",
+  });
   const [informUser, setInformUser] = useState<{
     deletealert: boolean;
     message: string;
@@ -144,6 +171,8 @@ const Invoices: NextPageWithLayout = () => {
           message: `deleted invoice -${id}`,
         });
         mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
+        setSorted([])
+        
       }
     } catch (error: any) {
       console.log(error.message);
@@ -209,19 +238,13 @@ const Invoices: NextPageWithLayout = () => {
     },
   ];
 
-  const handleCategoryFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (sorted.length > 1) {
-      const fValue = sorted.filter((inv) => inv.status === value);
-      setSorted(fValue);
-    } else {
-      const fValue = invoices.filter((inv) => inv.status === value);
-      setSorted(fValue);
-    }
+  const handleCategoryFilter = () => {
+    const fValue = invoices.filter((inv) => inv.status === statusSort.status);
+    setSorted(fValue);
   };
 
-  const handleNewOldSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (Number(e.target.value) === 1) {
+  const handleLOSort = () => {
+    if (newOldSort.value === 1) {
       if (sorted.length > 0) {
         const sortedInvoices = sorted
           .map((obj) => {
@@ -237,7 +260,7 @@ const Invoices: NextPageWithLayout = () => {
           .sort((a: any, b: any) => b.invoiceDate - a.invoiceDate);
         setSorted(sortedInvoices);
       }
-    } else if (Number(e.target.value) === 2) {
+    } else if (newOldSort.value === 2) {
       if (sorted.length > 0) {
         const sortedInvoices = sorted
           .map((obj) => {
@@ -258,27 +281,13 @@ const Invoices: NextPageWithLayout = () => {
     }
   };
 
-  const renderFSort: React.ReactNode = [
-    <>
-      <select onChange={handleNewOldSort}>
-        <option value={0}>Sort By</option>
-        <option value={1}>Newest</option>
-        <option value={2}>Oldest</option>
-      </select>
+  useEffect(() => {
+    handleLOSort();
+  }, [newOldSort]);
 
-      <select
-        title="filter-type"
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-          handleCategoryFilter(e)
-        }
-      >
-        <option value={"none"}>Status</option>
-        <option value={"draft"}>Draft</option>
-        <option value={"pending"}>Pending</option>
-        <option value={"complete"}>Complete</option>
-      </select>
-    </>,
-  ];
+  useEffect(() => {
+    handleCategoryFilter()
+  }, [statusSort])
 
   const renderDateSort: React.ReactNode = [
     <>
@@ -294,6 +303,75 @@ const Invoices: NextPageWithLayout = () => {
     </>,
   ];
 
+  const newOld: {
+    icon: JSX.Element;
+    item: string;
+    onClick: () => void;
+  }[] = [
+    {
+      icon: <SortRounded />,
+      item: "sort",
+      onClick: () => setNewOldSort({ ...newOldSort, value: 0, text: 'sort' }),
+    },
+    {
+      icon: <NewReleases />,
+      item: "latest",
+      onClick: () => setNewOldSort({ ...newOldSort, value: 1, text: 'latest' }),
+    },
+    {
+      icon: <DateRangeTwoTone />,
+      item: "oldest",
+      onClick: () => setNewOldSort({ ...newOldSort, value: 2, text: 'oldest' }),
+    },
+  ];
+
+  const stat: {
+    icon: JSX.Element;
+    item: string;
+    onClick: () => void;
+  }[] = [
+    {
+      icon: <Today />,
+      item: "status",
+      onClick: () => setStatusSort({ ...statusSort, status: "status" }),
+    },
+    {
+      icon: <Drafts />,
+      item: "draft",
+      onClick: () => setStatusSort({ ...statusSort, status: "draft" }),
+    },
+    {
+      icon: <Pending />,
+      item: "pending",
+      onClick: () => setStatusSort({ ...statusSort, status: "pending" }),
+    },
+    {
+      icon: <CheckCircle />,
+      item: "complete",
+      onClick: () => setStatusSort({ ...statusSort, status: "complete" }),
+    },
+  ];
+
+  const renderFSort: React.ReactNode = [
+    <>
+      <CustomizedMenus name={statusSort.status} menuItems={stat} />
+      
+      <CustomizedMenus name={newOldSort.text} menuItems={newOld} />
+    </>,
+  ];
+
+  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const searchbar = inputRef.current;
+    searchbar?.addEventListener("focusin", () => setIsSearching(true));
+    searchbar?.addEventListener("focusout", () => setIsSearching(false));
+    return () => {
+      searchbar?.removeEventListener("focusin", () => setIsSearching(true));
+      searchbar?.removeEventListener("focusout", () => setIsSearching(false));
+    };
+  }, []);
+
   return (
     <>
       <Container>
@@ -301,11 +379,18 @@ const Invoices: NextPageWithLayout = () => {
           <Typography>Invoices</Typography>
           <div>
             <MuiSearchbar
+            ref={inputRef}
               handleSearch={(e: ChangeEvent<HTMLInputElement>) =>
                 setSorted(
                   sortMultipleData<Invoice>(
                     invoices,
-                    ["clientName", "title", "invoiceDueDate", "status", "invoiceTitle"],
+                    [
+                      "clientName",
+                      "title",
+                      "invoiceDueDate",
+                      "status",
+                      "invoiceTitle",
+                    ],
                     e.target.value
                   )
                 )
@@ -398,9 +483,18 @@ const Invoices: NextPageWithLayout = () => {
             </FormControl>
           </motion.div>
         ) : null}
+        <motion.div style={{padding: 5}}>
+        {isSearching && sorted.length > 0 ? (
+          <div style={{display: "flex"}}>
+          <Forward/>
+          <Typography>
+            {`${sorted.length} search result`}
+          </Typography>
+          </div>
+        ) : ""}
+        </motion.div>
         <Main as={motion.div}>
-          {(status === "loading") ||
-            status === "authenticated" && !data ? (
+          {status === "loading" || (status === "authenticated" && !data) ? (
             <Center>
               <CustomLoader text="Fetching Invoices" />
             </Center>
@@ -408,8 +502,8 @@ const Invoices: NextPageWithLayout = () => {
             sorted.map((inv, idx) => {
               return (
                 <InvoiceBar
-                  key={idx}
-                  handleDelete={() => deleteInvoice(inv._id!?.toString())}
+                  key={`${inv.invoiceTitle}_${idx}`}
+                  handleDelete={() => deleteInvoice(inv._id?.toString()!)}
                   amt={inv.total}
                   clientname={inv.clientName}
                   due={inv.invoiceDueDate}
@@ -434,8 +528,8 @@ const Invoices: NextPageWithLayout = () => {
             invoices.map((inv, idx) => {
               return (
                 <InvoiceBar
-                  key={inv.invoiceTitle}
-                  handleDelete={() => deleteInvoice(inv._id!?.toString())}
+                key={`${inv.invoiceTitle}_${idx}`}
+                  handleDelete={() => deleteInvoice(inv._id?.toString()!)}
                   amt={inv.total}
                   clientname={inv.clientName}
                   due={inv.invoiceDueDate}
@@ -461,7 +555,7 @@ const Invoices: NextPageWithLayout = () => {
             <Divider />
             <Create />
             <div className={styles["card"]}>
-              <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create">
+              <Link href={`${baseRoute}/invoice/create`}>
                 <Typography>Create Invoice</Typography>
               </Link>
             </div>

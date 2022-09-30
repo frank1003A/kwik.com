@@ -307,6 +307,8 @@ export const InvoiceTable: FC<TableProps> = ({
   handleItemInput,
   contentEditable,
   customStyle,
+  itemEditable,
+  max_number
 }) => {
   return (
     <TableContainer
@@ -372,16 +374,18 @@ export const InvoiceTable: FC<TableProps> = ({
                     maxLength={200}
                     placeholder="item description"
                     value={inv.description}
-                    disabled={!contentEditable ? false : contentEditable}
+                    disabled={!contentEditable ? inv.editable : contentEditable}
                     onChange={(e) => handleItemInput(e, i, "description")}
                   />
                 </TableCell>
                 <TableCell align="center" aria-disabled>
                   <input
                     className={styles.tableInput}
-                    type="text"
+                    type="number"
                     placeholder="number"
                     value={inv.quantity}
+                    min={0}
+                    max={max_number}
                     style={customStyle}
                     disabled={!contentEditable ? false : contentEditable}
                     onChange={(e) => handleItemInput(e, i, "quantity")}
@@ -395,7 +399,7 @@ export const InvoiceTable: FC<TableProps> = ({
                     displayType="input"
                     placeholder="rate"
                     value={inv.rate}
-                    disabled={!contentEditable ? false : contentEditable}
+                    disabled={!contentEditable ? inv.editable : contentEditable}
                     style={customStyle}
                     onValueChange={(value: NumberFormatValues) =>
                       handleItemInput(value.value, i, "rate")

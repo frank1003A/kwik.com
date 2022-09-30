@@ -358,7 +358,7 @@
   flex-direction: row;
   grid-gap: 2rem;
   grid-gap: 2rem;
-  gap: 2rem;
+  gap: 1.2rem;
   width: 100%;
   align-items: stretch;
   flex-wrap: wrap;
@@ -398,7 +398,7 @@
   display: flex;
   flex-direction: row;
   grid-gap: .95rem;
-  gap: .95rem;
+  gap: 1.2rem;
   align-items: center;
 }
 
@@ -793,6 +793,13 @@
   color: var(--textcolor);
   line-height: 1.5;
   letter-spacing: 0.00938em;
+}
+
+.custom_icon_alert {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /*password-input*/

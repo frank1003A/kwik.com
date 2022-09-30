@@ -59,7 +59,10 @@ const Register: NextPage = () => {
     <motion.div className={styles["signup-container"]}
     initial={{width: "0%", opacity: 0}}
     animate={{width: "100%", opacity: 1}}
-    exit={{x: 0, transition: {duration: 3,easings: ["easeInOut"]}}}
+    exit={{width: "0%", opacity: 0, transition: {
+      duration: 2, 
+      ease: [0.455, 0.03, 0.515, 0.955],
+    }}}
     >
       <Head>
         <title>Kwik.com | Register</title>

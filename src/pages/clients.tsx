@@ -34,7 +34,7 @@ import MuiSearchbar from '../../components/MuiSearchbar';
 import { Card, Center, FlexContainer, List, Row, Top } from '../../components/styled-component/clients/Global';
 import { ControlledInput, Form, VhContainer } from '../../components/styled-component/Global';
 import useGetter from '../../hooks/useGetter';
-import { deleteRequest, patchRequest, postRequest } from '../../lib/axios/axiosClient';
+import { baseRoute, deleteRequest, patchRequest, postRequest } from '../../lib/axios/axiosClient';
 import clientClass from '../../model/clients';
 import styles from '../../styles/Home.module.css';
 import { sortMultipleData } from '../../utils/utils';
@@ -689,7 +689,7 @@ const Clients: NextPageWithLayout = () => {
         </Typography>
         </span>
         <div className={styles["card"]}>
-          <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create">
+          <Link href={`${baseRoute}/invoice/create`}>
             <Typography>Create Invoice</Typography>
           </Link>
         </div>

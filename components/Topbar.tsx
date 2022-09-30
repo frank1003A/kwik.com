@@ -30,6 +30,8 @@ import ButtonComponent from "./Button";
 import LeftAnchor from "./LeftAnchor";
 import { Center, UserBadge } from "./styled-component/Global";
 import styles from "../styles/Home.module.css";
+import { baseRoute } from "../lib/axios/axiosClient";
+import AccountMenu from "./AccountMenu";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -281,7 +283,7 @@ export default function PrimarySearchAppBar({
                   xs: "none",
                   md: "flex",
                 },
-                minWidth: "450px",
+                //minWidth: "450px",
                 right: "0",
                 justifyContent: "space-around",
                 alignItems: "center",
@@ -301,27 +303,7 @@ export default function PrimarySearchAppBar({
               <UserBadge>
                 <Typography variant="subtitle1">{userEmail}</Typography>
               </UserBadge>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                color="inherit"
-              >
-                <Avatar
-                  name={user.fullname}
-                  color={mounted && theme === "dark" ? "#FFA500" : "#2124B1"}
-                  round="50%"
-                  size="40px"
-                />
-              </IconButton>
-              |
-              <ButtonComponent
-                innerText="Sign Out"
-                className={styles["no_bg_btn"]}
-                onClick={handleSignOut}
-              />
+              <AccountMenu name={user.fullname!}/>
             </Box>
           )}
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
@@ -370,7 +352,7 @@ export default function PrimarySearchAppBar({
               innerText="Create Invoice"
               onClick={() => {
                 setSearchModal(false);
-                Router.push("http://localhost:3000/invoice/create");
+                Router.push(`${baseRoute}/invoice/create`);
               }}
             />
           </Center>
@@ -381,6 +363,28 @@ export default function PrimarySearchAppBar({
 }
 
 /**
+ 
+ <IconButton
+ size="large"
+ edge="end"
+ aria-label="account of current user"
+ aria-controls={menuId}
+ aria-haspopup="true"
+ color="inherit"
+>
+ <Avatar
+   name={user.fullname}
+   color={mounted && theme === "dark" ? "#FFA500" : "#2124B1"}
+   round="50%"
+   size="40px"
+ />
+</IconButton>
+|
+<ButtonComponent
+ innerText="Sign Out"
+ className={styles["no_bg_btn"]}
+ onClick={handleSignOut}
+/>
 
   const boxShadow: string = "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
 

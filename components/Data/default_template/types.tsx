@@ -64,9 +64,11 @@ export interface TableProps {
       handleItemInput: (e: Event | SyntheticEvent<any, Event> | string, index: number, name: keyof InvoiceItems) => void,
       invoice: typeof initialInvoice,
       contentEditable?: boolean,
+      itemEditable?: boolean,
       ref?: LegacyRef<HTMLInputElement>,
       id?: string,
       customStyle?: React.CSSProperties,
+      max_number? : number
 
   }
   

@@ -121,11 +121,14 @@ const Home: NextPageWithLayout = () => {
         {
           data: invoices.map((dta) => Number(dta.total)),
           backgroundColor: ["#2124b1", "orange"],
-          barThickness: 35,
+          barThickness: 30,
           order: 0,
           borderRadius: 4,
           borderColor: "none",
           categoryPercentage: 5,
+          borderSkipped: "middle",
+          type: "bar",
+          normalized: true
         },
       ],
     })
@@ -193,7 +196,7 @@ const Home: NextPageWithLayout = () => {
         label: "Amount-gained",
         data: [],
         backgroundColor: ["#2124b1", "orange"],
-        barThickness: 35,
+        barThickness: 30,
         borderRadius: 4,
         borderColor: "none",
         categoryPercentage: 5,

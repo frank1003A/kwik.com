@@ -34,7 +34,7 @@ const authOptions: NextAuthOptions = {
   pages: {
     signIn:"/auth/login",
     signOut: '/auth/login',
-    newUser: "/",
+    newUser: "/dashboard",
   },
   callbacks: {
     session: async ({ session, token }) => {
@@ -48,7 +48,7 @@ const authOptions: NextAuthOptions = {
 
 export default NextAuth(authOptions);
 
-/**Handles password encrption and decryption*/
+/**Handles password encryption and decryption*/
 const signInUser = async(password: string, user: user) => {
   if (!user.password){
     throw new Error('invalid passowrd')

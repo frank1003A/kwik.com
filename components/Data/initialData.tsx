@@ -10,7 +10,8 @@ export const initialInvoiceItems: InvoiceItems = {
   description: '',
   quantity: 0,
   rate: '',
-  amount: '0.00'
+  amount: '0.00',
+  editable: false
 }
 
 export const initialInvoice: Invoice = {

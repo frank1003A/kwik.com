@@ -11,6 +11,7 @@ import { Box, Chip, Divider, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useState } from "react";
+import { baseRoute } from "../lib/axios/axiosClient";
 
 import styles from "../styles/Home.module.css";
 import Create from "./asset/Create";
@@ -48,10 +49,10 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
       </div>
 
       <div className={styles.nav}>
-        <Link href={"/"}>
+        <Link href={"/dashboard"}>
           <a
             className={
-              router.pathname == "/"
+              router.pathname == "/dashboard"
                 ? styles.outercontainerActive
                 : styles.outercontainer
             }
@@ -145,7 +146,7 @@ const Sidebar = ({ id, switchOnChangeHandler }: Props) => {
               className={styles["card"]}
               onClick={() => setOptionModal(false)}
             >
-              <Link href="https://kwik-mini-invoice-generator.vercel.app/invoice/create">
+              <Link href={`${baseRoute}/invoice/create`}>
                 <Typography>Create Invoice</Typography>
               </Link>
             </div>

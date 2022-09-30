@@ -1,5 +1,14 @@
-import { DataObject, PhotoFilter, Redo, RemoveCircleRounded } from "@mui/icons-material";
-import { Typography } from "@mui/material";
+import {
+  AddBox,
+  Cancel,
+  DataObject,
+  GifBox,
+  GifBoxTwoTone,
+  PhotoFilter,
+  Redo,
+  RemoveCircleRounded,
+} from "@mui/icons-material";
+import { Badge, Chip, Typography } from "@mui/material";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
 import { motion } from "framer-motion";
 import { nanoid } from "nanoid";
@@ -11,6 +20,7 @@ import React, {
   ReactElement,
   SyntheticEvent,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -31,7 +41,10 @@ import CustomLoader from "../../../components/asset/CustomLoader";
 import ButtonComponent from "../../../components/Button";
 import CustomSnackbar from "../../../components/CustomSnackbar";
 import { countryList } from "../../../components/Data/countryList";
-import { initialInvoice } from "../../../components/Data/initialData";
+import {
+  initialInvoice,
+  initialInvoiceItems,
+} from "../../../components/Data/initialData";
 import { Invoice, InvoiceItems, STATUS } from "../../../components/Data/types";
 import Editorbar from "../../../components/Editorbar";
 import InvoiceMain from "../../../components/InvoiceMain";
@@ -45,18 +58,29 @@ import {
 } from "../../../components/styled-component/editorbar";
 import { Container } from "../../../components/styled-component/Global";
 import useCurrentUser from "../../../hooks/useCurrentUser";
-import { postRequest } from "../../../lib/axios/axiosClient";
+import { patchRequest, postRequest } from "../../../lib/axios/axiosClient";
 import styles from "../../../styles/Invoice.module.css";
 import { useAppDispatch } from "../../redux/hooks";
-import { clearProducts } from "../../redux/productSlice";
+import {
+  clearProducts,
+  ProductState,
+  updateAllProducts,
+  updateProductSelected,
+} from "../../redux/productSlice";
 import { RootState } from "../../redux/store";
 
 import type { NextPage } from "next";
 import { NextPageWithLayout } from "../_app";
 import Layout from "../../../components/Layout";
-import products from "../../../model/products";
+import productsClass from "../../../model/products";
 import useGetter from "../../../hooks/useGetter";
 import { useCallback } from "react";
+import CustomIconBtn from "../../../components/CustomIconBtn";
+import products from "../../../model/products";
+import { ClientState } from "../../redux/clientSlice";
+import Create from "../../../components/asset/Create";
+import CustomIconAlert from "../../../components/CustomIconAlert";
+import assert, { notEqual } from "assert";
 
 const CreateInvoice: NextPageWithLayout = () => {
   const router = useRouter();
@@ -79,10 +103,16 @@ const CreateInvoice: NextPageWithLayout = () => {
   });
   const [sModal, setSModal] = useState<boolean>(false);
   const [clipboard, setClipboard] = useState<boolean>(false);
+  const [altProduct, setAltProduct] = useState<productsClass[]>([]);
   /** */
   const [invComp, setInvComp] = useState<boolean>(false);
   const [edcActive, setEdcActive] = useState<boolean>(false);
   const [showEditComp, setShowEditComp] = useState<boolean>(false);
+  const [passed, setPassed] = useState<boolean>(false);
+  const [showBindedData, setShowBindedData] = useState<boolean>(false);
+  const [itemEditable, setItemEditable] = useState<boolean>(false);
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [interimSave, setInterimSave] = useState<boolean>(false);
   const [bindAlert, setBindAlert] = useState<{
     alert: boolean;
     message: string;
@@ -109,9 +139,12 @@ const CreateInvoice: NextPageWithLayout = () => {
     tc: "",
   });
 
-  const SelectedProducts = useSelector((state: RootState) => state.product);
-  const SelectedClient = useSelector((state: RootState) => state.client);
-  const bindSet = useSelector((state: RootState) => state.product.bind);
+  const SelectedProducts: ProductState = useSelector(
+    (state: RootState) => state.product
+  );
+  const SelectedClient: ClientState = useSelector(
+    (state: RootState) => state.client
+  );
   const dispatch = useAppDispatch();
 
   const handleActiveSideComponent = (): void => {
@@ -140,7 +173,7 @@ const CreateInvoice: NextPageWithLayout = () => {
         invoiceTitle: `invoice#${nanoid(5)}`,
       });
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, status]);
 
   /**
@@ -153,7 +186,7 @@ const CreateInvoice: NextPageWithLayout = () => {
     const resInv: Invoice = { ...InvoiceRepo };
     resInv.invoiceitems = SelectedProducts.product?.map((sp) => {
       let somedata: InvoiceItems = {
-        _id: nanoid(5),
+        _id: `${nanoid(5)}-${sp._id}`,
         description: sp.description!,
         quantity: 0,
         rate: sp.rate!,
@@ -162,29 +195,112 @@ const CreateInvoice: NextPageWithLayout = () => {
       return somedata;
     });
     setInvoiceRepo({ ...InvoiceRepo, invoiceitems: resInv.invoiceitems });
-    dispatch(clearProducts());
+    setPassed(true);
+    // dispatch(clearProducts());
   };
 
-  /**
-   * likewise we pass the client selected from client page
-   */
-  const handleClientTransfer = useCallback(() => {
-    const { fullname } = SelectedClient.client;
-    setInvoiceRepo({
-      ...InvoiceRepo,
-      clientName: fullname as string,
-    });
-  }, [])
+  /**Plan to add an autocomplete for clients and products */
 
   useEffect(() => {
     /**Transfer products and client data to invoice - if any */
     if (SelectedProducts.product.length > 0) handleOpenClipboard();
   }, [SelectedProducts.product.length]);
 
-  useEffect(() => {
-    if (SelectedClient.client) handleClientTransfer();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [,SelectedClient.client, handleClientTransfer]);
+  /**
+   * The base product functions checks if a product is from the product database or
+   * it's a new product. if it is, it returns a string rep of the id of that product
+   * from the product database and if it isn't it returns string - "not a base product"
+   */
+  const getBaseProductId = (string: string): string => {
+    let mark = string.indexOf("-");
+    let notBaseProduct = mark === -1 ? true : false;
+    let len = 0;
+    let str_id = "";
+    if (notBaseProduct) {
+      str_id = "not base product";
+      return str_id;
+    } else if (mark) {
+      len = string.length;
+      str_id = string.slice(mark + 1, len);
+      return str_id;
+    }
+    return str_id;
+  };
+
+  const clearBaseProduct = () => {
+    let invRepo = [...InvoiceRepo.invoiceitems];
+    let updatedInv = invRepo.filter((alt, i) => {
+      if (getBaseProductId(alt._id as string) === "not base product") {
+        return alt;
+      }
+    });
+    setInvoiceRepo({ ...InvoiceRepo, invoiceitems: updatedInv });
+  };
+
+  useMemo(() => {
+    const newp: productsClass[] = SelectedProducts.product.map((pr, idx) => {
+      let inv = { ...InvoiceRepo.invoiceitems };
+      let spr = { ...pr };
+      const initialValue: number = spr.qty as number;
+      for (let i = 0; i < InvoiceRepo.invoiceitems.length; i++) {
+        let base_id = "";
+        let notBaseProduct: boolean =
+          getBaseProductId(inv[i]._id as string) === "not base product"
+            ? true
+            : false;
+
+        if (inv[i]._id !== undefined && notBaseProduct === false) {
+          base_id = getBaseProductId(inv[i]._id as string);
+        }
+
+        if (base_id === pr._id?.toString()) {
+          spr.qty = spr.qty !== undefined ? spr.qty - inv[i].quantity : 0;
+        }
+
+        if (notBaseProduct) inv[i].editable = false;
+        if (notBaseProduct === false) inv[i].editable = true;
+
+        //Limit the user from specifying a quantity greater than in-stock quantity
+        if (notBaseProduct === false && spr.qty !== undefined) {
+          if (inv[i].quantity > initialValue && i === idx) {
+            alert(`${inv[i].description} is out of stock`);
+            //reset the value to zero if quantity is greater than in-stock quantity
+            inv[i].quantity = 0;
+          }
+        }
+
+      }
+      return spr;
+    });
+    setAltProduct(newp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [InvoiceRepo.invoiceitems, SelectedProducts.product]);
+  
+
+  const updateProductChanges = () => {
+    return altProduct.filter((alt, i) => {
+      let { _id, owner, ...ProUpdate } = alt;
+      if (alt._id !== undefined) {
+        updateProduct(alt._id?.toString(), ProUpdate);
+      }
+    });
+  };
+
+  const updateProduct = async (
+    id: string,
+    Product: products
+  ): Promise<void> => {
+    // REMOVE ID FIELD
+    try {
+      const UpdateProduct = await patchRequest(
+        `api/user/product/products/?product_id=${id}`,
+        Product
+      );
+      if (UpdateProduct.data) console.log(UpdateProduct.data);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const handlesucClose = (
     event: Event | SyntheticEvent<any, Event>,
@@ -223,6 +339,7 @@ const CreateInvoice: NextPageWithLayout = () => {
             name !== "_id" &&
             name !== "quantity" &&
             name !== undefined &&
+            name !== "editable" &&
             typeof value === "string"
           ) {
             invItems[name] = value;
@@ -261,6 +378,7 @@ const CreateInvoice: NextPageWithLayout = () => {
             name !== "_id" &&
             name !== "quantity" &&
             name !== undefined &&
+            name !== "editable" &&
             typeof value === "string"
           ) {
             invItems[name] = value;
@@ -604,20 +722,54 @@ const CreateInvoice: NextPageWithLayout = () => {
     inv.total = total.toString();
   };
 
+  const resetInvoice = () => {
+    let inv = { ...InvoiceRepo };
+    inv = initialInvoice;
+    inv.invoiceTitle = `invoice#${nanoid(5)}`;
+    inv.invoiceitems = [initialInvoiceItems];
+    setInvoiceRepo({ ...inv });
+  };
+
+  const resetBindedInvoice = () => {
+    dispatch(clearProducts());
+    clearBaseProduct();
+    setAltProduct([]);
+  };
+
   const handleInvoicePost = async (): Promise<void> => {
     try {
       const { _id, ...InvoiceToPost } = InvoiceRepo;
+
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${user._id}`,
         InvoiceToPost
       );
-      if (InvoicePost.data) setOpensuccess(true);
-      /**Generate new Id so user cannot save a new invoice with the same Id */
-      setInvoiceRepo({ ...InvoiceRepo, invoiceTitle: `invoice#${nanoid(5)}` });
+
+      if (InvoicePost.data) {
+        setOpensuccess(true);
+        updateProductChanges(); // if any
+        setInterimSave(true);
+      }
+
+      if (altProduct) resetBindedInvoice();
     } catch (error: any) {
       console.log(error.message);
     }
   };
+
+  useEffect(() => {
+    let inv = { ...InvoiceRepo };
+    inv = initialInvoice;
+    inv.invoiceTitle = `invoice#${nanoid(5)}`;
+    inv.invoiceitems = [initialInvoiceItems];
+    setInvoiceRepo({ ...inv });
+  }, [interimSave])
+  
+  useEffect(() => {
+    setTimeout(() => {
+      if (interimSave === true) setInterimSave(false);
+    }, 2000);
+  }, [interimSave]);
 
   const pageRef = useRef<HTMLDivElement | null>(null);
   return (
@@ -643,7 +795,8 @@ const CreateInvoice: NextPageWithLayout = () => {
         <>
           <Container ref={pageRef}>
             <div className={styles.fileAndEditor}>
-              <Editorbar
+              {interimSave ? null : (
+                <Editorbar
                 saveText="SAVE"
                 handlePrint={() => handlePrint()}
                 handleSave={() => handleInvoicePost()}
@@ -654,38 +807,48 @@ const CreateInvoice: NextPageWithLayout = () => {
                   );
                   exportComponentAsJPEG(componentRef);
                 }}
+                handleBP={() => setShowBindedData(!showBindedData)}
               />
+              )}
               <div className={styles.editorFlex}>
-                <InvoiceMain
-                  style={{ ...InvoiceRepo.pageStyles }}
-                  customStyle={{ ...InvoiceRepo.styles }}
-                  ref={componentRef}
-                  options={countryList}
-                  pdfMode={editPdf}
-                  cur={currency}
-                  itemArr={InvoiceRepo.invoiceitems}
-                  addTC={addTC}
-                  tR={taxRate}
-                  handleDateInput={handleDateInput}
-                  removeItem={removeItem}
-                  handleChange={handleImageChange}
-                  handleDetailInput={handleDetailInput}
-                  handleItemInput={handleItemInput}
-                  invoice={InvoiceRepo}
-                  selClr={setInvoiceRepo}
-                  onChangeComplete={(color) =>
-                    setInvoiceRepo({ ...InvoiceRepo, colorTheme: color.hex })
-                  }
-                  selectedColor={InvoiceRepo.colorTheme}
-                  hsco={toggleDisplay.headerdisplay}
-                  dividerDisplay={toggleDisplay.divider}
-                  csDisplay={toggleDisplay.cs}
-                  logo={toggleDisplay.logo}
-                  titlebox={toggleDisplay.tt}
-                  tanc={toggleDisplay.tc}
-                  notes={toggleDisplay.nt}
-                />
-                <PropertyEditor>
+                {/** */}
+                {!InvoiceRepo || interimSave ? (
+                  <CustomLoader text="Creating new Invoice" />
+                ) : (
+                  <InvoiceMain
+                    style={{ ...InvoiceRepo.pageStyles }}
+                    customStyle={{ ...InvoiceRepo.styles }}
+                    ref={componentRef}
+                    options={countryList}
+                    pdfMode={editPdf}
+                    cur={currency}
+                    itemArr={InvoiceRepo.invoiceitems}
+                    addTC={addTC}
+                    tR={taxRate}
+                    handleDateInput={handleDateInput}
+                    removeItem={removeItem}
+                    handleChange={handleImageChange}
+                    handleDetailInput={handleDetailInput}
+                    handleItemInput={handleItemInput}
+                    invoice={InvoiceRepo}
+                    selClr={setInvoiceRepo}
+                    onChangeComplete={(color) =>
+                      setInvoiceRepo({ ...InvoiceRepo, colorTheme: color.hex })
+                    }
+                    selectedColor={InvoiceRepo.colorTheme}
+                    hsco={toggleDisplay.headerdisplay}
+                    dividerDisplay={toggleDisplay.divider}
+                    csDisplay={toggleDisplay.cs}
+                    logo={toggleDisplay.logo}
+                    titlebox={toggleDisplay.tt}
+                    tanc={toggleDisplay.tc}
+                    notes={toggleDisplay.nt}
+                    itemEditable={itemEditable}
+                  />
+                )}
+                {
+                  interimSave ? null : (
+                    <PropertyEditor>
                   <Header>
                     <div className={styles["edcToggler"]}>
                       <button
@@ -718,8 +881,8 @@ const CreateInvoice: NextPageWithLayout = () => {
                   </Header>
                   <PropertiesContainer as={motion.div} layout animate>
                     {showEditComp ? (
-                      <div>{dispInvComponents}</div> 
-                    )  : (
+                      <div>{dispInvComponents}</div>
+                    ) : (
                       <>
                         <Property>
                           <Typography variant="overline" color="#555">
@@ -782,7 +945,50 @@ const CreateInvoice: NextPageWithLayout = () => {
                     )}
                   </PropertiesContainer>
                 </PropertyEditor>
+                  )
+                }
               </div>
+              {showBindedData === true || altProduct.length > 0 ? (
+                <motion.div className={styles["lseditor"]} layout animate>
+                  <div className={styles["lse_top"]}>
+                    <p>Binded Products</p>
+                    <CustomIconBtn
+                      icon={<Cancel />}
+                      toolTip="close"
+                      handleClick={() => setShowBindedData(false)}
+                    />
+                  </div>
+                  {altProduct.length <= 0 ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <AddBox />
+                      <p>no binded data</p>
+                    </div>
+                  ) : null}
+                  {altProduct.map((a) => {
+                    return (
+                      <span className={styles["lse_bar"]}>
+                        <p>{` ${a.description}`}</p>
+                        <div>{`${a.qty}`}</div>
+                      </span>
+                    );
+                  })}
+                  <div className={styles["lse_bottom_btn"]}>
+                    <ButtonComponent
+                      innerText="Clear Binded Products"
+                      onClick={() => resetBindedInvoice()}
+                    />
+                  </div>
+                </motion.div>
+              ) : null}
             </div>
 
             <CustomSnackbar
@@ -808,7 +1014,12 @@ const CreateInvoice: NextPageWithLayout = () => {
                   marginBottom: "1rem",
                 }}
               >
-                <Image src="/print2.svg" height={300} width={300}alt="image: after_print_image" />
+                <Image
+                  src="/print2.svg"
+                  height={300}
+                  width={300}
+                  alt="image: after_print_image"
+                />
                 <Typography variant="subtitle2" color="GrayText">
                   Thank You for using Kwik Invoice Generator
                 </Typography>
@@ -864,11 +1075,10 @@ const CreateInvoice: NextPageWithLayout = () => {
                 }}
               >
                 <Typography variant="subtitle1" color="initial">
-                  You have {SelectedProducts.product.length} products in
-                  Clipboard
+                  {SelectedProducts.product.length} products selected
                 </Typography>
                 <ButtonComponent
-                  innerText={"Retrieve"}
+                  innerText={"Recieve"}
                   onClick={() => handleProductTransfer()}
                 />
               </div>
@@ -886,6 +1096,8 @@ const CreateInvoice: NextPageWithLayout = () => {
     </>
   );
 };
+
+CreateInvoice.displayName = "create_invoice"
 
 export default CreateInvoice;
 
