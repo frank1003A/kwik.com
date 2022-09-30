@@ -975,7 +975,7 @@ const CreateInvoice: NextPageWithLayout = () => {
                   ) : null}
                   {altProduct.map((a) => {
                     return (
-                      <span className={styles["lse_bar"]}>
+                      <span className={styles["lse_bar"]} key={`${a._id}`}>
                         <p>{` ${a.description}`}</p>
                         <div>{`${a.qty}`}</div>
                       </span>
