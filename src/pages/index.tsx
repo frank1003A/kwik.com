@@ -68,7 +68,7 @@ const Landingpage = () => {
       router.replace("/dashboard");
     } else if (status === "unauthenticated") {
       router.replace("/auth/login");
-    } else if (!status) {
+    } else if (session?.user === null) {
       return
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
