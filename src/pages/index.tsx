@@ -21,12 +21,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Anchor from "../../components/Anchor";
 import CustomLoader from "../../components/asset/CustomLoader";
 import ButtonComponent from "../../components/Button";
-import Slidebar from "../../components/Slidebar";
 import useLocalStorage from "../../hooks/localStorage";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import styles from "../../styles/LandingPage.module.css";
-
-//mini icon component
+import leftSvg from  "../../public/leftsvg.png"
 
 interface Props {
   icon: JSX.Element;
@@ -108,7 +106,7 @@ const Landingpage = () => {
     visible: {
       opacity: 1,
       transition: {
-        delay: 0.5,
+       // delay: 0.5,
         staggerChildren: 0.08,
         ease: [0.075, 0.82, 0.165, 1],
       },
@@ -160,7 +158,7 @@ const Landingpage = () => {
           </Head>
 
           <motion.header
-            className={scrolly > 0 ? styles["header_fixed"] : styles.header}
+            className={styles.header}
             animate={{
               y: 0,
             }}
@@ -309,6 +307,7 @@ const Landingpage = () => {
                 <AnimatePresence>
                   <motion.img
                     initial={{ y: 0 }}
+                    loading="eager"
                     whileInView={{
                       y: 30,
                       transition: {
@@ -317,7 +316,7 @@ const Landingpage = () => {
                         duration: 0.8,
                       },
                     }}
-                    src="/leftsvg.png"
+                    src={leftSvg.src}
                     width={650}
                   />
                 </AnimatePresence>
