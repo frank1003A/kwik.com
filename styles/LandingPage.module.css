@@ -56,7 +56,7 @@
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
-    z-index: 1100;
+    z-index: 100;
     top: 0;
     left: auto;
     right: 0;
@@ -81,7 +81,6 @@
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
-    z-index: 1100;
     top: 0;
     left: auto;
     right: 0;
@@ -90,7 +89,8 @@
     color: #2124B1;
     box-shadow: none;
     min-height: 64px;
-    transition: 300ms ease-in-out;
+    z-index: 100;
+    transition: all;
     padding: .5rem 4.5rem;
     justify-content: space-between;
     align-items: center;

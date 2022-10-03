@@ -259,7 +259,7 @@ const CreateInvoice: NextPageWithLayout = () => {
 
         if (notBaseProduct) inv[i].editable = false;
         if (notBaseProduct === false) inv[i].editable = true;
-
+        
         //Limit the user from specifying a quantity greater than in-stock quantity
         if (notBaseProduct === false && spr.qty !== undefined) {
           if (inv[i].quantity > initialValue && i === idx) {

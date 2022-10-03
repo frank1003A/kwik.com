@@ -109,7 +109,6 @@ const EditInvoice: NextPageWithLayout = () => {
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
   const [opensaved, setOpenSaved] = useState<boolean>(false);
   const [sModal, setSModal] = useState<boolean>(false);
-  const [componentName, setComponentName] = useState<string>("")
 
   /**Invoice Changes */
   const [taxRate, setTaxRate] = useState<number>();
@@ -137,16 +136,12 @@ const EditInvoice: NextPageWithLayout = () => {
   });
 
   useEffect(() => {
-    setComponentName("Update_Invoice")
-  }, [])
-
-  useEffect(() => {
     const invItems: InvoiceItems[] = InvoiceRepo.invoiceitems.map((inv, idx) => {
-      inv.editable = false
+      editable === true && inv.editable === false ? inv.editable = true: inv.editable = false
       return inv
     })
     setInvoiceRepo({...InvoiceRepo, invoiceitems: invItems})
-  },[])
+  },[editable, InvoiceRepo.invoiceitems])
 
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
