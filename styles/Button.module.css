@@ -34,6 +34,18 @@
     background-color: var(--secondarycolor);
 }
 
+/* Ripple effect */
+.muiButton {
+    background-position: center;
+    transition: background 0.8s;
+  }
+
+.muiButton:active {
+    background-color: #eee;
+    background-size: 100%;
+    transition: background 0s;
+}
+  
 .muiButtonBackground {
     background: none;
     color: #555;
