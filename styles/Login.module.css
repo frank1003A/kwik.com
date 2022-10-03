@@ -224,7 +224,8 @@ section#formandinputsignup {
     padding: 10px;
     border-radius:50px !important;
     box-shadow: var(--box-shadow);
-    background-color: var(--primarycolor) !important
+    background-color: var(--primarycolor) !important;
+    transition: background 0.8s;
 }
 
 #formandinputsignup .form  .loginbtn{
@@ -233,6 +234,7 @@ section#formandinputsignup {
     border-radius: 50px !important;
     box-shadow: var(--box-shadow);
     background-color: var(--primarycolor) !important;
+    transition: background 0.8s;
 }
 
 #formandinput .form .googlebtn {
@@ -261,6 +263,13 @@ section#formandinputsignup {
     justify-content: center;
     gap: .2rem;
     align-items: center;
+}
+
+
+.loginbtn:active, .googlebtn:active {
+    background-color: #35378dcb;
+    background-size: 100%;
+    transition: background 0s;
 }
 
 #formandinput .flex-row{

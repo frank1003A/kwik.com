@@ -41,7 +41,7 @@
   }
 
 .muiButton:active {
-    background-color: #eee;
+    background-color: #35378dcb;
     background-size: 100%;
     transition: background 0s;
 }

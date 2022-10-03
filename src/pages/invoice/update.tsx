@@ -141,7 +141,7 @@ const EditInvoice: NextPageWithLayout = () => {
       return inv
     })
     setInvoiceRepo({...InvoiceRepo, invoiceitems: invItems})
-  },[editable, InvoiceRepo.invoiceitems])
+  },[editable])
 
   const handleActiveSideComponent = (): void => {
     if (invComp === true) {
