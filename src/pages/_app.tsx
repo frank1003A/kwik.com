@@ -13,6 +13,7 @@ import { createGlobalStyle } from 'styled-components';
 import { ReactElement, ReactNode, useState } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { StyledEngineProvider } from '@mui/material/styles';
 
 import { store } from '../redux/store';
 import Loading from '../../components/asset/Loading';
@@ -57,7 +58,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
       <>
       <Loading/>
       <GlobalStyle />
-        <SessionProvider session={session}>
+      <StyledEngineProvider injectFirst>
+      <SessionProvider session={session}>
           <DndProvider backend={HTML5Backend}>
             <ThemeProvider enableSystem={false}>
               <Provider store={store}>
@@ -68,6 +70,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
             </ThemeProvider>
           </DndProvider>
         </SessionProvider>
+      </StyledEngineProvider>
       </>
     )
 }
