@@ -28,7 +28,7 @@ const ButtonComponent = ({
 
   return (
     <div>
-        <button
+        <Button
         id={id}
         className={!className ? styles.muiButton : 
           className !== "no_bg_btn" ? `${styles.muiButton} ${className}` : className}
@@ -36,7 +36,7 @@ const ButtonComponent = ({
         style={customStyle}
         disabled={!btnDisabled ? false : btnDisabled}
         onMouseEnter={onMouseEnter}
-        >{icon}{innerText}</button>
+        >{icon}{innerText}</Button>
     </div>
   )
 }

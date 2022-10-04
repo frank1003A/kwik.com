@@ -68,8 +68,11 @@ const Anchor = ({ anchor, navlinks, bottomElement }: Props) => {
           >
               <div>
               <div className={styles["top-logo"]}>
-                <img src="/kwik_logo.png" />
+              <span className={styles["text-color-primary-gradient"]} style={{fontSize: "60px"}}>
+                        KWIK.COM
+                      </span>
                 <CloseRounded className={styles["close_icon"]} htmlColor="#ffa500"
+                onClick={toggleDrawer(anchor, false)}
                 />
               </div>
               <div className={styles["slideout-bar"]}>

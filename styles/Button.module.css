@@ -34,7 +34,7 @@
     background-color: var(--secondarycolor);
 }
 
-/* Ripple effect */
+/* Ripple effect 
 .muiButton {
     background-position: center;
     transition: background 0.8s;
@@ -44,7 +44,7 @@
     background-color: #35378dcb;
     background-size: 100%;
     transition: background 0s;
-}
+}*/
   
 .muiButtonBackground {
     background: none;

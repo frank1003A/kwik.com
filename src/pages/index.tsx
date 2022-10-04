@@ -141,7 +141,7 @@ const Landingpage = () => {
   return (
     <motion.div
       className={styles.main}
-      style={{ background: status === "loading" ? "#eee" : "inherit" }}
+      style={{ background: status === "loading" ? "#eee" : "" }}
       ref={parent}
     >
       {status === "loading" ||
