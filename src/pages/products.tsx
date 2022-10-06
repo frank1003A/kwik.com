@@ -236,13 +236,13 @@ const Products: NextPageWithLayout = () => {
         `api/user/product/products/?user_id=${session?.user?.id}`,
         newSinglePro
       );
+      if (newProduct.data) mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       if (newProduct.data) {
         setInformUser({
           ...informUser,
           savealert: true,
           message: `New Product Added`,
         });
-        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
     } catch (error: any) {
       console.log(error.message);
@@ -254,13 +254,13 @@ const Products: NextPageWithLayout = () => {
       const productData = await deleteRequest(
         `api/user/product/products/?product_id=${id}`
       );
+      if (productData.data) mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       if (productData.data) {
         setInformUser({
           ...informUser,
           deletealert: true,
           message: `product - ${id} - has been permanently deleted`,
         });
-        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
     } catch (error: any) {
       console.log(error.message);
@@ -275,13 +275,13 @@ const Products: NextPageWithLayout = () => {
         `api/user/product/products/?product_id=${id}`,
         ProUpdate
       );
+      if (UpdateProduct.data) mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       if (UpdateProduct.data) {
         setInformUser({
           ...informUser,
           savealert: true,
           message: `Updated Product - ${id}`,
         });
-        mutate(`/api/user/product/products/?user_id=${session?.user?.id}`);
       }
     } catch (error: any) {
       console.log(error);

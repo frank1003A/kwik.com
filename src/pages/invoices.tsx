@@ -3,13 +3,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   CheckCircle,
   CheckSharp,
+  Close,
   CreateOutlined,
   DateRange,
   DateRangeTwoTone,
   Done,
   Drafts,
+  FileCopy,
   Forward,
   ImportExportSharp,
+  InsertEmoticon,
   LocalActivity,
   NewReleases,
   Pending,
@@ -27,6 +30,7 @@ import {
   FormHelperText,
   FormLabel,
   IconButton,
+  Paper,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -37,7 +41,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
+  ChangeEventHandler,
   ReactElement,
+  SyntheticEvent,
   useEffect,
   useMemo,
   useRef,
@@ -55,15 +61,23 @@ import { Invoice } from "../../components/Data/types";
 import InvoiceBar from "../../components/InvoiceBar";
 import Modal from "../../components/Modal";
 import MuiSearchbar from "../../components/MuiSearchbar";
-import { ControlledInput } from "../../components/styled-component/Global";
+import {
+  ControlledInput,
+  Form,
+} from "../../components/styled-component/Global";
 import {
   Center,
   Container,
   Main,
+  SideCreator,
   Top,
 } from "../../components/styled-component/invoices";
 import useGetter from "../../hooks/useGetter";
-import { baseRoute, deleteRequest } from "../../lib/axios/axiosClient";
+import {
+  baseRoute,
+  deleteRequest,
+  postRequest,
+} from "../../lib/axios/axiosClient";
 import styles from "../../styles/Home.module.css";
 import {
   convertDateFormat,
@@ -74,6 +88,19 @@ import {
 import Layout from "../../components/Layout";
 import { NextPageWithLayout } from "./_app";
 import CustomizedMenus from "../../components/Dropdown";
+import CustomForm from "../../components/asset/CustomForm";
+import { Row } from "../../components/styled-component/clients/Global";
+import { nanoid } from "nanoid";
+import { initialInvoice } from "../../components/Data/initialData";
+
+type stringUnion =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "error"
+  | "info"
+  | "success"
+  | "warning";
 
 const Invoices: NextPageWithLayout = () => {
   const router = useRouter();
@@ -93,6 +120,15 @@ const Invoices: NextPageWithLayout = () => {
   const [sorted, setSorted] = useState<Invoice[]>([]);
   const [isFiltering, setIsFiltering] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [openCreatebar, setOpenCreatebar] = useState<boolean>(false);
+  const [invoice, setInvoice] = useState<Invoice>({ ...initialInvoice });
+  const [isSaveLoading, setIsSaveLoading] = useState<boolean>(false);
+  const [invNotify, setInvNotify] = useState<{ alert: "not saved" | "saved" }>({
+    alert: "not saved",
+  });
+  const [saved, setSaved] = useState<{ id: string }>({
+    id: "",
+  });
   const [newOldSort, setNewOldSort] = useState<{
     value: number;
     text: "sort" | "latest" | "oldest";
@@ -119,6 +155,11 @@ const Invoices: NextPageWithLayout = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, status]);
+
+  useEffect(() => {
+    setInvoice({ ...invoice, invoiceTitle: `invoice#${nanoid(5)}` });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openCreatebar, isSaveLoading]);
 
   useMemo(() => {
     if (startDate && endDate !== undefined && dateSort) {
@@ -164,15 +205,14 @@ const Invoices: NextPageWithLayout = () => {
       const deleteInvoice = await deleteRequest(
         `api/user/invoice/invoices/?invoice_id=${id}`
       );
+      mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
       if (deleteInvoice) {
         setInformUser({
           ...informUser,
           deletealert: true,
           message: `deleted invoice -${id}`,
         });
-        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
-        setSorted([])
-        
+        setSorted([]);
       }
     } catch (error: any) {
       console.log(error.message);
@@ -180,22 +220,14 @@ const Invoices: NextPageWithLayout = () => {
   };
 
   const dispStats = (status: string) => {
-    type stringUnion =
-      | "default"
-      | "primary"
-      | "secondary"
-      | "error"
-      | "info"
-      | "success"
-      | "warning";
     const clr = ["error", "warning", "success"];
     return ["draft", "pending", "complete"].map((key, idx) => {
       if (status === key) {
         return (
           <Chip
             label={status}
-            sx={{ borderRadius: "4px", color: "#FFFFF" }}
-            variant="filled"
+            sx={{ borderRadius: "4px" }}
+            variant="outlined"
             size="small"
             color={clr[idx] as stringUnion}
           />
@@ -230,7 +262,7 @@ const Invoices: NextPageWithLayout = () => {
     {
       icon: <CreateOutlined />,
       tip: "New Invoice",
-      func: () => openOModal(),
+      func: () => setOpenCreatebar(true),
     },
     {
       icon: <LocalActivity />,
@@ -286,8 +318,8 @@ const Invoices: NextPageWithLayout = () => {
   }, [newOldSort]);
 
   useEffect(() => {
-    handleCategoryFilter()
-  }, [statusSort])
+    handleCategoryFilter();
+  }, [statusSort]);
 
   const renderDateSort: React.ReactNode = [
     <>
@@ -311,17 +343,17 @@ const Invoices: NextPageWithLayout = () => {
     {
       icon: <SortRounded />,
       item: "sort",
-      onClick: () => setNewOldSort({ ...newOldSort, value: 0, text: 'sort' }),
+      onClick: () => setNewOldSort({ ...newOldSort, value: 0, text: "sort" }),
     },
     {
       icon: <NewReleases />,
       item: "latest",
-      onClick: () => setNewOldSort({ ...newOldSort, value: 1, text: 'latest' }),
+      onClick: () => setNewOldSort({ ...newOldSort, value: 1, text: "latest" }),
     },
     {
       icon: <DateRangeTwoTone />,
       item: "oldest",
-      onClick: () => setNewOldSort({ ...newOldSort, value: 2, text: 'oldest' }),
+      onClick: () => setNewOldSort({ ...newOldSort, value: 2, text: "oldest" }),
     },
   ];
 
@@ -355,7 +387,7 @@ const Invoices: NextPageWithLayout = () => {
   const renderFSort: React.ReactNode = [
     <>
       <CustomizedMenus name={statusSort.status} menuItems={stat} />
-      
+
       <CustomizedMenus name={newOldSort.text} menuItems={newOld} />
     </>,
   ];
@@ -372,6 +404,69 @@ const Invoices: NextPageWithLayout = () => {
     };
   }, []);
 
+  const handleDetailInput = (
+    e: Event | SyntheticEvent<any, Event>,
+    name: keyof Invoice
+  ) => {
+    e.preventDefault();
+    const { value } = e.currentTarget;
+
+    const newInvoice: Invoice = { ...invoice };
+    if (
+      name !== "invoiceitems" &&
+      name !== "_id" &&
+      name !== "status" &&
+      name !== "owner" &&
+      name !== "invoiceDate" &&
+      name !== "invoiceDueDate"
+    ) {
+      if (
+        name !== "logoWidth" &&
+        name !== "tax" &&
+        typeof value === "string" &&
+        name !== undefined
+      ) {
+        newInvoice[name] = value;
+      } else if (
+        !value &&
+        name !== "logoWidth" &&
+        name !== "tax" &&
+        typeof value === "string" &&
+        name !== undefined
+      ) {
+        newInvoice[name] = "";
+      }
+    }
+    setInvoice(newInvoice);
+  };
+
+  const handleDateInput = (date: Date, key: keyof Invoice) => {
+    if (key === "invoiceDate" || key === "invoiceDueDate")
+      setInvoice({ ...invoice, [key]: date });
+  };
+
+  const createInvoice = async (): Promise<void> => {
+    try {
+      const { _id, ...InvoiceToPost } = invoice;
+
+      const InvoicePost = await postRequest(
+        `api/user/invoice/invoices/?user_id=${session?.user?.id}`,
+        InvoiceToPost
+      );
+      if (InvoicePost.data) setIsSaveLoading(true);
+      if (InvoicePost.data) mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
+      if (InvoicePost.data) setSaved({ ...saved, id: _id?.toString()! });
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsSaveLoading(false);
+    }, 3000);
+  }, [isSaveLoading]);
+
   return (
     <>
       <Container>
@@ -379,7 +474,8 @@ const Invoices: NextPageWithLayout = () => {
           <Typography>Invoices</Typography>
           <div>
             <MuiSearchbar
-            ref={inputRef}
+              ref={inputRef}
+              disabled={openCreatebar ? true : false}
               handleSearch={(e: ChangeEvent<HTMLInputElement>) =>
                 setSorted(
                   sortMultipleData<Invoice>(
@@ -483,66 +579,166 @@ const Invoices: NextPageWithLayout = () => {
             </FormControl>
           </motion.div>
         ) : null}
-        <motion.div style={{padding: 5}}>
         {isSearching && sorted.length > 0 ? (
-          <div style={{display: "flex"}}>
-          <Forward/>
-          <Typography>
-            {`${sorted.length} search result`}
-          </Typography>
-          </div>
-        ) : ""}
+              <div style={{ display: "flex" }}>
+                <Forward />
+                <Typography>{`${sorted.length} search result`}</Typography>
+              </div>
+            ) : (
+              ""
+            )}
+        <motion.div className={styles["invpage_listform"]}>
+          <Main
+            as={motion.div}
+            style={{ height: openCreatebar ? "80vh" : "", overflow: "auto" }}
+          >
+            {status === "loading" || (status === "authenticated" && !data) ? (
+              <Center>
+                <CustomLoader text="Fetching Invoices" />
+              </Center>
+            ) : sorted.length > 0 ? (
+              sorted.map((inv, idx) => {
+                return (
+                  <InvoiceBar
+                    key={`${inv.invoiceTitle}_${idx}`}
+                    handleDelete={() => deleteInvoice(inv._id?.toString()!)}
+                    amt={inv.total}
+                    clientname={inv.clientName}
+                    due={inv.invoiceDueDate}
+                    invtitle={inv.invoiceTitle}
+                    name={inv.title}
+                    invId={inv._id}
+                    CurrencyText={inv.currency_symbol}
+                    status={dispStats(inv.status!)}
+                  />
+                );
+              })
+            ) : Array.isArray(data) &&
+              data.length < 1 &&
+              status === "authenticated" ? (
+              <Center>
+                <Create width={"200"} height={"200"} />
+                <Typography variant="body1" color="initial">
+                  You have not created any invoice
+                </Typography>
+              </Center>
+            ) : (
+              invoices.map((inv, idx) => {
+                return (
+                  <InvoiceBar
+                    key={`${inv.invoiceTitle}_${idx}`}
+                    handleDelete={() => deleteInvoice(inv._id?.toString()!)}
+                    amt={inv.total}
+                    clientname={inv.clientName}
+                    due={inv.invoiceDueDate}
+                    invtitle={inv.invoiceTitle}
+                    name={inv.title}
+                    invId={inv._id}
+                    status={dispStats(inv.status!)}
+                    CurrencyText={inv.currency_symbol}
+                  />
+                );
+              })
+            )}
+          </Main>
+          {openCreatebar ? (
+            <SideCreator>
+              {isSaveLoading ? (
+                <CustomLoader text="creating and saving invoice" />
+              ) : (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "space-between",
+                      marginBottom: "1rem",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CustomIconBtn
+                      icon={<Close />}
+                      toolTip="close"
+                      handleClick={() => setOpenCreatebar(false)}
+                    />
+                    <Typography variant="body1" color="initial">
+                      Create Invoice with basic data
+                    </Typography>
+                  </div>
+                  <Form>
+                    <CustomForm topLabel="Invoice Number/Title">
+                      <ControlledInput
+                        placeholder="generated invoice number"
+                        value={invoice.invoiceTitle}
+                        onChange={(e: ChangeEvent) =>
+                          handleDetailInput(e, "invoiceTitle")
+                        }
+                        disabled
+                      />
+                    </CustomForm>
+                    <CustomForm topLabel="Invoice Subject">
+                      <ControlledInput
+                        placeholder="description of invoice"
+                        value={invoice.title}
+                        onChange={(e: ChangeEvent) =>
+                          handleDetailInput(e, "title")
+                        }
+                      />
+                    </CustomForm>
+                    <CustomForm topLabel="Invoice Date">
+                      <ControlledInput
+                        placeholder="invoice creation date"
+                        type={"date"}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          handleDateInput(
+                            new Date(e.target.value),
+                            "invoiceDate"
+                          )
+                        }
+                      />
+                    </CustomForm>
+                    <CustomForm topLabel="Invoice Due Date">
+                      <ControlledInput
+                        placeholder="invoice due date"
+                        type={"date"}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          handleDateInput(
+                            new Date(e.target.value),
+                            "invoiceDueDate"
+                          )
+                        }
+                      />
+                    </CustomForm>
+                    <CustomForm topLabel="Billing To:">
+                      <ControlledInput
+                        placeholder="invoice reciever"
+                        value={invoice.billTo}
+                        onChange={(e: ChangeEvent) =>
+                          handleDetailInput(e, "billTo")
+                        }
+                      />
+                    </CustomForm>
+                    <ButtonComponent
+                      innerText="Create Invoice"
+                      icon={<FileCopy />}
+                      btnDisabled={!(openCreatebar && invoice) ? true : false}
+                      customStyle={{
+                        background: "none",
+                        border: "1px solid#2124b1",
+                        color: "#2124b1",
+                      }}
+                      onClick={() =>
+                        createInvoice().then(() =>
+                          setInvoice({ ...initialInvoice })
+                        )
+                      }
+                    />
+                  </Form>
+                </>
+              )}
+            </SideCreator>
+          ) : null}
         </motion.div>
-        <Main as={motion.div}>
-          {status === "loading" || (status === "authenticated" && !data) ? (
-            <Center>
-              <CustomLoader text="Fetching Invoices" />
-            </Center>
-          ) : sorted.length > 0 ? (
-            sorted.map((inv, idx) => {
-              return (
-                <InvoiceBar
-                  key={`${inv.invoiceTitle}_${idx}`}
-                  handleDelete={() => deleteInvoice(inv._id?.toString()!)}
-                  amt={inv.total}
-                  clientname={inv.clientName}
-                  due={inv.invoiceDueDate}
-                  invtitle={inv.invoiceTitle}
-                  name={inv.title}
-                  invId={inv._id}
-                  CurrencyText={inv.currency_symbol}
-                  status={dispStats(inv.status!)}
-                />
-              );
-            })
-          ) : Array.isArray(data) &&
-            data.length < 1 &&
-            status === "authenticated" ? (
-            <Center>
-              <Create width={"200"} height={"200"} />
-              <Typography variant="body1" color="initial">
-                You have not created any invoice
-              </Typography>
-            </Center>
-          ) : (
-            invoices.map((inv, idx) => {
-              return (
-                <InvoiceBar
-                key={`${inv.invoiceTitle}_${idx}`}
-                  handleDelete={() => deleteInvoice(inv._id?.toString()!)}
-                  amt={inv.total}
-                  clientname={inv.clientName}
-                  due={inv.invoiceDueDate}
-                  invtitle={inv.invoiceTitle}
-                  name={inv.title}
-                  invId={inv._id}
-                  status={dispStats(inv.status!)}
-                  CurrencyText={inv.currency_symbol}
-                />
-              );
-            })
-          )}
-        </Main>
       </Container>
 
       {/**Create Invoice Modal */}

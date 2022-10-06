@@ -38,7 +38,7 @@ import { baseRoute, deleteRequest, patchRequest, postRequest } from '../../lib/a
 import clientClass from '../../model/clients';
 import styles from '../../styles/Home.module.css';
 import { sortMultipleData } from '../../utils/utils';
-import { updateClient } from '../redux/clientSlice';
+import { updateClient, ClientState } from '../redux/clientSlice';
 import { useAppDispatch } from '../redux/hooks';
 import { RootState } from '../redux/store';
 import { NextPageWithLayout } from './_app';
@@ -90,7 +90,7 @@ const Clients: NextPageWithLayout = () => {
   const handleUpdateModal = () => setopenUpdateModal(true);
   const handleCloseUpdateModal = () => setopenUpdateModal(false);
 
-  const SelectedClient = useSelector((state: RootState) => state.client);
+  const SelectedClient: ClientState = useSelector((state: RootState) => state.client);
   const dispatch = useAppDispatch();
 
   const createSingleClientInvoice = (cli: clientClass) => {
@@ -157,13 +157,13 @@ const Clients: NextPageWithLayout = () => {
         `api/user/client/clients/?user_id=${session?.user?.id}`,
         newClientDb
       );
+      if (newClient.data) mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
       if (newClient.data) {
         setInformUser({
           ...informUser,
           savealert: true,
           message: "new Client added",
         });
-        mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
       }
     } catch (error: any) {
       console.log(error.message);
@@ -173,6 +173,7 @@ const Clients: NextPageWithLayout = () => {
   const deleteClientData = async (id: string): Promise<void> => {
     try {
       const clientData = await deleteRequest(`api/user/client/clients/?client_id=${id}`);
+      if (clientData.data) mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
       if (clientData.status === 200)
         if (clientData.data){
           setInformUser({
@@ -180,7 +181,6 @@ const Clients: NextPageWithLayout = () => {
             deletealert: true,
             message: `client - ${id} - has been removed from database`,
           });
-          mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
         }
     } catch (error: any) {
       console.log(error.message);
@@ -199,6 +199,7 @@ const Clients: NextPageWithLayout = () => {
         `api/user/client/clients/?client_id=${id}`,
         ClientUpdate
       );
+      if (UpdateClient.data) mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
       if (UpdateClient.data) {
         setInformUser({
           ...informUser,
@@ -207,7 +208,6 @@ const Clients: NextPageWithLayout = () => {
         });
         setSorted([])
       }
-      mutate(`/api/user/client/clients/?user_id=${session?.user?.id}`);
     } catch (error: any) {
       console.log(error);
     }

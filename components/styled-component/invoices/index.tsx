@@ -117,3 +117,10 @@ export const Status = styled.div`
   line-height: 1.5;
   letter-spacing: 0.00938em;
 `;
+
+export const SideCreator = styled.div`
+    width: 50%;
+    padding: 2rem;
+    background: #fff;
+    overflow: auto;
+`

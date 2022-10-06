@@ -57,7 +57,7 @@ export const VhContainer = styled.div`
     }
 `;
 
-export const Form = styled.div`
+export const Form = styled.form`
     margin: 0;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 500;

@@ -45,9 +45,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface Props {
     handleSearch?: (e: ChangeEvent<HTMLInputElement>) => void,
+    disabled?: boolean
 }
 
-const MuiSearchbar = forwardRef(({ handleSearch }: Props, ref: React.LegacyRef<HTMLDivElement>) => {
+const MuiSearchbar = forwardRef(({ handleSearch, disabled }: Props, ref: React.LegacyRef<HTMLDivElement>) => {
   return (
     <div>
       <Search ref={ref}>
@@ -58,6 +59,7 @@ const MuiSearchbar = forwardRef(({ handleSearch }: Props, ref: React.LegacyRef<H
           placeholder="Search…"
           inputProps={{ "aria-label": "search" }}
           onChange={handleSearch}
+          disabled={disabled}
         />
       </Search>
     </div>

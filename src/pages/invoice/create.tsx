@@ -81,6 +81,7 @@ import { ClientState } from "../../redux/clientSlice";
 import Create from "../../../components/asset/Create";
 import CustomIconAlert from "../../../components/CustomIconAlert";
 import assert, { notEqual } from "assert";
+import { useSWRConfig } from "swr"
 
 const CreateInvoice: NextPageWithLayout = () => {
   const router = useRouter();
@@ -92,6 +93,8 @@ const CreateInvoice: NextPageWithLayout = () => {
   });
 
   const { user, isLoading, status } = useCurrentUser();
+
+  const { mutate } = useSWRConfig();
 
   const [editPdf, seteditPdf] = useState<boolean>(false);
   const [opensuccess, setOpensuccess] = useState<boolean>(false);
@@ -744,13 +747,15 @@ const CreateInvoice: NextPageWithLayout = () => {
         `api/user/invoice/invoices/?user_id=${user._id}`,
         InvoiceToPost
       );
-
+      if (InvoicePost.data) {
+        mutate(`/api/user/invoice/invoices/?user_id=${user._id}`);
+        mutate(`/api/user/product/products/?user_id=${user._id}`);
+      }
       if (InvoicePost.data) {
         setOpensuccess(true);
-        updateProductChanges(); // if any
+        updateProductChanges(); 
         setInterimSave(true);
       }
-
       if (altProduct) resetBindedInvoice();
     } catch (error: any) {
       console.log(error.message);

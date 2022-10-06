@@ -755,6 +755,7 @@
   padding: 1rem;
   justify-content: space-between;
   box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+  transition: all;
 }
 
 .invcard .top {
@@ -774,7 +775,7 @@
 
 .invcard .barmain {
   display: flex;
-  border: 1px dotted var(--primarybackground);
+  border-bottom: 1px dotted var(--primarycolor);
   flex-direction: column;
   width: 100%;
   background: var(--primarybackground);
@@ -800,6 +801,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.invpage_listform {
+  display: flex;
 }
 
 /*password-input*/

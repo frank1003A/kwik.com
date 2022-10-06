@@ -51,6 +51,8 @@ import Layout from "../../../components/Layout";
 import { NextPageWithLayout } from "../_app";
 import { useTheme } from "next-themes";
 import CustomIconBtn from "../../../components/CustomIconBtn";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import { useSWRConfig } from "swr"
 
 
 /**Invoice Section */
@@ -70,6 +72,11 @@ const EditInvoice: NextPageWithLayout = () => {
 
   const router = useRouter();
 
+  const { mutate } = useSWRConfig()
+
+  //get user info 
+  const { user } = useCurrentUser()
+
   /**protects route */
   const { } = useSession({
     required: true,
@@ -87,8 +94,7 @@ const EditInvoice: NextPageWithLayout = () => {
 
   /**
    * edtable true means the core input element is disabled.
-   * function handleEditable() takes care of the core logic
-   * not the best or simple logic, but it works
+   * function @alias handleEditable() takes care of the core logic
    **/
    const [editable, setEditable] = useState<boolean>(true);
    const [notifyEdit, setNotifyEdit] = useState<boolean>(false);
@@ -609,6 +615,9 @@ const EditInvoice: NextPageWithLayout = () => {
         `api/user/invoice/invoices/?invoice_id=${query.invoice_id}`,
         InvUpdate
       );
+      if (UpdatedInvoice.data) {
+        mutate(`/api/user/invoice/invoices/?user_id=${user._id}`);
+      }
       if (UpdatedInvoice.data)
         setInformUser({
           ...informUser,
