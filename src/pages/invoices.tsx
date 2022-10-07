@@ -105,10 +105,9 @@ type stringUnion =
 const Invoices: NextPageWithLayout = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { data, isError, isLoading } = useGetter(
+  const { data, isError, mutate } = useGetter(
     `/api/user/invoice/invoices/?user_id=${session?.user?.id}`
   );
-  const { mutate } = useSWRConfig();
 
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -123,12 +122,6 @@ const Invoices: NextPageWithLayout = () => {
   const [openCreatebar, setOpenCreatebar] = useState<boolean>(false);
   const [invoice, setInvoice] = useState<Invoice>({ ...initialInvoice });
   const [isSaveLoading, setIsSaveLoading] = useState<boolean>(false);
-  const [invNotify, setInvNotify] = useState<{ alert: "not saved" | "saved" }>({
-    alert: "not saved",
-  });
-  const [saved, setSaved] = useState<{ id: string }>({
-    id: "",
-  });
   const [newOldSort, setNewOldSort] = useState<{
     value: number;
     text: "sort" | "latest" | "oldest";
@@ -456,10 +449,7 @@ const Invoices: NextPageWithLayout = () => {
         InvoiceToPost
       );
       if (InvoicePost.data) {
-        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`, InvoicePost, {
-          optimisticData: InvoiceToPost,
-          rollbackOnError: true
-        });
+        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
         setIsSaveLoading(true);
         setInformUser({...informUser, updatealert: true, message: `Invoice saved `})
       } 
