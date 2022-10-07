@@ -449,16 +449,19 @@ const Invoices: NextPageWithLayout = () => {
 
   const createInvoice = async (): Promise<void> => {
     try {
-      const { _id, ...InvoiceToPost } = invoice;
+      const InvoiceToPost = invoice;
 
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${session?.user?.id}`,
         InvoiceToPost
       );
       if (InvoicePost.data) {
-        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
+        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`, InvoicePost, {
+          optimisticData: invoice,
+          rollbackOnError: true
+        });
         setIsSaveLoading(true);
-        setInformUser({...informUser, updatealert: true, message: `Invoice - ${_id}- Saved `})
+        setInformUser({...informUser, updatealert: true, message: `Invoice saved `})
       } 
     } catch (error: any) {
       console.log(error.message);
