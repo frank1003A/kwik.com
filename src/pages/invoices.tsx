@@ -457,7 +457,7 @@ const Invoices: NextPageWithLayout = () => {
       );
       if (InvoicePost.data) {
         mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`, InvoicePost, {
-          optimisticData: invoice,
+          optimisticData: InvoiceToPost,
           rollbackOnError: true
         });
         setIsSaveLoading(true);
