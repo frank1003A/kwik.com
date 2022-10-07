@@ -121,6 +121,6 @@ export const Status = styled.div`
 export const SideCreator = styled.div`
     width: 50%;
     padding: 2rem;
-    background: #fff;
+    background: var(--cd);
     overflow: auto;
 `
