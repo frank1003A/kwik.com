@@ -105,9 +105,10 @@ type stringUnion =
 const Invoices: NextPageWithLayout = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { data, isError, mutate } = useGetter(
+  const { data, isError, isLoading } = useGetter(
     `/api/user/invoice/invoices/?user_id=${session?.user?.id}`
   );
+  const { mutate } = useSWRConfig();
 
   const [optionModal, setOptionModal] = useState<boolean>(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
