@@ -143,9 +143,11 @@ const Invoices: NextPageWithLayout = () => {
   });
   const [informUser, setInformUser] = useState<{
     deletealert: boolean;
+    updatealert: boolean;
     message: string;
   }>({
     deletealert: false,
+    updatealert: false,
     message: "",
   });
 
@@ -453,9 +455,11 @@ const Invoices: NextPageWithLayout = () => {
         `api/user/invoice/invoices/?user_id=${session?.user?.id}`,
         InvoiceToPost
       );
-      if (InvoicePost.data) setIsSaveLoading(true);
-      if (InvoicePost.data) mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
-      if (InvoicePost.data) setSaved({ ...saved, id: _id?.toString()! });
+      if (InvoicePost.data) {
+        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
+        setIsSaveLoading(true);
+        setInformUser({...informUser, updatealert: true, message: `Invoice - ${_id}- Saved `})
+      } 
     } catch (error: any) {
       console.log(error.message);
     }
@@ -762,6 +766,14 @@ const Invoices: NextPageWithLayout = () => {
       <CustomSnackbar
         openAlert={informUser.deletealert}
         closeAlert={() => setInformUser({ ...informUser, deletealert: false })}
+        outputText={informUser.message}
+        verticalPosition="bottom"
+        horizontalPosition="center"
+      />
+
+      <CustomSnackbar
+        openAlert={informUser.updatealert}
+        closeAlert={() => setInformUser({ ...informUser, updatealert: false })}
         outputText={informUser.message}
         verticalPosition="bottom"
         horizontalPosition="center"
