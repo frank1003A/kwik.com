@@ -200,16 +200,17 @@ const Invoices: NextPageWithLayout = () => {
     try {
       const deleteInvoice = await deleteRequest(
         `api/user/invoice/invoices/?invoice_id=${id}`
-      );
-      mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
-      if (deleteInvoice) {
+      ).then(() => {
+        mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
+        setSorted([]);
         setInformUser({
           ...informUser,
           deletealert: true,
           message: `deleted invoice -${id}`,
         });
-        setSorted([]);
-      }
+      }, 
+       () => console.log("error")
+      )
     } catch (error: any) {
       console.log(error.message);
     }
@@ -448,21 +449,18 @@ const Invoices: NextPageWithLayout = () => {
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${session?.user?.id}`,
         InvoiceToPost
-      );
-      if (InvoicePost.data) {
+      ).then(() => {
         mutate(`/api/user/invoice/invoices/?user_id=${session?.user?.id}`);
-        setIsSaveLoading(true);
         setInformUser({...informUser, updatealert: true, message: `Invoice saved `})
-      } 
+        setIsSaveLoading(true)
+      })
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsSaveLoading(false);
-    }, 3000);
+    if (isSaveLoading && informUser) setIsSaveLoading(false)
   }, [isSaveLoading]);
 
   return (

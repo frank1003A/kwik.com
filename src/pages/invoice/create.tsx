@@ -746,11 +746,10 @@ const CreateInvoice: NextPageWithLayout = () => {
       const InvoicePost = await postRequest(
         `api/user/invoice/invoices/?user_id=${user._id}`,
         InvoiceToPost
-      );
-      if (InvoicePost.data) {
+      ).finally(() => {
         mutate(`/api/user/invoice/invoices/?user_id=${user._id}`);
         mutate(`/api/user/product/products/?user_id=${user._id}`);
-      }
+      })
       if (InvoicePost.data) {
         setOpensuccess(true);
         updateProductChanges(); 

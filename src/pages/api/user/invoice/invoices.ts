@@ -25,7 +25,7 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
       const db = client.db("Kwik");
       const User = (await db
         .collection("Invoices")
-        .find({ owner: query.toString() })
+        .find({ owner: query.toString() }).sort({invoiceDate: -1})
         .toArray()) as Invoice[];
       !User
         ? res.status(404).json({ error: "Error finding Id" })

@@ -22,7 +22,7 @@ export default async function Kwik(req: NextApiRequest, res: NextApiResponse) {
       const db = client.db("Kwik"); // connect to database
       const clients = (await db
         .collection("clients")
-        .find({ owner: query.toString() })
+        .find({ owner: query.toString() }).sort({dateCreated: -1})
         .toArray()) as clients[];
       res.status(200).json(clients);
     } catch (err: any) {
