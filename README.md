@@ -1,5 +1,5 @@
 <div align="center">
-  ![Kwik](https://user-images.githubusercontent.com/63779386/169904701-5bdae1e2-623d-4e9e-8d25-fdb5b6c203bc.png)
+  ![Kwik](/assets/kwik_logo.png)
 </div>
 
 <div align="center">
