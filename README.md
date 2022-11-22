@@ -2,7 +2,7 @@
 ![Kwik](public/kwik_logo.png)
 
 ## Landing Page
-![Kwik landingpage](https://kwik-mini-invoice-generator.vercel.app/presentation/landingpage)
+(https://kwik-mini-invoice-generator.vercel.app/presentation/landingpage)
 
 ## A paper design invoice and quotation maker for the web
   
@@ -16,15 +16,13 @@ In order to test out the app, use the user profile:
 
 ## UI
 
-| | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/loginp.jpg"> |
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/dash.jpg">|
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/editpage.jpg">| 
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/invspage.jpg">|
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/clientmgr.jpg">|
-|<img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="/public/prdmgr.jpg">|
-|
+|<img width="500" alt="kwik screenshot" src="/public/loginp.jpg"> |
+|<img width="500" alt="kwik screenshot" src="/public/dash.jpg">|
+|<img width="500" alt="kwik screenshot" src="/public/editpage.jpg">| 
+|<img width="500" alt="kwik screenshot" src="/public/invspage.jpg">|
+|<img width="500" alt="kwik screenshot" src="/public/clientmgr.jpg">|
+|<img width="500" alt="kwik screenshot" src="/public/prdmgr.jpg">|
 
 ## Backend 
 
