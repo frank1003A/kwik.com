@@ -767,6 +767,7 @@ const CreateInvoice: NextPageWithLayout = () => {
     inv.invoiceTitle = `invoice#${nanoid(5)}`;
     inv.invoiceitems = [initialInvoiceItems];
     setInvoiceRepo({ ...inv });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interimSave])
   
   useEffect(() => {
