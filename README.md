@@ -1,8 +1,11 @@
 # Kwik - Invoice Generator and Manager
+
 ![Kwik](public/kwik_logo.png)
 
+## WebApp
+http://kwik-mini-invoice-generator.vercel.app/
 ## Landing Page
-(https://kwik-mini-invoice-generator.vercel.app/presentation/landingpage)
+https://kwik-mini-invoice-generator.vercel.app/presentation/landingpage
 
 ## A paper design invoice and quotation maker for the web
   
