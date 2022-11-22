@@ -1,7 +1,5 @@
 # Kwik - Invoice Generator and Manager
 
-![Kwik](public/kwik_logo.png)
-
 ## A paper design invoice and quotation maker for the web
   
 Kwik is just a portfolio project Written by Frank Ezene, 
