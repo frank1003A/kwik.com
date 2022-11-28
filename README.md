@@ -23,11 +23,13 @@ In order to test out the app, use the user profile:
 |<img width="500" alt="kwik screenshot" src="/public/loginp.jpg"> | <img width="500" alt="kwik screenshot" src="/public/dash.jpg">| <img width="500" alt="kwik screenshot" src="/public/editpage.jpg">| 
 |<img width="500" alt="kwik screenshot" src="/public/invspage.jpg">| <img width="500" alt="kwik screenshot" src="/public/clientmgr.jpg">|<img width="500" alt="kwik screenshot" src="/public/prdmgr.jpg">|
 
-## Backend 
 
-The api folder has all the codes
+## Database Model 
+https://github.com/frank1003A/kwik.com/blob/main/model/
+
+## Backend Api Design
+https://github.com/frank1003A/kwik.com/tree/main/src/pages/api
 
 ## Database 
-
-MongoDB free cluster
+MongoDB Atlas free cluster
 
