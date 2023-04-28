@@ -55,9 +55,19 @@ const Login: NextPage = () => {
     return stat;
   };
 
+  // add test login details auttomatically
+  const addTestUser = () => {
+    const testUser = {
+      email: "ka@gmail.com",
+      password: "fried"
+    }
+    setUserInfo(testUser)
+  }
+
   useEffect(() => {
     if (status === "authenticated") {
       router.push("/dashboard")
+      addTestUser()
     }
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ status])
@@ -84,7 +94,7 @@ const Login: NextPage = () => {
           </Typography>
           <ButtonComponent
             innerText="Sign in with Google"
-            icon={<img src="/google_32.png" width="20" height="20" />}
+            icon={<img src="/google_32.png" width="20" height="20" alt="google-login" />}
             className={styles["googlebtn"]}
           />
           <div className={styles["flex-row"]}>
@@ -146,7 +156,7 @@ const Login: NextPage = () => {
         </div>
       </section>
       <section id={styles.imgandtext}>
-        <img src="/leftsvg.png" height={300} />
+        <img src="/leftsvg.png" height={300} alt="logo" />
       </section>
 
       <CustomSnackbar
